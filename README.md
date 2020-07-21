@@ -6,6 +6,10 @@
 # Git config setting
     * git config --global user.name ""
     * git config --global user.email ""
+
+# Vim setting
+Ref: 
+    1. https://blog.m157q.tw/posts/2018/07/23/use-my-old-vimrc-for-neovim/
    
 # Error case
 Ref:
