@@ -144,3 +144,5 @@ MODE_INDICATOR_VISUAL='%F{12}[%F{12}V]%f'
 MODE_INDICATOR_VLINE='%F{12}[%F{12}V-LINE]%f'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+alias vim='nvim'
+alias vi='nvim'
