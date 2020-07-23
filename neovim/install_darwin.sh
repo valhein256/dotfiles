@@ -5,7 +5,9 @@ CURRENT_PATH=`pwd`
 # Make config directory for Neovim's init.vim
 echo '[*] Preparing Neovim config directory ...'
 mkdir -p ~/.config/
-ln -s $CURRENT_PATH ~/.config/nvim
+if [[ ! -f $HOME/.config/nvim ]]; then
+  ln -s $CURRENT_PATH $HOME/.config/nvim
+fi
 
 # Install virtualenv to containerize dependencies
 echo '[*] Pip installing venv to containerize Neovim dependencies (instead of installing them onto your system) ...'
