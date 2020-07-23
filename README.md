@@ -1,3 +1,8 @@
+# Pre-processing
+    * Run ./install_brew.sh & ./install_brew_packages.py
+    * Make sure you have pip3.
+    * Run ./install_dotfiles.sh
+
 # Init git submodule
     * $ ./scripts/git_submodule_add.sh
     * git submodule add https://github.com/zplug/zplug zsh/zplug
