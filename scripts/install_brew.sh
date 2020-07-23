@@ -29,13 +29,4 @@ install_homebrew () {
   echo ""
 }
 
-
-echo -e "### Homebrew installing..."
 install_homebrew
-echo -e "\033[32m### Homebrew installed!\033[0m"
-echo ""
-echo -e "### Packages installing..."
-brew install neovim python3 python3-pip python3-venv exuberant-ctags
-brew install ag
-echo -e "\033[32m### !\033[0m"
-echo ""
