@@ -1,4 +1,4 @@
-#vim:set ft=gitconfig
+#nvim:set ft=gitconfig
 [user]
 	name = 
 	email = 
@@ -6,8 +6,8 @@
     lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
     lgnn = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s' --abbrev-commit --date=relative
 	st = status
-    edit-last-commit = !vim `git diff-tree -r --name-only HEAD HEAD~1`
-    edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
+    edit-last-commit = !nvim `git diff-tree -r --name-only HEAD HEAD~1`
+    edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; nvim `f`"
     add-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
 	co = checkout
 	br = branch
@@ -28,7 +28,7 @@
 [pager]
     color = true
 [core]
-	editor = vim
+	editor = nvim
 	excludesfile = /Users/whlin/.gitignore_global
     ignoreCase = false
 [mergetool "Kaleidoscope"]
