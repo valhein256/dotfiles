@@ -1,4 +1,6 @@
-""" Optixal's Neovim Init.vim
+" Esc Keymapping: {{{
+inoremap jk <esc>
+" "}}}
 
 """ Vim-Plug
 call plug#begin()
@@ -14,7 +16,6 @@ Plug 'junegunn/seoul256.vim'
 Plug 'junegunn/vim-journal'
 Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'nightsense/forgotten'
-Plug 'zaki/zazen'
 
 " Aethetics - Additional
 Plug 'nightsense/nemo'
@@ -57,6 +58,9 @@ call plug#end()
 """ Python3 VirtualEnv
 let g:python3_host_prog = expand('~/.config/nvim/env/bin/python')
 
+" vim-pydocstring
+let g:pydocstring_doq_path = '~/.config/nvim/env/bin/doq'
+
 """ Coloring
 syntax on
 color dracula
@@ -83,6 +87,8 @@ set wrap breakindent
 set encoding=utf-8
 set number
 set title
+set nobackup
+set noswapfile
 
 """ Plugin Configurations
 
@@ -108,9 +114,6 @@ autocmd BufLeave term://* stopinsert
 let g:deoplete#enable_at_startup = 1
 " Disable documentation window
 set completeopt-=preview
-
-" vim-pydocstring
-let g:pydocstring_doq_path = '~/.config/nvim/env/bin/doq'
 
 " Supertab
 let g:SuperTabDefaultCompletionType = "<C-n>"
@@ -199,13 +202,6 @@ function! ColorForgotten()
     IndentLinesDisable
 endfunction
 
-" Zazen Mode (Black & White)
-function! ColorZazen()
-    let g:airline_theme='badcat'
-    color zazen
-    IndentLinesEnable
-endfunction
-
 """ Custom Mappings
 
 let mapleader=","
@@ -217,7 +213,6 @@ nmap <leader>ea :AirlineTheme
 nmap <leader>e1 :call ColorDracula()<CR>
 nmap <leader>e2 :call ColorSeoul256()<CR>
 nmap <leader>e3 :call ColorForgotten()<CR>
-nmap <leader>e4 :call ColorZazen()<CR>
 nmap <leader>r :so ~/.config/nvim/init.vim<CR>
 nmap <leader>t :call TrimWhitespace()<CR>
 xmap <leader>a gaip*
@@ -245,6 +240,22 @@ nnoremap <leader>tm :tabmove<SPACE>
 nnoremap <leader>tc :tabclose<CR>
 nnoremap <C-H> :tabprev<CR>
 nnoremap <C-L> :tabnext<CR>
+
+" Indent: {{{
+set backspace=indent,eol,start
+set autoindent
+set expandtab
+set smarttab            " insert tabs on the start of a line according to context
+set shiftwidth=4
+set softtabstop=4
+set tabstop=4
+
+" indent key mapping
+nnoremap <tab> v>
+nnoremap <s-tab> v<
+vnoremap <tab> >gv
+vnoremap <s-tab> <gv
+" "}}}
 
 " Airline: {{{
 let g:airline_powerline_fonts = 0
