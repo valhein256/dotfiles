@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from __future__ import print_function
 import itertools
+import os
 
 # BREW_TAP_LIST = """
 # homebrew/science
@@ -27,7 +28,7 @@ import itertools
 # doxygen graphviz ctags cscope git gnu-tar tmux screen cmake
 # """
 
-BBEW_LIST = """neovim python3 ctags-exuberant ag
+BREW_LIST = """neovim python3 ctags-exuberant ag
 """
 
 # PIP_PACKAGE_LIST = """cython ipython pylint pep8 pyscope flask nikola
@@ -78,7 +79,10 @@ def main():
     cmds = [c['generator'](c['cmd'], c['list']) for c in cmd_seeting]
     cmds = list(itertools.chain(*cmds))
 
-    print("\n".join(cmds))
+    for cmd in cmds:
+        print("Running cmd:", cmd)
+        os.system(cmd)
+        print("Finish")
 
 if __name__ == '__main__':
     main()
