@@ -3,14 +3,21 @@
     * Make sure you have pip3.
     * Run ./install_dotfiles.sh
 
+# Install steps:
+
 # Init git submodule
     * $ ./scripts/git_submodule_add.sh
     * git submodule add https://github.com/zplug/zplug zsh/zplug
     * git submodule add https://github.com/tmux-plugins/tpm tmux/plugins/tpm
 
 # Git config setting
-    * git config --global user.name ""
-    * git config --global user.email ""
+    * set global:
+      * git config --global user.name ""
+      * git config --global user.email ""
+
+    * set local:
+      * git config --global user.name ""
+      * git config --global user.email ""
 
 # Vim setting
 Ref: 
