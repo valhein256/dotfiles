@@ -4,7 +4,7 @@ CURRENT_PATH=`pwd`
 # Make config directory for Neovim's init.vim
 echo '[*] Preparing Neovim config directory ...'
 mkdir -p ~/.config/
-ln -s $CURRENT_PATH ~/.config/nvim
+ln -sfn $CURRENT_PATH ~/.config/nvim
 
 # Install nvim (and its dependencies: pip3, git), Python 3 and ctags (for tagbar)
 echo '[*] App installing Neovim and its dependencies (Python 3 and git), and dependencies for tagbar (exuberant-ctags) ...'
