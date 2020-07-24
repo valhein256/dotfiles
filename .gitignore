@@ -1,0 +1,11 @@
+.netrwhist
+.ycm_extra_conf.pyc
+.ropeproject/
+bundle/
+dein/
+neovim/plugged/
+neovim/env/
+neovim/autoload/
+vim/autoload/
+vim/plugged/
+vim/.ropeproject/
