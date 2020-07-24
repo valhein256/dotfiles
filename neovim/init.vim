@@ -1,6 +1,11 @@
+" GUI_setting: {{{
+set guifont=Source\ Code\ Pro:h20
+set cursorline        " highlight current line
+highlight SpellBad term=underline gui=undercurl guisp=Orange
+" }}}
 " Esc Keymapping: {{{
 inoremap jk <esc>
-" "}}}
+" }}}
 
 """ Vim-Plug
 call plug#begin()
@@ -17,6 +22,10 @@ Plug 'junegunn/vim-journal'
 Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'nightsense/forgotten'
 
+" Tabbar
+Plug 'mkitt/tabline.vim'
+Plug 'majutsushi/tagbar'
+
 " Aethetics - Additional
 Plug 'nightsense/nemo'
 Plug 'yuttie/hydrangea-vim'
@@ -24,9 +33,11 @@ Plug 'chriskempson/tomorrow-theme', { 'rtp': 'vim' }
 Plug 'rhysd/vim-color-spring-night'
 
 " Functionalities
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-speeddating'
+Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-fugitive'
 Plug 'majutsushi/tagbar'
 Plug 'scrooloose/nerdtree'
 Plug 'scrooloose/nerdcommenter'
@@ -258,23 +269,31 @@ vnoremap <s-tab> <gv
 " "}}}
 
 " Airline: {{{
-let g:airline_powerline_fonts = 0
+let g:airline_powerline_fonts = 1
 let g:airline_detect_modified = 1
 let g:airline_detect_paste = 1
 let g:airline_detect_iminsert = 0
 let g:airline#extensions#whitespace#enabled = 0
 
-  let g:airline_mode_map = {
-      \ '__' : '-',
-      \ 'n'  : 'N',
-      \ 'i'  : 'I',
-      \ 'R'  : 'R',
-      \ 'c'  : 'C',
-      \ 'v'  : 'V',
-      \ 'V'  : 'V',
-      \ '' : 'V',
-      \ 's'  : 'S',
-      \ 'S'  : 'S',
-      \ '' : 'S',
-      \ }
+let g:airline_mode_map = {
+  \ '__' : '-',
+  \ 'n'  : 'N',
+  \ 'i'  : 'I',
+  \ 'R'  : 'R',
+  \ 'c'  : 'C',
+  \ 'v'  : 'V',
+  \ 'V'  : 'V',
+  \ '' : 'V',
+  \ 's'  : 'S',
+  \ 'S'  : 'S',
+  \ '' : 'S',
+  \ }
 " }}}
+
+" Tabline: {{{
+hi TabLine      ctermfg=Black  ctermbg=Green     cterm=NONE
+hi TabLineFill  ctermfg=Black  ctermbg=Green     cterm=NONE
+hi TabLineSel   ctermfg=White  ctermbg=DarkBlue  cterm=NONE
+" }}}
+
+" vim: ft=vim foldmethod=marker foldcolumn=1
