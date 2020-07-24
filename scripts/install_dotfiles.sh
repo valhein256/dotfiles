@@ -86,10 +86,8 @@ git submodule update --recursive
 echo -e "\033[32m### Finish !!\033[0m"
 echo ""
 
-echo -e "### Installing..."
+echo -e "### Dotfiles Installing..."
 install_dotfiles 
-#install_vim_plug
-cd ./neovim && ./install_darwin.sh
-echo -e "\033[32m### All installed!\033[0m"
+echo -e "\033[32m### Finish !!\033[0m"
 echo ""
 

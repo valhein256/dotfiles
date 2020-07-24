@@ -7,3 +7,9 @@ launch_env:
 		-v `pwd`:/usr/dotfiles \
 		ubuntu:latest /bin/bash
 
+install_all:
+	./scripts/install_dotfiles.sh
+	cd ./neovim && ./install_darwin.sh
+
+uninstall_all:
+	./scripts/uninstall.sh

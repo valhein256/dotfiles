@@ -59,6 +59,7 @@ cleanOther (){
         $HOME/.ssh/rc
         $HOME/.tmux
         $HOME/.zplug
+        $HOME/.config/nvim
     )
     tLen=${#FILES[@]}
 
