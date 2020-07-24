@@ -9,7 +9,7 @@ launch_env:
 
 install_all:
 	./scripts/install_dotfiles.sh
-	cd ./neovim && ./install_darwin.sh
+	./scripts/install_nvim.sh
 
 uninstall_all:
 	./scripts/uninstall.sh
