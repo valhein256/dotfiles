@@ -13,3 +13,9 @@ install_all:
 
 uninstall_all:
 	./scripts/uninstall.sh
+
+test_install_nvim:
+	./scripts/install_nvim_ubuntu.sh
+
+test_uninstall_nvim:
+	./scripts/uninstall_nvim_ubuntu.sh
