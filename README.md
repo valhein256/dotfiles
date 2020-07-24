@@ -1,4 +1,5 @@
 # Pre-processing
+    * Install powerline fonts: https://github.com/powerline/fonts
     * Run ./install_brew.sh & ./install_brew_packages.py
     * Make sure you have pip3.
     * Run ./install_dotfiles.sh
