@@ -1,3 +1,12 @@
+### Test for nvim installation
+
+
+cd ~/path/to/dotfiles
+start docker: 
+  1. make pull_ubuntu_image && make launch_env to into the docker-container.
+  2. cd /usr/dotfiles/neovim && run install.sh
+
+
 ### Update
 
 Update plugins (super simple)
