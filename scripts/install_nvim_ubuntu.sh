@@ -3,11 +3,9 @@
 CURRENT_PATH=`pwd`
 
 # Make config directory for Neovim's init.vim
-echo '[*] Preparing Neovim config directory ...'
-mkdir -p $HOME/.config/
-if [[ ! -f $HOME/.config/nvim ]]; then
-  ln -sfn $CURRENT_PATH/neovim $HOME/.config/nvim
-fi
+rm -rf ~/.config/nvim
+mkdir -p ~/.config/nvim
+cp $CURRENT_PATH/neovim/init.vim ~/.config/nvim
 
 # Install nvim (and its dependencies: pip3, git), Python 3 and ctags (for tagbar)
 echo '[*] App installing Neovim and its dependencies (Python 3 and git), and dependencies for tagbar (exuberant-ctags) ...'
@@ -39,13 +37,13 @@ echo "alias vim='nvim'" >> ~/.bashrc
 
 # Enter Neovim and install plugins using a temporary init.vim, which avoids warnings about missing colorschemes, functions, etc
 echo -e '[*] Running :PlugInstall within nvim ...'
-sed '/call plug#end/q' init.vim > ~/.config/nvim/init.vim
+sed '/call plug#end/q' $CURRENT_PATH/neovim/init.vim > ~/.config/nvim/init.vim
 nvim -c ':PlugInstall' -c ':UpdateRemotePlugins' -c ':qall'
 rm ~/.config/nvim/init.vim
 
 # Copy init.vim in current working directory to nvim's config location ...
 echo '[*] Copying init.vim -> ~/.config/nvim/init.vim'
-cp init.vim ~/.config/nvim/
+cp $CURRENT_PATH/neovim/init.vim ~/.config/nvim/
 
 echo -e "[+] Done, welcome to \033[1m\033[92mNeoVim\033[0m! Try it by running: nvim/vim. Want to customize it? Modify ~/.config/nvim/init.vim"
 
