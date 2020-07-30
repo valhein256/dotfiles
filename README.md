@@ -1,7 +1,6 @@
 # MacOS Setup Guide
 Ref: https://sourabhbajaj.com/mac-setup/
 
-## Install Steps
 ### Application 
 * Browser: [Chrome], [FirFox]
 * [Docker]
@@ -97,7 +96,7 @@ Todo: [Use my old vimrc for NeoVim]
 Ref:
     1. https://blog.m157q.tw/posts/2018/07/23/use-my-old-vimrc-for-neovim/
 
-# Other Documents
+### Other Documents
 [What is the difference between venv, pyvenv, pyenv, virtualenv, virtualenvwrapper, pipenv, etc?]
 
    [Chrome]: <https://www.google.com/chrome/?brand=CHBD&gclid=CjwKCAjw34n5BRA9EiwA2u9k30fBEMblRcv82Os1vwt6z4tOarneYbf-eOGCF4Uy7kVNs4MxcmpE6xoC4lUQAvD_BwE&gclsrc=aw.ds>
