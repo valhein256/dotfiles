@@ -45,7 +45,7 @@ Error: The following directories are not writable by your user:
 /usr/local/share/zsh/site-functions
 
 You should change the ownership of these directories to your user.
-  sudo chown -R $(whoami) /usr/local/share/zsh /usr/local/share/zsh/site-functions
+sudo chown -R $(whoami) /usr/local/share/zsh /usr/local/share/zsh/site-functions
 ```
 
 #### Font and Theme
@@ -72,6 +72,16 @@ $ cd /path/to/dotfiles
 $ make install_all
 ```
 After the installation is finished, restart the zsh to install the zsh-plugins.
+##### Error case
+If you encountered following problem when launch a new zsh after installing... 
+```sh
+zsh compinit: insecure directories, run compaudit for list.
+Ignore insecure directories and continue [y] or abort compinit [n]? 
+
+You should change the ownership of these directories to your user.
+sudo chmod 755 /usr/local/share/zsh /usr/local/share/zsh/site-functions 
+sudo chown -R $(whoami) /usr/local/share/zsh /usr/local/share/zsh/site-functions
+```
 ### Git Config Setting
 #### Global
 ```sh
