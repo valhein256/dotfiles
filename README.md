@@ -2,7 +2,7 @@
 Ref: https://sourabhbajaj.com/mac-setup/
 
 ### Application 
-* Browser: [Chrome], [FirFox]
+* Browser: [Chrome], [FireFox]
 * [Docker]
 * [VirtualBox]
 * [Vagrant]
@@ -110,7 +110,7 @@ Ref:
 [What is the difference between venv, pyvenv, pyenv, virtualenv, virtualenvwrapper, pipenv, etc?]
 
    [Chrome]: <https://www.google.com/chrome/?brand=CHBD&gclid=CjwKCAjw34n5BRA9EiwA2u9k30fBEMblRcv82Os1vwt6z4tOarneYbf-eOGCF4Uy7kVNs4MxcmpE6xoC4lUQAvD_BwE&gclsrc=aw.ds>
-   [Firfox]: <https://www.mozilla.org/en-US/>
+   [Firefox]: <https://www.mozilla.org/en-US/>
    [Docker]: <https://www.docker.com/>
    [virtualbox]: <https://www.virtualbox.org/>
    [vagrant]: <https://www.vagrantup.com/>
