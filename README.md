@@ -34,8 +34,6 @@ $ cd /path/to/dotfiles
 $ ./scripts/install_packages.py
 ```
 Make sure you have installed python3 and pip3.
-Todo:
-Use Homebrew to install zsh and git.
 
 ##### Error case
 If you encountered following problem when the script:./scripts/install_packages.py was running
@@ -103,8 +101,6 @@ $ ./scripts/git_submodule_add.sh
 * git submodule add https://github.com/tmux-plugins/tpm tmux/plugins/tpm
 ### Vim and Neovim setting
 Todo: [Use my old vimrc for NeoVim]
-Ref:
-    1. https://blog.m157q.tw/posts/2018/07/23/use-my-old-vimrc-for-neovim/
 
 ### Other Documents
 [What is the difference between venv, pyvenv, pyenv, virtualenv, virtualenvwrapper, pipenv, etc?]
@@ -119,3 +115,4 @@ Ref:
    [iterm2-color-schemes]: <https://iterm2colorschemes.com/>
    [Use my old vimrc for NeoVim]: <https://blog.m157q.tw/posts/2018/07/23/use-my-old-vimrc-for-neovim/>
    [What is the difference between venv, pyvenv, pyenv, virtualenv, virtualenvwrapper, pipenv, etc?]: <https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe/41573588#41573588>
+   [Use my old vimrc for NeoVim]: <https://blog.m157q.tw/posts/2018/07/23/use-my-old-vimrc-for-neovim/>
