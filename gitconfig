@@ -1,18 +1,19 @@
 #nvim:set ft=gitconfig
 [user]
-	name = 
-	email = 
+    name = 
+    email = 
 [alias]
     lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
     lgnn = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s' --abbrev-commit --date=relative
-	st = status
+    st = status
     edit-last-commit = !nvim `git diff-tree -r --name-only HEAD HEAD~1`
     edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; nvim `f`"
     add-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
-	co = checkout
-	br = branch
-	ci = commit
-	subupdate = submodule foreach git pull origin master 
+    co = checkout
+    rs = restore
+    br = branch
+    ci = commit
+    subupdate = submodule foreach git pull origin master 
 [color]
     diff = auto
     status = auto
@@ -22,29 +23,29 @@
 [push]
     default = simple
 [diff]
-	tool = Kaleidoscope
+    tool = Kaleidoscope
 [merge]
-	tool = Kaleidoscope
+    tool = Kaleidoscope
 [pager]
     color = true
 [core]
-	editor = nvim
-	excludesfile = /Users/whlin/.gitignore_global
+    editor = nvim
+    excludesfile = ~/.gitignore_global
     ignoreCase = false
 [mergetool "Kaleidoscope"]
-	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
-	trustexitcode = true
+    cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+    trustexitcode = true
 [difftool "Kaleidoscope"]
-	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+    cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [difftool]
-	prompt = false
+    prompt = false
 [mergetool]
-	prompt = false
+    prompt = false
 [difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
+    cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+    path = 
 [mergetool "sourcetree"]
-	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
+    cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+    trustExitCode = true
 [commit]
-	template = /Users/whlin/.stCommitMsg
+    template = ~/.stCommitMsg
