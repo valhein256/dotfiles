@@ -34,7 +34,7 @@ BREW_LIST = """neovim python3 ctags-exuberant ag zsh git node awscli tree go
 # PIP_PACKAGE_LIST = """cython ipython pylint pep8 pyscope flask nikola
 # markdown nose""
 
-PIP_PACKAGE_LIST = """virtualenv
+PIP_PACKAGE_LIST = """virtualenv pep8
 """
 
 # CABAL_PACKAGE_LIST= """happy pandoc hakyll ghc-mod hlint"""
