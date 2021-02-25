@@ -109,6 +109,9 @@ zplug "softmoth/zsh-vim-mode", defer:3
 # Load theme file
 zplug 'dracula/zsh', as:theme
 
+# ssh
+zplug "zpm-zsh/ssh"
+
 #############
 # Install plugins if there are plugins that have not been installed
 #############
