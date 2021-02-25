@@ -1,5 +1,9 @@
 # MacOS Setup Guide
 Ref: https://sourabhbajaj.com/mac-setup/
+
+## Todo
+* Migrate vim to nvim (Expect to remove vim folder)
+
 ## Installation
 ### Application
 Go to the website to install these applications directly
