@@ -1,5 +1,8 @@
 # MacOS Setup Guide
-Ref: https://sourabhbajaj.com/mac-setup/
+Ref: 
+* https://sourabhbajaj.com/mac-setup/
+* https://project-awesome.org/unixorn/awesome-zsh-plugins
+
 
 ## Todo
 * Migrate vim to nvim (Expect to remove vim folder)
