@@ -1,26 +1,29 @@
 # MacOS Setup Guide
 Ref: https://sourabhbajaj.com/mac-setup/
-
-### Application 
+## Installation
+### Application
+Go to the website to install these applications directly
 * Browser: [Chrome], [FireFox]
 * [Docker]
 * [VirtualBox]
 * [Vagrant]
 * [iTerm2]
+
 ### Dotfiles
-#### Add an SSH key
+#### Add SSH Key to Gitlab Account
 To add an SSH key you need to generate one or use an existing key.
 ```sh
 $ ssh-keygen -t rsa -b 2048 -C "email@example.com"
 $ cat ~/.ssh/id_rsa.pub
 ```
-Paste the content of catting to gitlab: Dettings ->  SSH Keys
-#### clone / download
+Paste the content of catting to [Gitlab profile keys]
+#### Clone / Download
 If the system has git command, use git clone to fetch dotfiles repos.
 ```sh
 $ git clone git@gitlab.com:valhein256/dotfiles.git
 ```
 Or you could download the repos from gitlab.
+
 #### Homebrew
 Scripts in dotfiles.
 ```sh
@@ -33,7 +36,21 @@ After install howebrew, run the scripts: scripts/install_packages.py to install 
 $ cd /path/to/dotfiles
 $ ./scripts/install_packages.py
 ```
-Make sure you have installed python3 and pip3.
+Package list:
+* Brew
+    * neovim 
+    * python3 
+    * ctags-exuberant 
+    * ag 
+    * zsh 
+    * git 
+    * node 
+    * awscli 
+    * tree 
+    * go
+* Python Packages
+    * virtualenv
+    * pep8
 
 ##### Error case
 If you encountered following problem when the script:./scripts/install_packages.py was running
@@ -45,7 +62,12 @@ Error: The following directories are not writable by your user:
 You should change the ownership of these directories to your user.
 sudo chown -R $(whoami) /usr/local/share/zsh /usr/local/share/zsh/site-functions
 ```
-
+#### Dotfiles and Vimfiles (for neovim)
+After install howebrew and packages, run make command to install Dotfiles and Vimfiles.
+```sh
+$ cd /path/to/dotfiles
+$ make install_all
+```
 #### Font and Theme
 ##### Font
 Ref: https://github.com/Homebrew/homebrew-cask-fonts
@@ -116,3 +138,5 @@ Todo: [Use my old vimrc for NeoVim]
    [Use my old vimrc for NeoVim]: <https://blog.m157q.tw/posts/2018/07/23/use-my-old-vimrc-for-neovim/>
    [What is the difference between venv, pyvenv, pyenv, virtualenv, virtualenvwrapper, pipenv, etc?]: <https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe/41573588#41573588>
    [Use my old vimrc for NeoVim]: <https://blog.m157q.tw/posts/2018/07/23/use-my-old-vimrc-for-neovim/>
+   [Gitlab profile keys]: <https://gitlab.com/-/profile/keys>
+
