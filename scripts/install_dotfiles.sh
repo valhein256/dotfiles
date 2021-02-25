@@ -35,7 +35,7 @@ install_dotfiles () {
   if [[ ! -d $HOME/.zplug ]]; then
     ln -s $CURRENT_PATH/zsh/zplug $HOME/.zplug
   fi
-  ln -s $CURRENT_PATH/zsh/zshrc             $HOME/.zshrc       
+  ln -s $CURRENT_PATH/zsh/zshrc             $HOME/.zshrc
   ### end ###
 
   # install tmux plugin manager
@@ -87,7 +87,7 @@ echo -e "\033[32m### Finish !!\033[0m"
 echo ""
 
 echo -e "### Dotfiles Installing..."
-install_dotfiles 
+install_dotfiles
 echo -e "\033[32m### Finish !!\033[0m"
 echo ""
 
