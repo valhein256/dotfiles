@@ -139,6 +139,7 @@ alias htop='sudo htop'
 
 # Workaroud for vim + Syntastic +pylint
 export LC_CTYPE=en_US.UTF-8
+export LANG=en_US
 
 #export LESS_TERMCAP_mb=$'\E[01;31m'       # begin blinking
 #export LESS_TERMCAP_md=$'\E[01;38;5;74m'  # begin bold

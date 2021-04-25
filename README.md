@@ -79,7 +79,7 @@ $ make install_all
 ##### Font
 Ref: https://github.com/Homebrew/homebrew-cask-fonts
 ```sh
-$ brew tap homebrew/cask-fonts && brew cask install font-saucecodepro-nerd-font # Install Source Code Pro With Nerd Font.
+$ brew tap homebrew/cask-fonts && brew install font-sauce-code-pro-nerd-font # Install Source Code Pro With Nerd Font.
 ```
 After install Source Code Pro With Nerd Font...
 Go to iTerm2 preferences -> Profiles -> Text -> Select the font: SauceCodePro Nerd Font.
