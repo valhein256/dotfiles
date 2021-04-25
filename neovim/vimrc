@@ -4,11 +4,11 @@
 let mapleader = ","
 " }}}
 " Source_path_setting: {{{
-source ~/.config/nvim/vim/plugin.vim
-source ~/.config/nvim/vim/general.vim
+source ~/.config/nvim/vimfiles/plugin.vim
+source ~/.config/nvim/vimfiles/general.vim
 " }}}
 " GUI Setting: {{{
-source ~/.config/nvim/vim/gui.vim
+source ~/.config/nvim/vimfiles/gui.vim
 " }}}
 
 " vim: ft=vim foldmethod=marker foldcolumn=1 foldlevelstart=0
