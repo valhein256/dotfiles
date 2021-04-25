@@ -1,10 +1,9 @@
-pull_ubuntu_image:
-	docker pull ubuntu
+build:
+	docker build --pull . -t neovim
 
-launch_env:
-	docker run -it  \
-		-v `pwd`:/usr/dotfiles \
-		ubuntu:latest /bin/bash
+launch:
+	docker run -it --rm \
+		neovim:latest /bin/bash
 
 install_all:
 	./scripts/install_dotfiles.sh
