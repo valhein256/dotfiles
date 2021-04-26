@@ -32,12 +32,7 @@ $ git clone git@gitlab.com:valhein256/dotfiles.git
 Or you could download the repos from gitlab.
 
 #### Homebrew
-Scripts in dotfiles.
-```sh
-$ cd /path/to/dotfiles
-$ ./scripts/install_brew.sh
-```
-Or, go to [Homebrew].
+Go to [Homebrew], and install it.
 After install howebrew, run the scripts: scripts/install_packages.py to install required packages.
 ```sh
 $ cd /path/to/dotfiles
@@ -57,7 +52,6 @@ Package list:
     * go
 * Python Packages
     * virtualenv
-    * pep8
 
 ##### Error case
 If you encountered following problem when the script:./scripts/install_packages.py was running

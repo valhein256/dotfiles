@@ -8,11 +8,11 @@ usage: $0 [OPTIONS]
     -c      Clean dotfilers rc
 
     example:
-        ./uninstall_dotfiles.sh or ./uninstall_dotfiles.sh -c all
-        ./uninstall_dotfiles.sh -c zsh
-        ./uninstall_dotfiles.sh -c vim
-        ./uninstall_dotfiles.sh -c other
-        ./uninstall_dotfiles.sh -c all
+        ./remove_dotfiles.sh or ./remove_dotfiles.sh -c all
+        ./remove_dotfiles.sh -c zsh
+        ./remove_dotfiles.sh -c vim
+        ./remove_dotfiles.sh -c other
+        ./remove_dotfiles.sh -c all
 EOF
 }
 
@@ -33,10 +33,9 @@ cleanZshrc (){
     done
 }
 
-cleanVimrc (){
+cleanNeovimrc (){
     FILES=(
-        $HOME/.vimrc
-        $HOME/.vim
+        $HOME/.config/nvim
     )
     tLen=${#FILES[@]}
 
@@ -59,7 +58,6 @@ cleanOther (){
         $HOME/.ssh/rc
         $HOME/.tmux
         $HOME/.zplug
-        $HOME/.config/nvim
     )
     tLen=${#FILES[@]}
 
@@ -95,7 +93,7 @@ elif [ "$CLEANRC" == other ]; then
     cleanOther
 elif [ "$CLEANRC" == all ]; then
     cleanZshrc
-    cleanVimrc
+    cleanNeovimrc
     cleanOther
 fi
 

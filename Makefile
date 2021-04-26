@@ -4,13 +4,18 @@ build:
 launch:
 	docker run -it --rm neovim:latest /bin/bash
 
+reinstall_all: clean install_all
+
 install_all:
 	./scripts/installations/git-submodule.sh
 	./scripts/installations/dotfiles.sh
 	./scripts/installations/neovim.sh
 
-uninstall_all:
-	./scripts/uninstall.sh
+clean:
+	@rm -rf ./neovim/plugged/
+	@rm -rf ./neovim/autoload/
+	@rm -rf ./neovim/env/
+	./scripts/remove_dotfiles.sh
 
 show:
 	@echo "Show submodule list:"
