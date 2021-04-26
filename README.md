@@ -3,10 +3,6 @@ Ref:
 * https://sourabhbajaj.com/mac-setup/
 * https://project-awesome.org/unixorn/awesome-zsh-plugins
 
-
-## Todo
-* Migrate vim to nvim (Expect to remove vim folder)
-
 ## Installation
 ### Application
 Go to the website to install these applications directly
@@ -33,10 +29,10 @@ Or you could download the repos from gitlab.
 
 #### Homebrew
 Go to [Homebrew], and install it.
-After install howebrew, run the scripts: scripts/install_packages.py to install required packages.
+After install howebrew, run the scripts: scripts/brew_packages.py to install required packages.
 ```sh
 $ cd /path/to/dotfiles
-$ ./scripts/install_packages.py
+$ ./scripts/brew_packages.py
 ```
 Package list:
 * Brew
@@ -54,7 +50,7 @@ Package list:
     * virtualenv
 
 ##### Error case
-If you encountered following problem when the script:./scripts/install_packages.py was running
+If you encountered following problem when the script:./scripts/brew_packages.py was running
 ```sh
 Error: The following directories are not writable by your user:
 /usr/local/share/zsh
@@ -63,8 +59,8 @@ Error: The following directories are not writable by your user:
 You should change the ownership of these directories to your user.
 sudo chown -R $(whoami) /usr/local/share/zsh /usr/local/share/zsh/site-functions
 ```
-#### Dotfiles and Vimfiles (for neovim)
-After install howebrew and packages, run make command to install Dotfiles and Vimfiles.
+#### Dotfiles and Neovim-config
+After install howebrew and packages, run make command to install Dotfiles and Neovim-config.
 ```sh
 $ cd /path/to/dotfiles
 $ make install_all
@@ -115,15 +111,6 @@ $ git config --local user.name "..."
 $ git config --local user.email "..."
 ```
 ---------
-# Others
-### Init git submodule
-```sh
-$ ./scripts/git_submodule_add.sh
-```
-* git submodule add https://github.com/zplug/zplug zsh/zplug
-* git submodule add https://github.com/tmux-plugins/tpm tmux/plugins/tpm
-### Vim and Neovim setting
-Todo: [Use my old vimrc for NeoVim]
 
 ### Other Documents
 [What is the difference between venv, pyvenv, pyenv, virtualenv, virtualenvwrapper, pipenv, etc?]
