@@ -25,11 +25,15 @@ fail () {
 ############################
 
 echo ""
-echo "### Homebrew installing..."
-if test ! $(which brew)
-then
-echo "### Installing Homebrew for you... "
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+echo -e "### Git submodule init & update..."
+if [[ ! -f $CURRENT_PATH/.gitmodules ]]; then
+  # zplug
+  git submodule add https://github.com/zplug/zplug zsh/zplug
+  # tmux plugin: tpm
+  git submodule add https://github.com/tmux-plugins/tpm tmux/plugins/tpm
 fi
+git submodule init
+git submodule update --recursive
+git submodule foreach --recursive git pull origin master
 echo -e "\033[32m### Finish !!\033[0m"
 echo ""
