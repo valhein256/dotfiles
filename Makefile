@@ -5,7 +5,7 @@ launch:
 	docker run -it --rm neovim:latest /bin/bash
 
 install_all:
-	./scripts/installations/git-submodules.sh
+	./scripts/installations/git-submodule.sh
 	./scripts/installations/dotfiles.sh
 	./scripts/installations/neovim.sh
 
