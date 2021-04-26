@@ -2,6 +2,12 @@
 
 CURRENT_PATH=`pwd`
 
+echo ""
+echo -e "\033[90m###################################\033[0m"
+echo -e "\033[90m# scripts/installations/neovim.sh #\033[0m"
+echo -e "\033[90m###################################\033[0m"
+echo ""
+echo -e "### Neovim config setting and plugins installing..."
 # Make config directory for Neovim's init.vim
 echo '[*] Preparing Neovim config directory ...'
 mkdir -p $HOME/.config/
@@ -29,4 +35,8 @@ echo -e '[*] Running :PlugInstall within nvim ...'
 nvim -c ':PlugInstall' -c ':UpdateRemotePlugins' -c ':qall'
 
 echo -e "[+] Done, welcome to \033[1m\033[92mNeoVim\033[0m! Try it by running: nvim/vim. Want to customize it? Modify $HOME/.config/nvim/init.vim"
+echo -e "### Neovim config setting and plugins installing... done !!"
 
+echo ""
+echo -e "\033[32m# scripts/installations/neovim.sh Finish !!\033[0m"
+echo ""

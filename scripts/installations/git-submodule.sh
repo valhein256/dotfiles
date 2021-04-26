@@ -25,6 +25,10 @@ fail () {
 ############################
 
 echo ""
+echo -e "\033[90m##########################################\033[0m"
+echo -e "\033[90m# scripts/installations/git-submodule.sh #\033[0m"
+echo -e "\033[90m##########################################\033[0m"
+echo ""
 echo -e "### Git submodule init & update..."
 if [[ ! -f $CURRENT_PATH/.gitmodules ]]; then
   # zplug
@@ -35,5 +39,8 @@ fi
 git submodule init
 git submodule update --recursive
 git submodule foreach --recursive git pull origin master
-echo -e "\033[32m### Finish !!\033[0m"
+echo -e "### Git submodule init & update... done !!"
+
+echo ""
+echo -e "\033[32m# scripts/installations/git-submodule.sh Finish !!\033[0m"
 echo ""

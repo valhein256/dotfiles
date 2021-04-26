@@ -1,21 +1,23 @@
 build:
-	docker build --pull . -t neovim
+	@docker build --pull . -t neovim
 
 launch:
-	docker run -it --rm neovim:latest /bin/bash
+	@docker run -it --rm neovim:latest /bin/bash
 
 reinstall_all: clean install_all
 
 install_all:
-	./scripts/installations/git-submodule.sh
-	./scripts/installations/dotfiles.sh
-	./scripts/installations/neovim.sh
+	@./scripts/installations/git-submodule.sh
+	@./scripts/installations/dotfiles.sh
+	@./scripts/installations/neovim.sh
 
 clean:
-	@rm -rf ./neovim/plugged/
-	@rm -rf ./neovim/autoload/
-	@rm -rf ./neovim/env/
-	./scripts/remove_dotfiles.sh
+	@-rm -rf ./neovim/plugged/ | true
+	@-rm -rf ./neovim/autoload/ | true
+	@-rm -rf ./neovim/env/ | true
+	@-find ./zsh/zplug -delete | true
+	@-find ./tmux/plugins/tpm -delete |true
+	@./scripts/remove_dotfiles.sh
 
 show:
 	@echo "Show submodule list:"
@@ -25,7 +27,7 @@ show:
 	@cat Makefile
 
 test_install_nvim:
-	./scripts/install_nvim_ubuntu.sh
+	@./scripts/install_nvim_ubuntu.sh
 
 test_uninstall_nvim:
-	./scripts/uninstall_nvim_ubuntu.sh
+	@./scripts/uninstall_nvim_ubuntu.sh
