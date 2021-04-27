@@ -49,6 +49,9 @@ Plug 'tpope/vim-abolish'
 Plug 'Yggdroot/indentLine'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'Shougo/unite.vim'
+Plug 'Shougo/unite-outline'
+Plug 'Shougo/neomru.vim'
 Plug 'sheerun/vim-polyglot'
 Plug 'chrisbra/Colorizer'
 Plug 'KabbAmine/vCoolor.vim'
@@ -78,6 +81,15 @@ Plug 'dyng/ctrlsf.vim'
 
 call plug#end()
 
+" }}}
+" Autocomplete: {{{
+source ~/.config/nvim/vimfiles/plugin/autocomplete.vim
+" }}}
+" Search: {{{
+source ~/.config/nvim/vimfiles/plugin/search.vim
+" }}}
+" Misc: {{{
+source ~/.config/nvim/vimfiles/plugin/misc.vim
 " }}}
 
 " vim: ft=vim foldmethod=marker foldcolumn=1
