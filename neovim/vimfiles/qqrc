@@ -1,9 +1,0 @@
-" GUI_setting: {{{
-set guifont=Source\ Code\ Pro:h20
-set cursorline        " highlight current line
-highlight SpellBad term=underline gui=undercurl guisp=Orange
-" }}}
-" Esc Keymapping: {{{
-inoremap jk <esc>
-" }}}
-
