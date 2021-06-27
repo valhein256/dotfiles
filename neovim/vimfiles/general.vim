@@ -312,7 +312,7 @@ set completeopt-=preview
 let g:SuperTabDefaultCompletionType = "<C-n>"
 
 " Ultisnips
-let g:UltiSnipsExpandTrigger="<C-U>"
+let g:UltiSnipsExpandTrigger="<C-S>"
 let g:UltiSnipsJumpForwardTrigger="<Tab>"
 let g:UltiSnipsJumpBackwardTrigger="<C-x>"
 
