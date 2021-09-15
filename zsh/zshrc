@@ -166,6 +166,8 @@ MODE_INDICATOR_VISUAL='%F{12}[%F{12}V]%f'
 MODE_INDICATOR_VLINE='%F{12}[%F{12}V-LINE]%f'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
+source "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
 
 # Alias vim and vi to neovim
 alias nv='nvim'
