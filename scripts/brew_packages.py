@@ -28,7 +28,7 @@ import os
 # doxygen graphviz ctags cscope git gnu-tar tmux screen cmake
 # """
 
-BREW_LIST = """neovim python3 ctags-exuberant ag zsh git node awscli tree go ansible google-cloud-sdk
+BREW_LIST = """neovim python3 ctags-exuberant ag zsh git node awscli tree go ansible google-cloud-sdk kubectl kind minikube
 """
 
 # PIP_PACKAGE_LIST = """cython ipython pylint pep8 pyscope flask nikola
