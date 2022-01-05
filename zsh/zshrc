@@ -112,6 +112,10 @@ zplug 'dracula/zsh', as:theme
 # ssh
 zplug "zpm-zsh/ssh"
 
+# k8s
+zplug "plugins/kubectl", from:oh-my-zsh, defer:2
+zplug "bonnefoa/kubectl-fzf", defer:3
+
 #############
 # Install plugins if there are plugins that have not been installed
 #############
@@ -171,3 +175,10 @@ source "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/compl
 
 # Alias vim and vi to neovim
 alias nv='nvim'
+
+# terraform
+alias terraform_precheck='terraform init -upgrade && terraform fmt && terraform validate;'
+
+# k8s
+alias k=kubectl
+complete -F __start_kubectl k
