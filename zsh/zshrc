@@ -113,8 +113,7 @@ zplug 'dracula/zsh', as:theme
 zplug "zpm-zsh/ssh"
 
 # k8s
-zplug "plugins/kubectl", from:oh-my-zsh, defer:2
-zplug "bonnefoa/kubectl-fzf", defer:3
+#source <(kubectl completion zsh)
 
 #############
 # Install plugins if there are plugins that have not been installed
@@ -127,7 +126,7 @@ if ! zplug check --verbose; then
 fi
 
 # Then, source plugins and add commands to $PATH
-zplug load 
+zplug load
 
 
 #############
@@ -179,6 +178,5 @@ alias nv='nvim'
 # terraform
 alias terraform_precheck='terraform init -upgrade && terraform fmt && terraform validate;'
 
-# k8s
-alias k=kubectl
-complete -F __start_kubectl k
+# k8s zsh auto-completion
+source <(kubectl completion zsh)
