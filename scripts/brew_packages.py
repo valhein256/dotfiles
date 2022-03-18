@@ -29,10 +29,13 @@ import os
 # """
 
 BREW_LIST = """
-    neovim python3 ctags-exuberant
-    ag zsh git node awscli tree go
-    ansible google-cloud-sdk kubectl
-    kind minikube terraform xquartz
+    zsh git tree ag xquartz
+    neovim ctags-exuberant
+    node go python3
+    awscli google-cloud-sdk
+    ansible terraform terragrunt
+    kubectl kind minikube
+    helm hyperkit argocd
 """
 
 # PIP_PACKAGE_LIST = """cython ipython pylint pep8 pyscope flask nikola

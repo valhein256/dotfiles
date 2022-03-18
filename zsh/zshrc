@@ -180,3 +180,6 @@ alias terraform_precheck='terraform init -upgrade && terraform fmt && terraform 
 
 # k8s zsh auto-completion
 source <(kubectl completion zsh)
+
+# kubectl default editor
+export KUBE_EDITOR="$(which nvim)"
