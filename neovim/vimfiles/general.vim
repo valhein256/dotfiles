@@ -21,6 +21,10 @@ filetype on             " Enable filetype detection
 filetype plugin on      " Enable filetype-specific plugins
 filetype indent on      " Enable filetype-specific indenting
 
+"" split and vsplit
+set splitbelow
+set splitright
+
 "" status line
 set laststatus=2
 
