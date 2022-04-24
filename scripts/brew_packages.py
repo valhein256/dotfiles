@@ -3,13 +3,11 @@ from __future__ import print_function
 import itertools
 import os
 
-# BREW_TAP_LIST = """
-# homebrew/science
-# homebrew/dupes
-# homebrew/versions
-# phinze/cask
-# caskroom/fonts
-# """
+BREW_TAP_LIST = """
+homebrew/cask
+homebrew/cask-fonts
+hashicorp/tap
+"""
 
 # BREW_LIST_WITH_ARGS = """
 # vim --with-lua --with-luajit
@@ -33,6 +31,7 @@ BREW_LIST = """
     neovim ctags-exuberant
     node go python3
     awscli google-cloud-sdk
+    hashicorp/tap/vault
     ansible terraform terragrunt
     kubectl kind minikube
     helm hyperkit argocd
@@ -75,7 +74,7 @@ def generateCommandByLines(cmd, lines):
 def main():
     cmd_seeting = [
         {"cmd": "", "list": SETTING_COMMANDS_INIT, "generator": generateCommandByLines},
-        # {"cmd": "brew tap", "list": BREW_TAP_LIST, "generator": generateCommandByWords},
+        {"cmd": "brew tap", "list": BREW_TAP_LIST, "generator": generateCommandByWords},
         {"cmd": "brew install", "list": BREW_LIST, "generator": generateCommandByWords},
         # {"cmd": "brew install", "list": BREW_LIST_WITH_ARGS, "generator": generateCommandByLines},
         {"cmd": "pip3 install", "list": PIP_PACKAGE_LIST, "generator": generateCommandByWords},
