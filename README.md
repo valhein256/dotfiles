@@ -29,10 +29,10 @@ Or you could download the repos from gitlab.
 
 #### Homebrew
 Go to [Homebrew], and install it.
-After install howebrew, run the scripts: scripts/brew_packages.py to install required packages.
+After install howebrew, run the scripts: scripts/packages.py to install required packages.
 ```sh
 $ cd /path/to/dotfiles
-$ ./scripts/brew_packages.py
+$ ./scripts/packages.py
 ```
 Package list:
 * Brew
@@ -50,7 +50,7 @@ Package list:
     * virtualenv
 
 ##### Error case
-If you encountered following problem when the script:./scripts/brew_packages.py was running
+If you encountered following problem when the script:./scripts/packages.py was running
 ```sh
 Error: The following directories are not writable by your user:
 /usr/local/share/zsh

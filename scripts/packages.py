@@ -40,7 +40,9 @@ BREW_LIST = """
 # PIP_PACKAGE_LIST = """cython ipython pylint pep8 pyscope flask nikola
 # markdown nose""
 
-PIP_PACKAGE_LIST = """virtualenv
+PIP_PACKAGE_LIST = """
+    virtualenv
+    poetry
 """
 
 # CABAL_PACKAGE_LIST= """happy pandoc hakyll ghc-mod hlint"""
