@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 from __future__ import print_function
 import itertools
 import os
@@ -35,6 +35,7 @@ BREW_LIST = """
     ansible terraform terragrunt
     kubectl kind minikube
     helm hyperkit argocd
+    vagrant sshs
 """
 
 # PIP_PACKAGE_LIST = """cython ipython pylint pep8 pyscope flask nikola
