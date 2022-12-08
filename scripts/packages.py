@@ -35,7 +35,7 @@ BREW_LIST = """
     ansible terraform terragrunt
     kubectl kind minikube
     helm hyperkit argocd
-    vagrant sshs hudochenkov/sshpass/sshpass
+    vagrant sshs fzf
 """
 
 # PIP_PACKAGE_LIST = """cython ipython pylint pep8 pyscope flask nikola

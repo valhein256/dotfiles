@@ -28,11 +28,11 @@ zplug "k4rthik/git-cal", as:command, frozen:1
 
 # Grab binaries from GitHub Releases
 # and rename with the "rename-to:" tag
-zplug "junegunn/fzf-bin", \
-    from:gh-r, \
-    as:command, \
-    rename-to:fzf, \
-    use:"*darwin*amd64*"
+# zplug "junegunn/fzf-bin", \
+    # from:gh-r, \
+    # as:command, \
+    # rename-to:fzf, \
+    # use:"*darwin*amd64*"
 
 # Supports oh-my-zsh plugins and the like
 # Ref: https://ithelp.ithome.com.tw/articles/10192899?sc=pt
@@ -65,10 +65,10 @@ zplug "lib/clipboard", from:oh-my-zsh, if:"[[ $OSTYPE == *darwin* ]]"
 # Run a command after a plugin is installed/updated
 # Provided, it requires to set the variable like the following:
 # ZPLUG_SUDO_PASSWORD="********"
-zplug "jhawthorn/fzy", \
-    as:command, \
-    rename-to:fzy, \
-    hook-build:"make && sudo make install"
+# zplug "jhawthorn/fzy", \
+    # as:command, \
+    # rename-to:fzy, \
+    # hook-build:"make && sudo make install"
 
 # Supports checking out a specific branch/tag/commit
 zplug "b4b4r07/enhancd", at:v1
@@ -94,12 +94,12 @@ zplug "b4b4r07/httpstat", \
 
 # Group dependencies
 # Load "emoji-cli" if "jq" is installed in this example
-zplug "stedolan/jq", \
-    from:gh-r, \
-    as:command, \
-    rename-to:jq
-zplug "b4b4r07/emoji-cli", \
-    on:"stedolan/jq"
+# zplug "stedolan/jq", \
+    # from:gh-r, \
+    # as:command, \
+    # rename-to:jq
+# zplug "b4b4r07/emoji-cli", \
+    # on:"stedolan/jq"
 # Note: To specify the order in which packages should be loaded, use the defer
 #       tag described in the next section
 
