@@ -168,7 +168,21 @@ MODE_INDICATOR_SEARCH='%F{13}[%F{13}S]%f'
 MODE_INDICATOR_VISUAL='%F{12}[%F{12}V]%f'
 MODE_INDICATOR_VLINE='%F{12}[%F{12}V-LINE]%f'
 
+# Add following command to setup brew command - 20230814
+# ==> Next steps:
+# - Run these two commands in your terminal to add Homebrew to your PATH:
+#   (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> /Users/lwh/.zprofile
+#   eval "$(/opt/homebrew/bin/brew shellenv)"
+# - Run brew help to get started
+# - Further documentation:
+#     https://docs.brew.sh
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+
+# fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# GCP
 source "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
 source "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
 
