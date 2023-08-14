@@ -1,4 +1,3 @@
-
 ##@ Helpers
 
 .PHONY: help
@@ -8,29 +7,47 @@ help: ## Display this help.
 
 ##@ OPERATION
 
-reinstall: clean install-libs ## Reinstall
+install: tools-and-packages git-submodule dotfiles neovim-plugins ## Install all
 
-install-libs: ## Install
+reinstall: clean install ## Reinstall all
+
+##@ TOOLS AND PACKAGES
+
+tools-and-packages: ## Step.1 - Install tools and packages
+	@echo "Install tools and packages..."
+	@./scripts/installations/tools_and_packages.py
+	@echo "Done"
+
+##@ DOTFILES AND NEOVIM
+
+git-submodule: ## Step.2 - Install git-submodule
+	@echo "Install git-submodule..."
 	@./scripts/installations/git-submodule.sh
+	@echo "Done"
+
+dotfiles: ## Step.3 - Install dotfiles
+	@echo "Install dotfiles..."
 	@./scripts/installations/dotfiles.sh
+	@echo "Done"
+
+neovim-plugins: ## Step.4 - Install neovim plugins and configurations
+	@echo "Install neovim plugins and configurations..."
 	@./scripts/installations/neovim.sh
+	@echo "Done"
 
-install-package: ## Install packages
-	@./scripts/packages.py
-
-clean: ## Clean
-	@-rm -rf ./neovim/plugged/ | true
-	@-rm -rf ./neovim/autoload/ | true
-	@-rm -rf ./neovim/env/ | true
-	@-find ./zsh/zplug -delete | true
-	@-find ./tmux/plugins/tpm -delete |true
+clean: ## Clean all dotfiles and neovim plugins and configurations
+	@echo "Clean all dotfiles and neovim plugins and configurations..."
+	@rm -rf ./neovim/plugged/ | true
+	@rm -rf ./neovim/autoload/ | true
+	@rm -rf ./neovim/env/ | true
 	@./scripts/remove_dotfiles.sh
+	@echo "Done"
 
-show: ## Show submodule list
+show-git-submodule: ## Show submodule list
 	@echo "Show submodule list:"
 	@git submodule status
 
-##@ TESTING
+##@ NEOVIM TESTING
 
 build: ## build neovim tset environment 
 	@docker build --pull . -t neovim
