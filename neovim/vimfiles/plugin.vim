@@ -74,6 +74,8 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'mileszs/ack.vim'
 Plug 'dyng/ctrlsf.vim'
 
+Plug 'github/copilot.vim'
+
 " Entertainment
 "Plug 'ryanss/vim-hackernews'
 
