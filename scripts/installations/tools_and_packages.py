@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 from __future__ import print_function
 import itertools
 import os
@@ -27,19 +28,15 @@ hashicorp/tap
 # """
 
 BREW_LIST = """
-    zsh git tree ag xquartz
-    neovim ctags-exuberant
+    zsh git tree ag xquartz fzf sshs
+    neovim ctags-exuberant vault
+    ansible terraform terragrunt
+    kubectl kind minikube helm argocd
     node go python3
     awscli google-cloud-sdk
-    hashicorp/tap/vault
-    ansible terraform terragrunt
-    kubectl kind minikube
-    helm hyperkit argocd
-    vagrant sshs fzf
 """
 
-# PIP_PACKAGE_LIST = """cython ipython pylint pep8 pyscope flask nikola
-# markdown nose""
+# PIP_PACKAGE_LIST = """cython ipython pylint pep8 pyscope flask nikola markdown nose"""
 
 PIP_PACKAGE_LIST = """
     virtualenv
@@ -48,13 +45,9 @@ PIP_PACKAGE_LIST = """
 
 # CABAL_PACKAGE_LIST= """happy pandoc hakyll ghc-mod hlint"""
 
+# SETTING_COMMANDS_INIT= """brew update cabal update"""
 
-# SETTING_COMMANDS_INIT= """brew update
-# cabal update
-# """
-
-SETTING_COMMANDS_INIT= """brew update
-"""
+SETTING_COMMANDS_INIT= """brew update"""
 
 # SETTING_COMMANDS_POST = """sudo rm -rf /usr/bin/tar
 # sudo ln -s /usr/local/bin/gtar /usr/bin/tar
@@ -79,8 +72,8 @@ def main():
         {"cmd": "", "list": SETTING_COMMANDS_INIT, "generator": generateCommandByLines},
         {"cmd": "brew tap", "list": BREW_TAP_LIST, "generator": generateCommandByWords},
         {"cmd": "brew install", "list": BREW_LIST, "generator": generateCommandByWords},
-        # {"cmd": "brew install", "list": BREW_LIST_WITH_ARGS, "generator": generateCommandByLines},
         {"cmd": "pip3 install", "list": PIP_PACKAGE_LIST, "generator": generateCommandByWords},
+        # {"cmd": "brew install", "list": BREW_LIST_WITH_ARGS, "generator": generateCommandByLines},
         # {"cmd": "cabal install", "list": CABAL_PACKAGE_LIST, "generator": generateCommandByWords},
         # {"cmd": "", "list": SETTING_COMMANDS_POST, "generator": generateCommandByLines}
     ]

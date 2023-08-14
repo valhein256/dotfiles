@@ -63,7 +63,7 @@ cleanOther (){
 
     for (( i=0; i<${tLen}; i++ ));
     do
-      if [[ -e ${FILES[$i]} ]]; then
+      if [[ -e ${FILES[$i]} || -L ${FILES[$i]} ]]; then
           echo "rm -rf ${FILES[$i]}"
           rm -rf ${FILES[$i]}
       else
