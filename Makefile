@@ -40,6 +40,8 @@ clean: ## Clean all dotfiles and neovim plugins and configurations
 	@rm -rf ./neovim/plugged/ | true
 	@rm -rf ./neovim/autoload/ | true
 	@rm -rf ./neovim/env/ | true
+	@-find ./zsh/zplug -delete | true
+	@-find ./tmux/plugins/tpm -delete |true
 	@./scripts/remove_dotfiles.sh
 	@echo "Done"
 
