@@ -18,14 +18,14 @@ Plug 'junegunn/limelight.vim'
 Plug 'junegunn/seoul256.vim'
 Plug 'junegunn/vim-journal'
 Plug 'junegunn/rainbow_parentheses.vim'
-Plug 'nightsense/forgotten'
+"Plug 'nightsense/forgotten'
 
 " Tabbar
 Plug 'mkitt/tabline.vim'
 Plug 'majutsushi/tagbar'
 
 " Aethetics - Additional
-Plug 'nightsense/nemo'
+"Plug 'nightsense/nemo'
 Plug 'yuttie/hydrangea-vim'
 Plug 'chriskempson/tomorrow-theme', { 'rtp': 'vim' }
 Plug 'rhysd/vim-color-spring-night'
