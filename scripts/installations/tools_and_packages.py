@@ -31,7 +31,7 @@ BREW_LIST = """
     zsh git tree ag xquartz fzf sshs
     neovim ctags-exuberant vault
     ansible terraform terragrunt
-    kubectl kind minikube helm argocd
+    kubectl kind minikube helm argocd cog
     node go python3
     awscli google-cloud-sdk
 """
