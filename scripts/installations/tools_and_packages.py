@@ -32,7 +32,7 @@ BREW_LIST = """
     neovim ctags-exuberant vault
     ansible terraform terragrunt
     kubectl kind minikube helm argocd cog
-    node go python3
+    node go python3 pyenv
     awscli google-cloud-sdk
 """
 
