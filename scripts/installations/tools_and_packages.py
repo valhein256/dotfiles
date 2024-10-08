@@ -5,8 +5,6 @@ import itertools
 import os
 
 BREW_TAP_LIST = """
-homebrew/cask
-homebrew/cask-fonts
 hashicorp/tap
 """
 

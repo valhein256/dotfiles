@@ -42,7 +42,11 @@ If the system has git command, use git clone to fetch dotfiles repos.
 
 Or you can download the repos from github.
 
-### Tools and Packages
+### First Time to Install Everythings
+
+For the first time to install everything, you need to install the tools and packages, dotfiles and neovim-config manually in order for the following steps.
+
+#### Tools and Packages
 
 First, to cd to the dotfiles repos.
 
@@ -56,7 +60,7 @@ or you can install the packages manually:
 
     $ ./scripts/installations/tools_and_packages.py
 
-#### Error case
+##### Error case
 
 If you encountered following problem when you install tools and packages via make command or scripts
 
@@ -67,7 +71,7 @@ If you encountered following problem when you install tools and packages via mak
     You should change the ownership of these directories to your user.
     sudo chown -R $(whoami) /usr/local/share/zsh /usr/local/share/zsh/site-functions
 
-### Dotfiles and Neovim-config
+#### Dotfiles and Neovim-config
 
 After install tools and packages, run make command to install Dotfiles and Neovim-config.
 
@@ -89,7 +93,7 @@ If you want to reinstall or update the all of the tools, packages, dotfiles and 
 
 To install the font: SauceCodePro Nerd Font, you can use the following commands:
 
-    $ brew tap homebrew/cask-fonts && brew install font-sauce-code-pro-nerd-font
+    $ brew install font-sauce-code-pro-nerd-font
 
 After install Source Code Pro With Nerd Font...
 
