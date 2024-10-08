@@ -27,10 +27,10 @@ hashicorp/tap
 
 BREW_LIST = """
     zsh git tree ag xquartz fzf sshs
-    neovim ctags-exuberant vault
+    neovim ctags-exuberant
     ansible terraform terragrunt
     kubectl kind minikube helm argocd cog
-    node go python3 pyenv
+    node go python3 pyenv pipx
     awscli google-cloud-sdk
 """
 
@@ -70,7 +70,7 @@ def main():
         {"cmd": "", "list": SETTING_COMMANDS_INIT, "generator": generateCommandByLines},
         {"cmd": "brew tap", "list": BREW_TAP_LIST, "generator": generateCommandByWords},
         {"cmd": "brew install", "list": BREW_LIST, "generator": generateCommandByWords},
-        {"cmd": "pip3 install", "list": PIP_PACKAGE_LIST, "generator": generateCommandByWords},
+        {"cmd": "pipx install", "list": PIP_PACKAGE_LIST, "generator": generateCommandByWords},
         # {"cmd": "brew install", "list": BREW_LIST_WITH_ARGS, "generator": generateCommandByLines},
         # {"cmd": "cabal install", "list": CABAL_PACKAGE_LIST, "generator": generateCommandByWords},
         # {"cmd": "", "list": SETTING_COMMANDS_POST, "generator": generateCommandByLines}

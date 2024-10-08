@@ -44,9 +44,9 @@ zplug "plugins/docker-compose", from:oh-my-zsh
 #zplug "plugins/node", from:oh-my-zsh
 #zplug "plugins/npm", from:oh-my-zsh
 
-zplug "plugins/python", from:oh-my-zsh
-zplug "plugins/pip", from:oh-my-zsh
-zplug "plugins/pyenv", from:oh-my-zsh
+#zplug "plugins/python", from:oh-my-zsh
+#zplug "plugins/pip", from:oh-my-zsh
+#zplug "plugins/pyenv", from:oh-my-zsh
 #zplug "plugins/virtualenvwrapper", from:oh-my-zsh
 
 #zplug "plugins/osx",   from:oh-my-zsh
@@ -133,7 +133,7 @@ zplug load
 # export 
 #############
 export ZPLUG_HOME=$HOME/Documents/dotfiles/zsh/zplug
-export PATH="/usr/local/bin:$PATH:$HOME/usr/bin:$ZPLUG_HOME/bin"
+export PATH="$HOME/.local/bin:/usr/local/bin:$PATH:$HOME/usr/bin:$ZPLUG_HOME/bin"
 
 alias ls='ls -Gv'
 alias ll='ls -lh'
