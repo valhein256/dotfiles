@@ -37,11 +37,12 @@ neovim-plugins: ## Step.4 - Install neovim plugins and configurations
 
 clean: ## Clean all dotfiles and neovim plugins and configurations
 	@echo "Clean all dotfiles and neovim plugins and configurations..."
+	@rm -rf ~/.local/share/nvim/ | true
 	@rm -rf ./neovim/plugged/ | true
 	@rm -rf ./neovim/autoload/ | true
 	@rm -rf ./neovim/env/ | true
 	@-find ./zsh/zplug -delete | true
-	@-find ./tmux/plugins/tpm -delete |true
+	@-find ./tmux/plugins/tpm -delete | true
 	@./scripts/remove_dotfiles.sh
 	@echo "Done"
 
