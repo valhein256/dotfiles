@@ -31,7 +31,7 @@ BREW_LIST = """
     ansible terraform terragrunt
     kubectl kind minikube helm argocd cog
     nvm go python3 pyenv pipx
-    awscli google-cloud-sdk
+    awscli google-cloud-sdk amazon-q
 """
 
 # PIP_PACKAGE_LIST = """cython ipython pylint pep8 pyscope flask nikola markdown nose"""
