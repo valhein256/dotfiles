@@ -30,7 +30,7 @@ BREW_LIST = """
     neovim ctags-exuberant
     ansible terraform terragrunt
     kubectl kind minikube helm argocd cog
-    node go python3 pyenv pipx
+    nvm go python3 pyenv pipx
     awscli google-cloud-sdk
 """
 
@@ -41,11 +41,12 @@ PIP_PACKAGE_LIST = """
     poetry
 """
 
-# CABAL_PACKAGE_LIST= """happy pandoc hakyll ghc-mod hlint"""
+# CABAL_PACKAGE_LIST = """happy pandoc hakyll ghc-mod hlint"""
 
-# SETTING_COMMANDS_INIT= """brew update cabal update"""
+# SETTING_COMMANDS_INIT = """brew update cabal update"""
 
-SETTING_COMMANDS_INIT= """brew update"""
+PREPARING = """rm -rf ~/.nvm && mkdir ~/.nvm"""
+SETTING_COMMANDS_INIT = """brew update"""
 
 # SETTING_COMMANDS_POST = """sudo rm -rf /usr/bin/tar
 # sudo ln -s /usr/local/bin/gtar /usr/bin/tar
@@ -67,6 +68,7 @@ def generateCommandByLines(cmd, lines):
 
 def main():
     cmd_seeting = [
+        {"cmd": "", "list": PREPARING, "generator": generateCommandByLines},
         {"cmd": "", "list": SETTING_COMMANDS_INIT, "generator": generateCommandByLines},
         {"cmd": "brew tap", "list": BREW_TAP_LIST, "generator": generateCommandByWords},
         {"cmd": "brew install", "list": BREW_LIST, "generator": generateCommandByWords},
