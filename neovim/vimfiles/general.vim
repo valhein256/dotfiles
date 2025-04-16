@@ -93,7 +93,6 @@ endfunction
 " Set_encoding: {{{
 set encoding=utf-8
 set fileencoding=utf-8
-set termencoding=utf-8
 " }}}
 
 " Disable_sound_on_errors: {{{
