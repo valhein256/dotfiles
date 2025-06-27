@@ -215,3 +215,8 @@ export NVM_DIR="$HOME/.nvm"
 
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+
+# OpenAI API key
+export OPENAI_API_KEY=""
+export OPENAI_ORGANIZATION_ID=""
+export OPENAI_PROJECT_ID=""

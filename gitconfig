@@ -1,7 +1,7 @@
 #nvim:set ft=gitconfig
 [user]
-	name =
-	email =
+    name =
+    email =
 [alias]
     lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
     lgnn = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s' --abbrev-commit --date=relative
@@ -13,7 +13,8 @@
     rs = restore
     br = branch
     ci = commit
-    subupdate = submodule foreach git pull origin master 
+    subupdate = submodule foreach git pull origin master
+    aicommit = !~/.tools/git-aicommit
 [color]
     diff = auto
     status = auto
