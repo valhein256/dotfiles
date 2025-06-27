@@ -81,6 +81,13 @@ echo -e "tmux setting... done !!"
 echo -e "### Dotfiles setting... done !!"
 ### end ###
 
+### link tools files ###
+echo -e "tools files setting..."
+if [[ ! -d $HOME/.tools ]]; then
+  ln -s $CURRENT_PATH/tools $HOME/.tools
+fi
+### end ###
+
 echo ""
 echo -e "\033[32m# scripts/installations/dotfiles.sh Finish !!\033[0m"
 echo ""

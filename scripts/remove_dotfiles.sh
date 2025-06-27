@@ -18,7 +18,7 @@ EOF
 
 cleanZshrc (){
     FILES=(
-        $HOME/.zshrc       
+        $HOME/.zshrc
     )
     tLen=${#FILES[@]}
 
@@ -42,6 +42,23 @@ cleanNeovimrc (){
     for (( i=0; i<${tLen}; i++ ));
     do
       if [[ -e ${FILES[$i]} ]]; then
+          echo "rm -rf ${FILES[$i]}"
+          rm -rf ${FILES[$i]}
+      else
+          echo "${FILES[$i]} doesn't exist"
+      fi
+    done
+}
+
+cleanTools (){
+    FILES=(
+        $HOME/.tools
+    )
+    tLen=${#FILES[@]}
+
+    for (( i=0; i<${tLen}; i++ ));
+    do
+      if [[ -e ${FILES[$i]} || -L ${FILES[$i]} ]]; then
           echo "rm -rf ${FILES[$i]}"
           rm -rf ${FILES[$i]}
       else
