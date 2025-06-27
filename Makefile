@@ -7,15 +7,15 @@ help: ## Display this help.
 
 ##@ OPERATION
 
-install: tools-and-packages git-submodule dotfiles neovim-plugins ## Install all
+install: packages git-submodule dotfiles neovim-plugins ## Install all
 
 reinstall: clean install ## Reinstall all
 
 ##@ TOOLS AND PACKAGES
 
-tools-and-packages: ## Step.1 - Install tools and packages
-	@echo "Install tools and packages..."
-	@./scripts/installations/tools_and_packages.py
+packages: ## Step.1 - Install packages
+	@echo "Install packages..."
+	@./scripts/installations/packages.py
 	@echo "Done"
 
 ##@ DOTFILES AND NEOVIM

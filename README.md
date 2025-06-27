@@ -54,11 +54,11 @@ First, to cd to the dotfiles repos.
 
 Run the scripts: scripts/packages.py to install required packages.
 
-    $ make tools_and_packages
+    $ make packages
 
 or you can install the packages manually:
 
-    $ ./scripts/installations/tools_and_packages.py
+    $ ./scripts/installations/packages.py
 
 ##### Error case
 
