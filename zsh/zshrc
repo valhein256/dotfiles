@@ -201,7 +201,7 @@ source <(kubectl completion zsh)
 export KUBE_EDITOR="$(which nvim)"
 
 # kubectl config
-export KUBECONFIG=~/.kube/gke-security-efficacy.yml
+export KUBECONFIG=~/.kube/config
 
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"
