@@ -1,125 +1,104 @@
-# Amazon Q pre block. Keep at the top of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
-###########
-# zplug setting
-###########
+
+# Kiro CLI pre block. Keep at the top of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
+
+# ============================================================================
+# Amazon Q Integration (Pre-initialization)
+# ============================================================================
+# NOTE: Keep at the top of this file
+[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && \
+    builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
+
+
+# ============================================================================
+# Zplug Plugin Manager
+# ============================================================================
 source ~/.zplug/init.zsh
 
-# (defer:2 means syntax-highlighting gets loaded after completions)
-zplug 'zsh-users/zsh-syntax-highlighting', defer:2 # (like fish)
-# (defer:3 means history-substring search gets loaded after syntax-highlighting)
-zplug 'zsh-users/zsh-history-substring-search', defer:3 # (like fish)
-zplug 'zsh-users/zsh-autosuggestions' # (like fish)
-zplug 'zsh-users/zsh-completions', depth:1 # more completions
 
-#zplug 'chrissicool/zsh-256color' # if 256-color mode isn't kicking in
+# ----------------------------------------------------------------------------
+# Zsh Enhancement Plugins
+# ----------------------------------------------------------------------------
+# Fish-like features (defer:2/3 to ensure proper loading order)
+zplug 'zsh-users/zsh-syntax-highlighting', defer:2
+zplug 'zsh-users/zsh-history-substring-search', defer:3
+zplug 'zsh-users/zsh-autosuggestions'
+zplug 'zsh-users/zsh-completions', depth:1
 
-# possibly useful plugins:
-# set and jump between directory "warp points"
-zplug 'mfaerevaag/wd', as:command, use:'wd.sh', hook-load:"wd() { . $ZPLUG_REPOS/mfaerevaag/wd/wd.sh }"
+# Optional: Enable 256-color mode if needed
+#zplug 'chrissicool/zsh-256color'
 
-# Use the package as a command
-# And accept glob patterns (e.g., brace, wildcard, ...)
+
+# ----------------------------------------------------------------------------
+# Utility Plugins
+# ----------------------------------------------------------------------------
+# Directory warp points
+zplug 'mfaerevaag/wd', as:command, use:'wd.sh', \
+    hook-load:"wd() { . $ZPLUG_REPOS/mfaerevaag/wd/wd.sh }"
+
+# Command-line utilities
 zplug "Jxck/dotfiles", as:command, use:"bin/{histuniq,color}"
+zplug "k4rthik/git-cal", as:command, frozen:1
+zplug "b4b4r07/httpstat", as:command, use:'(*).sh', rename-to:'$1'
 
-# Can manage everything e.g., other person's zshrc
+# Docker aliases
 zplug "tcnksm/docker-alias", use:zshrc
 
-# Disable updates using the "frozen" tag
-zplug "k4rthik/git-cal", as:command, frozen:1
+# Enhanced directory navigation
+zplug "b4b4r07/enhancd", at:v1
+zplug "mollifier/anyframe", at:4c23cb60
 
-# Grab binaries from GitHub Releases
-# and rename with the "rename-to:" tag
-# zplug "junegunn/fzf-bin", \
-    # from:gh-r, \
-    # as:command, \
-    # rename-to:fzf, \
-    # use:"*darwin*amd64*"
+# Gist and Bitbucket utilities
+zplug "b4b4r07/79ee61f7c140c63d2786", from:gist, as:command, use:get_last_pane_path.sh
+zplug "b4b4r07/hello_bitbucket", from:bitbucket, as:command, use:"*.sh"
 
-# Supports oh-my-zsh plugins and the like
+# Enhanced vim mode
+zplug "softmoth/zsh-vim-mode", defer:3
+
+# SSH utilities
+zplug "zpm-zsh/ssh"
+
+
+# ----------------------------------------------------------------------------
+# Oh-My-Zsh Plugins
+# ----------------------------------------------------------------------------
 # Ref: https://ithelp.ithome.com.tw/articles/10192899?sc=pt
-zplug "plugins/git",   from:oh-my-zsh
+
+# Active plugins
+zplug "plugins/git", from:oh-my-zsh
 zplug "plugins/docker", from:oh-my-zsh
 zplug "plugins/vagrant", from:oh-my-zsh
 zplug "plugins/docker-compose", from:oh-my-zsh
 
-#zplug "plugins/node", from:oh-my-zsh
-#zplug "plugins/npm", from:oh-my-zsh
-
-#zplug "plugins/python", from:oh-my-zsh
-#zplug "plugins/pip", from:oh-my-zsh
-#zplug "plugins/pyenv", from:oh-my-zsh
-#zplug "plugins/virtualenvwrapper", from:oh-my-zsh
-
-#zplug "plugins/osx",   from:oh-my-zsh
-#zplug "plugins/fasd", from:oh-my-zsh
-#zplug "plugins/cargo", from:oh-my-zsh
-
+# Oh-My-Zsh core libraries
 zplug "lib/spectrum", from:oh-my-zsh
 zplug "lib/completion", from:oh-my-zsh
 zplug "lib/directories", from:oh-my-zsh
 zplug "lib/functions", from:oh-my-zsh
 zplug "lib/history", from:oh-my-zsh
-
-# Load if "if" tag returns true
 zplug "lib/clipboard", from:oh-my-zsh, if:"[[ $OSTYPE == *darwin* ]]"
 
-# Run a command after a plugin is installed/updated
-# Provided, it requires to set the variable like the following:
-# ZPLUG_SUDO_PASSWORD="********"
-# zplug "jhawthorn/fzy", \
-    # as:command, \
-    # rename-to:fzy, \
-    # hook-build:"make && sudo make install"
+# Disabled plugins (uncomment if needed)
+#zplug "plugins/node", from:oh-my-zsh
+#zplug "plugins/npm", from:oh-my-zsh
+#zplug "plugins/python", from:oh-my-zsh
+#zplug "plugins/pip", from:oh-my-zsh
+#zplug "plugins/pyenv", from:oh-my-zsh
+#zplug "plugins/virtualenvwrapper", from:oh-my-zsh
+#zplug "plugins/osx", from:oh-my-zsh
+#zplug "plugins/fasd", from:oh-my-zsh
+#zplug "plugins/cargo", from:oh-my-zsh
 
-# Supports checking out a specific branch/tag/commit
-zplug "b4b4r07/enhancd", at:v1
-zplug "mollifier/anyframe", at:4c23cb60
 
-# Can manage gist file just like other packages
-zplug "b4b4r07/79ee61f7c140c63d2786", \
-    from:gist, \
-    as:command, \
-    use:get_last_pane_path.sh
-
-# Support bitbucket
-zplug "b4b4r07/hello_bitbucket", \
-    from:bitbucket, \
-    as:command, \
-    use:"*.sh"
-
-# Rename a command with the string captured with `use` tag
-zplug "b4b4r07/httpstat", \
-    as:command, \
-    use:'(*).sh', \
-    rename-to:'$1'
-
-# Group dependencies
-# Load "emoji-cli" if "jq" is installed in this example
-# zplug "stedolan/jq", \
-    # from:gh-r, \
-    # as:command, \
-    # rename-to:jq
-# zplug "b4b4r07/emoji-cli", \
-    # on:"stedolan/jq"
-# Note: To specify the order in which packages should be loaded, use the defer
-#       tag described in the next section
-
-# enhanced zsh vim mode
-zplug "softmoth/zsh-vim-mode", defer:3
-
-# Load theme file
+# ----------------------------------------------------------------------------
+# Theme
+# ----------------------------------------------------------------------------
 zplug 'dracula/zsh', as:theme
 
-# ssh
-zplug "zpm-zsh/ssh"
 
-# k8s
-#source <(kubectl completion zsh)
-
-#############
-# Install plugins if there are plugins that have not been installed
-#############
+# ----------------------------------------------------------------------------
+# Plugin Installation & Loading
+# ----------------------------------------------------------------------------
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "
     if read -q; then
@@ -127,25 +106,153 @@ if ! zplug check --verbose; then
     fi
 fi
 
-# Then, source plugins and add commands to $PATH
 zplug load
 
 
-#############
-# export 
-#############
+# ============================================================================
+# Environment Variables
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Path Configuration
+# ----------------------------------------------------------------------------
 export ZPLUG_HOME=$HOME/Documents/dotfiles/zsh/zplug
 export PATH="$HOME/.local/bin:/usr/local/bin:$PATH:$HOME/usr/bin:$ZPLUG_HOME/bin"
 
+# ----------------------------------------------------------------------------
+# Locale Settings
+# ----------------------------------------------------------------------------
+# Workaround for vim + Syntastic + pylint
+export LC_CTYPE=en_US.UTF-8
+export LANG=en_US
+
+# ----------------------------------------------------------------------------
+# Homebrew
+# ----------------------------------------------------------------------------
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+
+# ============================================================================
+# Zsh Configuration
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Vi Mode Settings
+# ----------------------------------------------------------------------------
+# Ref: https://jdhao.github.io/2019/02/19/zsh_advanced_configuration/
+bindkey -v
+keytimeout=1
+
+# Cursor styles
+MODE_CURSOR_VICMD="green block"
+MODE_CURSOR_VIINS="#20d08a blinking bar"
+MODE_CURSOR_SEARCH="#ff00ff blinking underline"
+
+# Mode indicators
+MODE_INDICATOR_VIINS='%F{15}[%F{15}I]%f'
+MODE_INDICATOR_VICMD='%F{10}[%F{10}N]%f'
+MODE_INDICATOR_REPLACE='%F{9}[%F{9}R]%f'
+MODE_INDICATOR_SEARCH='%F{13}[%F{13}S]%f'
+MODE_INDICATOR_VISUAL='%F{12}[%F{12}V]%f'
+MODE_INDICATOR_VLINE='%F{12}[%F{12}V-LINE]%f'
+
+
+# ============================================================================
+# Tool Integrations
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# FZF - Fuzzy Finder
+# ----------------------------------------------------------------------------
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# ----------------------------------------------------------------------------
+# Python - Pyenv
+# ----------------------------------------------------------------------------
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+
+# ----------------------------------------------------------------------------
+# Node.js - NVM
+# ----------------------------------------------------------------------------
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+
+# Auto-load .nvmrc when changing directories
+autoload -U add-zsh-hook
+load-nvmrc() {
+    local node_version="$(nvm version)"
+    local nvmrc_path="$(nvm_find_nvmrc)"
+
+    if [ -n "$nvmrc_path" ]; then
+        local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+
+        if [ "$nvmrc_node_version" = "N/A" ]; then
+            nvm install
+        elif [ "$nvmrc_node_version" != "$node_version" ]; then
+            nvm use
+        fi
+    elif [ "$node_version" != "$(nvm version default)" ]; then
+        echo "Reverting to nvm default version"
+        nvm use default
+    fi
+}
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
+
+# ----------------------------------------------------------------------------
+# Google Cloud Platform
+# ----------------------------------------------------------------------------
+source "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
+source "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
+
+# ----------------------------------------------------------------------------
+# Kubernetes
+# ----------------------------------------------------------------------------
+source <(kubectl completion zsh)
+export KUBE_EDITOR="$(which nvim)"
+export KUBECONFIG=~/.kube/config
+
+# ----------------------------------------------------------------------------
+# OpenAI API
+# ----------------------------------------------------------------------------
+export OPENAI_API_KEY=""
+export OPENAI_ORGANIZATION_ID=""
+export OPENAI_PROJECT_ID=""
+
+
+# ============================================================================
+# Aliases
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# General Aliases
+# ----------------------------------------------------------------------------
 alias ls='ls -Gv'
 alias ll='ls -lh'
 alias la='ls -alh'
 alias htop='sudo htop'
 
-# Workaroud for vim + Syntastic +pylint
-export LC_CTYPE=en_US.UTF-8
-export LANG=en_US
+# ----------------------------------------------------------------------------
+# Editor Aliases
+# ----------------------------------------------------------------------------
+alias nv='nvim'
 
+# ----------------------------------------------------------------------------
+# Terraform Aliases
+# ----------------------------------------------------------------------------
+alias terraform_precheck='terraform init -upgrade && terraform fmt && terraform validate;'
+
+
+# ============================================================================
+# Optional Configurations
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Less Color Configuration (Disabled)
+# ----------------------------------------------------------------------------
 #export LESS_TERMCAP_mb=$'\E[01;31m'       # begin blinking
 #export LESS_TERMCAP_md=$'\E[01;38;5;74m'  # begin bold
 #export LESS_TERMCAP_me=$'\E[0m'           # end mode
@@ -154,69 +261,17 @@ export LANG=en_US
 #export LESS_TERMCAP_ue=$'\E[0m'           # end underline
 #export LESS_TERMCAP_us=$'\E[04;38;5;146m' # begin underline
 
-# zsh vi-mode setting
-# Ref: https://jdhao.github.io/2019/02/19/zsh_advanced_configuration/
-bindkey -v
-keytimeout=1
 
-MODE_CURSOR_VICMD="green block"
-MODE_CURSOR_VIINS="#20d08a blinking bar"
-MODE_CURSOR_SEARCH="#ff00ff blinking underline"
+# ============================================================================
+# Amazon Q Integration (Post-initialization)
+# ============================================================================
+# NOTE: Keep at the bottom of this file
+[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && \
+    builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
 
-MODE_INDICATOR_VIINS='%F{15}[%F{15}I]%f'
-MODE_INDICATOR_VICMD='%F{10}[%F{10}N]%f'
-MODE_INDICATOR_REPLACE='%F{9}[%F{9}R]%f'
-MODE_INDICATOR_SEARCH='%F{13}[%F{13}S]%f'
-MODE_INDICATOR_VISUAL='%F{12}[%F{12}V]%f'
-MODE_INDICATOR_VLINE='%F{12}[%F{12}V-LINE]%f'
-
-# Add following command to setup brew command - 20230814
-# ==> Next steps:
-# - Run these two commands in your terminal to add Homebrew to your PATH:
-#   (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> /Users/lwh/.zprofile
-#   eval "$(/opt/homebrew/bin/brew shellenv)"
-# - Run brew help to get started
-# - Further documentation:
-#     https://docs.brew.sh
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Added by Antigravity
+export PATH="/Users/wlin/.antigravity/antigravity/bin:$PATH"
 
 
-# fzf
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# GCP
-source "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
-source "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
-
-# Alias vim and vi to neovim
-alias nv='nvim'
-
-# terraform
-alias terraform_precheck='terraform init -upgrade && terraform fmt && terraform validate;'
-
-# k8s zsh auto-completion
-source <(kubectl completion zsh)
-
-# kubectl default editor
-export KUBE_EDITOR="$(which nvim)"
-
-# kubectl config
-export KUBECONFIG=~/.kube/config
-
-# pyenv
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init --path)"
-
-# nvm
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-
-# Amazon Q post block. Keep at the bottom of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
-
-# OpenAI API key
-export OPENAI_API_KEY=""
-export OPENAI_ORGANIZATION_ID=""
-export OPENAI_PROJECT_ID=""
+# Kiro CLI post block. Keep at the bottom of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
