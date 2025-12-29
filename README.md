@@ -1,166 +1,331 @@
-# MacOS Setup Guide
-References: 
-* https://sourabhbajaj.com/mac-setup/
-* https://project-awesome.org/unixorn/awesome-zsh-plugins
+# Modern Development Environment Setup
 
-## Applications Setup Guide
+A comprehensive, automated development environment setup for macOS with modern tooling and best practices.
 
-Install the following applications:
+## 🚀 Quick Start
 
-* [logi options+] - Logitech Options+ is a powerful and easy-to-use application that enhances your Logic MX Master 3.
-* [Chrome]
-* [Docker]
-* [iTerm2]
-* [Homebrew]
+### Prerequisites
 
-Hint: To uninstall logi options+, you can use the following command:
+1. **Install Xcode Command Line Tools**
+   ```bash
+   xcode-select --install
+   ```
 
-    $ sudo rm -rf /Applications/logioptionsplus.app
+2. **Setup GitHub SSH Key**
+   ```bash
+   ssh-keygen -t rsa -b 4096 -C "your-email@example.com"
+   cat ~/.ssh/id_rsa.pub
+   ```
+   Add the key to your [GitHub SSH Keys](https://github.com/settings/keys)
 
-## Development Environment Setup Guide
+3. **Clone Repository**
+   ```bash
+   git clone git@github.com:valhein256/dotfiles.git
+   cd dotfiles
+   ```
 
-### Prepare
+### One-Command Installation
 
-#### Install Xcode Command Line Tools
+```bash
+make install
+```
 
-    $ xcode-select --install
+This orchestrated installation includes:
+- 📦 Homebrew packages (70+ modern development tools)
+- 🔧 Language managers (Python, Node.js, Java, Rust, Go)
+- ⚙️ Dotfiles configuration
+- 📝 Neovim plugins
+- 🔗 Git submodules
 
-#### Setup Github Account SSH Key
+## 📊 System Status & Verification
 
-Go to [Github profile keys] to add SSH Key. You can use the following command to generate SSH Key.
+### Check Installation Status
+```bash
+make system-status                    # Check if everything is properly installed
+make system-status-installed          # Explicit installation verification
+make install-verify                   # Detailed installation verification
+```
 
-    $ ssh-keygen -t rsa -b 2048 -C "email@example.com"
-    $ cat ~/.ssh/id_rsa.pub
+### Check Cleanup Status
+```bash
+make system-status-cleaned            # Verify system is clean after cleanup
+make cleanup-verify                   # Detailed cleanup verification
+```
 
-Paste the content of catting to [Github profile keys]
+## 🧹 System Management
 
-#### Clone or Download Dotfiles Repos
+### Complete System Reset
+```bash
+make full-reset                       # Clean everything and reinstall
+```
 
-If the system has git command, use git clone to fetch dotfiles repos.
+### Selective Operations
+```bash
+make clean                           # Remove all components
+make install-packages                # Install only Homebrew packages
+make install-dotfiles                # Install only dotfiles
+make install-language-managers       # Install only language managers
+```
 
-    $ git clone git@github.com:valhein256/dotfiles.git
+## 📦 Package Management
 
-Or you can download the repos from github.
+### Modern Language Ecosystems
 
-### First Time to Install Everythings
+Our setup uses industry best practices with modern, fast tools:
 
-For the first time to install everything, you need to install the tools and packages, dotfiles and neovim-config manually in order for the following steps.
+| Language | Tool | Replaces | Benefits |
+|----------|------|----------|----------|
+| **Python** | `uv` | pyenv + pip + poetry + pipx | 10-100x faster, unified tool |
+| **Node.js** | `fnm` | nvm | 40x faster, cross-platform |
+| **Java** | `SDKMAN` | Manual management | Multiple JDK versions, instant switching |
+| **Rust** | `rustup` | Manual management | Official toolchain manager |
+| **Go** | `go` | Manual management | Official version management |
 
-#### Tools and Packages
+### Package Categories
 
-First, to cd to the dotfiles repos.
+```bash
+# View all available packages
+python3 scripts/installations/packages.py list
 
-    $ cd /path/to/dotfiles
+# Install by category
+make install-packages                 # All packages
+python3 scripts/installations/packages.py install --category python
+python3 scripts/installations/packages.py install --category nodejs
+python3 scripts/installations/packages.py install --category golang
+```
 
-Run the scripts: scripts/packages.py to install required packages.
+**Available Categories:**
+- `core` - Essential system tools (zsh, git, tree, fzf, ripgrep)
+- `editor` - Development editors (neovim, universal-ctags)
+- `python` - Python ecosystem (uv - replaces pyenv + pip + poetry + pipx)
+- `nodejs` - Node.js ecosystem (fnm, pnpm - fnm is 40x faster than nvm)
+- `golang` - Go ecosystem (official go toolchain)
+- `java-prereq` - Java prerequisites (zip, unzip, curl for SDKMAN)
+- `rust` - Rust ecosystem (rustup official toolchain)
+- `devops` - DevOps tools (kubectl, helm, terraform, terragrunt)
+- `cloud` - Cloud tools (awscli, gcloud-cli)
+- `network` - Network tools (openssh, sshs, teleport)
+- `terminal` - Terminal tools (tmux)
+- `fonts` - Development fonts (SauceCodePro Nerd Font)
+- `system` - System tools (xquartz)
+- `optional` - Optional tools (ansible, kind)
 
-    $ make packages
+## 🔧 Language Version Management
 
-or you can install the packages manually:
+### Python - UV (Modern All-in-One Tool)
+```bash
+# Install Python versions
+uv python install 3.12
+uv python install 3.11
+uv python list
 
-    $ ./scripts/installations/packages.py
+# Project management (replaces poetry)
+uv init my-project
+cd my-project
+uv add fastapi uvicorn
+uv run python main.py
 
-##### Error case
+# Global tools (replaces pipx)
+uv tool install black
+uv tool install pytest
+uv tool install ruff
+```
 
-If you encountered following problem when you install tools and packages via make command or scripts
+### Node.js - FNM (40x Faster than NVM)
+```bash
+# Install and use Node.js versions
+fnm install --lts
+fnm use lts-latest
+fnm default lts-latest
+fnm list
 
-    Error: The following directories are not writable by your user:
-    /usr/local/share/zsh
-    /usr/local/share/zsh/site-functions
+# Package management with pnpm (faster than npm)
+pnpm install
+pnpm add express
+pnpm run dev
+```
 
-    You should change the ownership of these directories to your user.
-    sudo chown -R $(whoami) /usr/local/share/zsh /usr/local/share/zsh/site-functions
+### Java - SDKMAN (Multi-Version Management)
+```bash
+# After installation, restart shell and run:
+source ~/.sdkman/bin/sdkman-init.sh
 
-#### Dotfiles and Neovim-config
+# Install and switch JDK versions
+sdk list java
+sdk install java 21.0.1-tem
+sdk install java 17.0.9-tem
+sdk use java 21.0.1-tem          # Switch for current session
+sdk default java 21.0.1-tem      # Set permanent default
 
-After install tools and packages, run make command to install Dotfiles and Neovim-config.
+# Build tools
+sdk install maven
+sdk install gradle
+```
 
-    $ make git-submodule
-    $ make dotfiles
-    $ make neovim-config
+### Rust - Rustup (Official Toolchain)
+```bash
+# After installation:
+source ~/.cargo/env
+rustup update stable
+rustup install nightly
+rustup default stable
+```
 
-### Reinstall or Update
+### Go - Official Toolchain
+```bash
+# Go is installed via Homebrew with latest version
+go version
+go mod init my-project
+go get github.com/gin-gonic/gin
+```
 
-If you want to reinstall or update the all of the tools, packages, dotfiles and neovim-config, you can use the following commands:
+## 🍺 Homebrew Management
 
-    $ make reinstall
+### Package Installation
+```bash
+make brew-install PACKAGE=git
+make brew-install PACKAGE=docker CASK=true    # GUI applications
+```
 
-## Others
+### Custom Formulas
+```bash
+make brew-list-formulas                        # List available custom formulas
+make brew-install-formula FORMULA=formulas/teleport.rb
+```
 
-### Font and Theme Setting
+### Maintenance
+```bash
+make brew-update                               # Update Homebrew
+make brew-upgrade                              # Upgrade all packages
+make brew-clean-taps                           # Remove custom taps
+```
 
-#### Font
+## 🏠 Local Taps Management
 
-To install the font: SauceCodePro Nerd Font, you can use the following commands:
+```bash
+make local-taps-list                           # List local taps
+make local-taps-backup DIR=backup-dir          # Backup taps
+make local-taps-restore DIR=backup-dir         # Restore taps
+make local-taps-validate                       # Validate taps
+```
 
-    $ brew install font-sauce-code-pro-nerd-font
+## ⚙️ Configuration
 
-After install Source Code Pro With Nerd Font...
+### Font Setup
+The setup automatically installs **SauceCodePro Nerd Font**. Configure your terminal:
 
-Go to iTerm2 Settings -> Profiles -> Text -> Select the font: SauceCodePro Nerd Font.
+**iTerm2**: Settings → Profiles → Text → Font: SauceCodePro Nerd Font
 
-#### Theme
+### Theme Setup
+1. Download themes from [iTerm2 Color Schemes](https://iterm2colorschemes.com/)
+2. Import: iTerm2 Settings → Profiles → Colors → Color Presets → Import
+3. Recommended: Hurtado theme
 
-Go to [iterm2-color-schemes] to download the resources: .tar.gz file or .zip file.
+### Git Configuration
+```bash
+# Global configuration
+git config --global user.name "Your Name"
+git config --global user.email "your-email@example.com"
 
-After unzip the resources..., you can import the theme to iTerm2.
+# Per-project configuration
+git config --local user.name "Your Name"
+git config --local user.email "work-email@company.com"
+```
 
-Import path: iTerm2 Settings -> Profiles -> Colors -> Color Presets... -> Import..., then select the theme file: ./schemas/Hurtado.itermcolors
+## 🔍 Troubleshooting
 
-Go to iTerm2 Settings -> Profiles -> Colors -> Select the colors: Hurtado.
+### System Status Check
+```bash
+make system-status                             # Comprehensive status check
+make system-status CHECK_TYPE=installed       # Check installation status
+make system-status CHECK_TYPE=cleaned         # Check cleanup status
+```
 
-Hint: The file path may be difference, you may need to find the .itermcolors file in the resources.
+### Common Issues
 
-Reference:
-* https://github.com/Homebrew/homebrew-cask-fonts
-* https://github.com/mbadolato/iTerm2-Color-Schemes
-* https://iterm2colorschemes.com/
-* https://github.com/ryanoasis/nerd-fonts#option-1-download-and-install-manually
-* https://github.com/Homebrew/homebrew-cask-fonts
-* https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/SourceCodePro
+**Empty directories in tmux/zsh:**
+```bash
+make full-reset                                # Complete reset and reinstall
+tree -L 2 zsh                                 # Verify zsh structure
+tree -L 3 tmux                                # Verify tmux structure
+```
 
-### Git Config Setting
+**Permission issues:**
+```bash
+sudo chown -R $(whoami) /usr/local/share/zsh /usr/local/share/zsh/site-functions
+```
 
-#### Global
+**Language manager not working:**
+```bash
+# Restart shell after installation
+exec $SHELL -l
 
-    $ git config --global user.name "..."
-    $ git config --global user.email "..."
+# Check specific language manager
+uv --version                                   # Python
+fnm --version                                  # Node.js
+sdk version                                    # Java (after sourcing SDKMAN)
+rustup --version                              # Rust
+go version                                     # Go
+```
 
-#### Local
+## 🛠️ Advanced Usage
 
-    $ git config --local user.name "..."
-    $ git config --local user.email "..."
+### Development & Testing
+```bash
+make build                                     # Build test environment
+make container-bash                            # Run bash in container
+```
 
-## Troubleshooting
+### Selective Component Management
+```bash
+# Individual component installation
+make install-packages
+make install-dotfiles
+make install-language-managers
+make install-neovim
+make install-git-submodules
 
-After installation, you might occasionally notice the presence of numerous numbered empty folders within the tmux or zsh directories. 
+# Individual component cleanup
+make clean-packages
+make clean-dotfiles
+make clean-language-managers
+make clean-neovim
+make clean-caches
+```
 
-To address this issue, you can attempt to rerun the installation command. Should these empty folders persist, continue with repeated reinstallations until they no longer appear. 
+### Legacy Compatibility
+```bash
+# Legacy commands (still supported)
+make packages                                  # Same as install-packages
+make language-managers                         # Same as install-language-managers
+make dotfiles                                  # Same as install-dotfiles
+make neovim-plugins                           # Same as install-neovim
+```
 
-Commands:
+## 📚 Architecture
 
-    # Reinstall Command
-    $ make reinstall
-    # zsh checking
-    $ tree -L 2 zsh
-    # tmux checking
-    $ tree -L 3 tmux
+This setup follows modern development best practices:
 
----------
+- **Orchestrated Installation**: Single command installs everything in correct order
+- **Comprehensive Verification**: Status checks ensure everything works correctly
+- **Modern Tooling**: Uses fastest, most reliable tools for each language
+- **Modular Design**: Install/remove components independently
+- **Automated Cleanup**: Complete system reset capability
+- **Cross-Platform**: Works on Intel and Apple Silicon Macs
 
-### Other Documents
-[What is the difference between venv, pyvenv, pyenv, virtualenv, virtualenvwrapper, pipenv, etc?]
+## 🔗 References
 
-   [Chrome]: <https://www.google.com/chrome/?brand=CHBD&gclid=CjwKCAjw34n5BRA9EiwA2u9k30fBEMblRcv82Os1vwt6z4tOarneYbf-eOGCF4Uy7kVNs4MxcmpE6xoC4lUQAvD_BwE&gclsrc=aw.ds>
-   [Firefox]: <https://www.mozilla.org/en-US/>
-   [Docker]: <https://www.docker.com/>
-   [virtualbox]: <https://www.virtualbox.org/>
-   [vagrant]: <https://www.vagrantup.com/>
-   [iTerm2]: <https://www.iterm2.com/>
-   [Homebrew]: <https://brew.sh/>
-   [iterm2-color-schemes]: <https://iterm2colorschemes.com/>
-   [Use my old vimrc for NeoVim]: <https://blog.m157q.tw/posts/2018/07/23/use-my-old-vimrc-for-neovim/>
-   [What is the difference between venv, pyvenv, pyenv, virtualenv, virtualenvwrapper, pipenv, etc?]: <https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe/41573588#41573588>
-   [Use my old vimrc for NeoVim]: <https://blog.m157q.tw/posts/2018/07/23/use-my-old-vimrc-for-neovim/>
-   [Github profile keys]: <https://github.com/settings/keys>
-   [logi options+]: <https://www.logitech.com/en-us/product/options-plus>
+- [Homebrew](https://brew.sh/) - Package manager for macOS
+- [UV Python](https://github.com/astral-sh/uv) - Modern Python package manager
+- [FNM](https://github.com/Schniz/fnm) - Fast Node.js version manager
+- [SDKMAN](https://sdkman.io/) - Java ecosystem manager
+- [iTerm2](https://iterm2.com/) - Terminal emulator
+- [Neovim](https://neovim.io/) - Modern Vim editor
+
+---
+
+**Quick Commands Reference:**
+- `make install` - Install everything
+- `make system-status` - Check status
+- `make full-reset` - Reset and reinstall
+- `make help` - Show all available commands
