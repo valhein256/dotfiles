@@ -180,10 +180,92 @@ MODE_INDICATOR_VLINE='%F{12}[%F{12}V-LINE]%f'
 # Language Version Managers - Modern Stack
 # ----------------------------------------------------------------------------
 
-# Python - UV Only (replaces pyenv, pip, poetry, pipx)
+# ----------------------------------------------------------------------------
+# Language Version Managers - Modern Stack
+# ----------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------
+# Language Version Managers - Modern Stack
+# ----------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------
+# Language Version Managers - Modern Stack
+# ----------------------------------------------------------------------------
+
+# Python - UV (replaces pyenv, pip, poetry, pipx)
 if command -v uv &> /dev/null; then
+    # Add uv to PATH
     export PATH="$HOME/.local/bin:$PATH"
+    
+    # Configure uv Python path management
+    # This ensures that 'python' and 'python3' commands use uv-managed Python versions
+    export UV_PYTHON_PREFERENCE="only-managed"
+    
+    # Add uv tool binaries to PATH (for globally installed tools)
+    if [ -d "$HOME/.local/share/uv/tools" ]; then
+        export PATH="$HOME/.local/share/uv/tools:$PATH"
+    fi
+    
+    # Enable uv shell completion
     eval "$(uv generate-shell-completion zsh)"
+    
+    # Automatic Python version switching based on .python-version files
+    # This function creates python/python3 wrapper functions that use uv's automatic detection
+    uv_auto_switch() {
+        # Create wrapper functions that use uv's built-in .python-version detection
+        python() {
+            local uv_python=$(uv python find 2>/dev/null)
+            if [ -n "$uv_python" ]; then
+                "$uv_python" "$@"
+            else
+                # Fallback to system python if uv fails
+                command python "$@"
+            fi
+        }
+        
+        python3() {
+            local uv_python=$(uv python find 2>/dev/null)
+            if [ -n "$uv_python" ]; then
+                "$uv_python" "$@"
+            else
+                # Fallback to system python3 if uv fails
+                command python3 "$@"
+            fi
+        }
+        
+        # Also create a pip wrapper that uses the correct Python
+        pip() {
+            local uv_python=$(uv python find 2>/dev/null)
+            if [ -n "$uv_python" ]; then
+                "$uv_python" -m pip "$@"
+            else
+                command pip "$@"
+            fi
+        }
+        
+        pip3() {
+            local uv_python=$(uv python find 2>/dev/null)
+            if [ -n "$uv_python" ]; then
+                "$uv_python" -m pip "$@"
+            else
+                command pip3 "$@"
+            fi
+        }
+    }
+    
+    # Hook into directory changes to refresh the Python version
+    autoload -U add-zsh-hook
+    add-zsh-hook chpwd uv_auto_switch
+    
+    # Run once on shell startup
+    uv_auto_switch
+    
+    # Aliases for convenience
+    alias python-versions="uv python list"
+    alias python-install="uv python install"
+    alias python-pin="uv python pin"
+    alias python-current="uv python find --show-version"
+    alias python-which="uv python find"
 fi
 
 # Node.js - fnm (faster than nvm)

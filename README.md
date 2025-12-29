@@ -112,12 +112,40 @@ python3 scripts/installations/packages.py install --category golang
 
 ## 🔧 Language Version Management
 
+### Automatic Version Switching
+
+Our setup supports automatic version switching based on project configuration files:
+
+| Language | File | Example | Auto-Switch |
+|----------|------|---------|-------------|
+| **Python** | `.python-version` | `3.12` | ✅ Automatic with UV |
+| **Node.js** | `.nvmrc` | `18` | ✅ Automatic with fnm |
+| **Java** | Manual switching | `sdk use java 21.0.1-tem` | Manual with SDKMAN |
+
 ### Python - UV (Modern All-in-One Tool)
+
+**Important**: After installation, restart your shell or run `source ~/.zshrc` to activate uv Python path management.
+
+**✨ Automatic Version Switching**: UV automatically detects `.python-version` files and switches Python versions when you change directories!
+
 ```bash
+# Verify uv Python is working
+python --version                      # Should show uv-managed Python
+which python                          # Should show path in ~/.local/share/uv/
+
+# If still showing system Python, fix the configuration:
+make uv-python-setup                  # Configure UV Python environment
+
 # Install Python versions
 uv python install 3.12
 uv python install 3.11
 uv python list
+
+# Automatic version switching with .python-version files
+echo "3.12" > .python-version         # Create version file
+cd your-project                       # Python automatically switches to 3.12!
+python --version                      # Shows Python 3.12.x
+python-current                        # Show current version (alias)
 
 # Project management (replaces poetry)
 uv init my-project
@@ -129,6 +157,11 @@ uv run python main.py
 uv tool install black
 uv tool install pytest
 uv tool install ruff
+
+# Virtual environments (replaces venv)
+uv venv                               # Create virtual environment
+source .venv/bin/activate             # Activate (or use uv run)
+uv run python script.py              # Run without activation
 ```
 
 ### Node.js - FNM (40x Faster than NVM)
@@ -266,6 +299,43 @@ fnm --version                                  # Node.js
 sdk version                                    # Java (after sourcing SDKMAN)
 rustup --version                              # Rust
 go version                                     # Go
+```
+
+**UV Python not working (still using system Python):**
+```bash
+# Check current Python
+python --version                               # Should show uv-managed version
+which python                                   # Should show ~/.local/share/uv/ path
+
+# Fix UV Python configuration
+make uv-python-setup                           # Configure UV environment
+source ~/.zshrc                                # Reload shell configuration
+
+# Verify UV Python versions
+uv python list                                 # List installed versions
+uv python find                                 # Show current default Python
+
+# Install Python if none available
+uv python install 3.12                        # Install Python 3.12
+uv python pin 3.12                            # Set as default
+```
+
+**Python version not switching with .python-version files:**
+```bash
+# Check if .python-version file is detected
+uv python find --show-version                 # Should show version from file
+uv python find                                # Should show path to that version
+
+# Create .python-version file manually
+echo "3.12" > .python-version                 # Create version file
+uv python install 3.12                        # Install if not available
+cd .                                           # Trigger directory change
+python --version                               # Should show Python 3.12.x
+
+# Check available aliases
+python-current                                 # Show current version
+python-which                                   # Show current Python path
+python-versions                               # List all installed versions
 ```
 
 ## 🛠️ Advanced Usage

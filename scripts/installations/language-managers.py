@@ -165,7 +165,7 @@ def setup_python_uv() -> None:
     info("Setting up Python with uv...")
     
     if command_exists('uv'):
-        # Install latest Python version
+        # Install latest Python versions
         info("Installing Python 3.12 via uv...")
         result = run_command(['uv', 'python', 'install', '3.12'], capture_output=False)
         if result and result.returncode == 0:
@@ -173,13 +173,44 @@ def setup_python_uv() -> None:
         else:
             warning("Python 3.12 may already be installed")
         
-        # Set as default
+        info("Installing Python 3.11 via uv...")
+        result = run_command(['uv', 'python', 'install', '3.11'], capture_output=False)
+        if result and result.returncode == 0:
+            success("Python 3.11 installed via uv")
+        else:
+            warning("Python 3.11 may already be installed")
+        
+        # Set Python 3.12 as default
         info("Setting Python 3.12 as default...")
         result = run_command(['uv', 'python', 'pin', '3.12'], capture_output=False)
         if result and result.returncode == 0:
             success("Python 3.12 set as default")
         else:
             warning("Failed to set Python 3.12 as default")
+        
+        # Install common global tools
+        info("Installing common Python tools globally...")
+        global_tools = ['black', 'ruff', 'pytest', 'mypy', 'ipython']
+        for tool in global_tools:
+            result = run_command(['uv', 'tool', 'install', tool], capture_output=True)
+            if result and result.returncode == 0:
+                success(f"Installed {tool} globally")
+            else:
+                warning(f"Failed to install {tool} globally (may already exist)")
+        
+        # Verify Python setup
+        info("Verifying Python setup...")
+        result = run_command(['uv', 'python', 'find'])
+        if result and result.returncode == 0 and result.stdout.strip():
+            default_python = result.stdout.strip()
+            success(f"Default Python: {default_python}")
+            
+            if ".local/share/uv" in default_python:
+                success("Using uv-managed Python ✓")
+            else:
+                warning("Not using uv-managed Python - restart shell to fix")
+        else:
+            warning("No default Python found via uv")
     else:
         info("uv not found, will be available after package installation")
 
@@ -220,6 +251,25 @@ def show_setup_info() -> None:
     print("  📦 Rust: rustup (official Rust toolchain)")
     print()
     
+    print(f"{Colors.YELLOW}⚠️  IMPORTANT: UV Python Path Configuration{Colors.RESET}")
+    print("After installation, you need to restart your shell or run:")
+    print("  source ~/.zshrc")
+    print()
+    print("To verify UV Python is working correctly:")
+    print("  python --version                  # Should show uv-managed Python")
+    print("  which python                      # Should show path in ~/.local/share/uv/")
+    print()
+    print("If Python still shows system version, run:")
+    print("  make uv-python-setup              # Fix UV Python path configuration")
+    print()
+    print(f"{Colors.GREEN}✨ AUTOMATIC VERSION SWITCHING:{Colors.RESET}")
+    print("UV automatically detects .python-version files!")
+    print("  echo '3.12' > .python-version     # Create version file")
+    print("  cd your-project                   # Python automatically switches to 3.12")
+    print("  python --version                  # Shows Python 3.12.x")
+    print("  python-current                    # Show current version")
+    print()
+    
     print("Next steps - Use language versions:")
     print()
     print("  # Python (uv handles everything - no pyenv needed)")
@@ -228,6 +278,9 @@ def show_setup_info() -> None:
     print("  uv python list                    # List installed versions")
     print("  uv venv                           # Create virtual environment")
     print("  uv pip install package           # Install packages")
+    print("  uv tool install black             # Install global tools")
+    print("  uv run python script.py          # Run with specific Python")
+    print("  python --version                  # Should show uv-managed Python")
     print()
     
     print("  # Node.js (fnm is faster than nvm)")

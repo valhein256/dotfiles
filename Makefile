@@ -301,6 +301,49 @@ clean-caches: ## 🗑️ Remove development caches only
 
 ##@ HOMEBREW MANAGEMENT
 
+uv-python-setup: ## 🐍 Configure UV Python environment (fix Python path issues)
+	@echo "🐍 Configuring UV Python environment..."
+	@echo ""
+	@echo "Checking UV installation..."
+	@uv --version || (echo "❌ UV not installed. Run 'make install-packages' first." && exit 1)
+	@echo ""
+	@echo "Installing Python 3.12 if not available..."
+	@uv python install 3.12 2>/dev/null || echo "✅ Python 3.12 already available"
+	@echo ""
+	@echo "Setting Python 3.12 as default..."
+	@uv python pin 3.12 2>/dev/null || echo "✅ Python 3.12 already set as default"
+	@echo ""
+	@echo "Current UV Python status:"
+	@echo "  Default Python: $$(uv python find 2>/dev/null || echo 'Not found')"
+	@echo "  Python version: $$(uv python find --show-version 2>/dev/null || echo 'Not found')"
+	@echo ""
+	@echo "✅ UV Python configuration complete!"
+	@echo ""
+	@echo "🔄 Please restart your shell or run: source ~/.zshrc"
+	@echo "   Then test with: python --version"
+
+uv-python-status: ## 🐍 Check UV Python configuration status
+	@echo "🐍 UV Python Configuration Status"
+	@echo "=================================="
+	@echo ""
+	@echo "UV Version:"
+	@uv --version || echo "  UV not found"
+	@echo ""
+	@echo "Python Version:"
+	@python --version 2>/dev/null || echo "  Python not found"
+	@echo ""
+	@echo "Python Path:"
+	@which python 2>/dev/null || echo "  Python not in PATH"
+	@echo ""
+	@echo "UV Python Versions:"
+	@uv python list 2>/dev/null || echo "  No UV Python versions installed"
+	@echo ""
+	@echo "UV Default Python:"
+	@uv python find 2>/dev/null || echo "  No default Python set"
+	@echo ""
+	@echo "Test .python-version detection:"
+	@echo "3.12" > .test-python-version && uv python find --show-version 2>/dev/null && rm .test-python-version || echo "  Detection failed"
+
 brew-install: ## 🍺 Install package (usage: make brew-install PACKAGE=git)
 	@if [ -z "$(PACKAGE)" ]; then \
 		echo "Usage: make brew-install PACKAGE=package-name [CASK=true]"; \
