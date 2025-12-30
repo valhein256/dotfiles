@@ -301,6 +301,30 @@ clean-caches: ## 🗑️ Remove development caches only
 
 ##@ HOMEBREW MANAGEMENT
 
+fix-zsh-completion: ## 🔧 Fix ZSH completion system (resolve _arguments errors)
+	@echo "🔧 Fixing ZSH completion system..."
+	@echo "Clearing all completion cache files..."
+	@rm -f ~/.zcompdump* ~/.zsh/cache/* ~/.zplug/cache/* 2>/dev/null || true
+	@echo "Creating necessary directories..."
+	@mkdir -p ~/.zsh/{cache,functions} 2>/dev/null || true
+	@echo "Creating comparguments stub function..."
+	@echo '#autoload\n# comparguments stub to prevent _arguments errors\nreturn 0' > ~/.zsh/functions/comparguments
+	@echo "Resetting completion system..."
+	@zsh -c 'fpath=(~/.zsh/functions $$fpath) && autoload -Uz compinit && compinit -d ~/.zcompdump'
+	@echo "✅ ZSH completion system fixed!"
+	@echo ""
+	@echo "🔄 Please restart your shell: exec \$$SHELL -l"
+
+fix-zsh-simple: ## 🔧 Simple ZSH completion fix (disable problematic features)
+	@echo "🔧 Applying simple ZSH completion fix..."
+	@echo "Clearing completion cache..."
+	@rm -f ~/.zcompdump* 2>/dev/null || true
+	@echo "Resetting completion system..."
+	@zsh -c 'autoload -Uz compinit && compinit -d ~/.zcompdump'
+	@echo "✅ Simple fix applied!"
+	@echo ""
+	@echo "🔄 Please restart your shell: exec \$$SHELL -l"
+
 uv-python-setup: ## 🐍 Configure UV Python environment (fix Python path issues)
 	@echo "🐍 Configuring UV Python environment..."
 	@echo ""

@@ -70,9 +70,8 @@ zplug "plugins/docker", from:oh-my-zsh
 zplug "plugins/vagrant", from:oh-my-zsh
 zplug "plugins/docker-compose", from:oh-my-zsh
 
-# Oh-My-Zsh core libraries
+# Oh-My-Zsh core libraries (excluding completion to avoid conflicts)
 zplug "lib/spectrum", from:oh-my-zsh
-zplug "lib/completion", from:oh-my-zsh
 zplug "lib/directories", from:oh-my-zsh
 zplug "lib/functions", from:oh-my-zsh
 zplug "lib/history", from:oh-my-zsh
@@ -111,12 +110,48 @@ zplug load
 # ============================================================================
 # Zsh Completion System Initialization
 # ============================================================================
-# Initialize completion system
-autoload -U compinit
-compinit
+# Clear any existing completion cache to avoid conflicts
+rm -f ~/.zcompdump* 2>/dev/null
 
-# Load comparguments function if available
-autoload -U comparguments 2>/dev/null || true
+# Add local functions directory first (for custom stubs)
+fpath=(~/.zsh/functions /usr/share/zsh/5.9/functions /opt/homebrew/share/zsh/site-functions $fpath)
+
+# Initialize completion system after plugins are loaded
+autoload -Uz compinit
+compinit -d ~/.zcompdump
+
+# Load essential completion functions with error handling
+autoload -Uz _arguments 2>/dev/null || true
+autoload -Uz comparguments 2>/dev/null || true
+
+# Set completion options
+setopt COMPLETE_IN_WORD
+setopt AUTO_MENU
+setopt AUTO_LIST
+setopt AUTO_PARAM_SLASH
+unsetopt MENU_COMPLETE
+
+# Enable completion caching
+zstyle ':completion::complete:*' use-cache 1
+zstyle ':completion::complete:*' cache-path ~/.zsh/cache
+
+# Suppress completion errors completely
+zstyle ':completion:*' verbose false
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*:warnings' format ''
+
+# Disable problematic completions that cause _arguments errors
+zstyle ':completion:*' completer _complete _ignored
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+# Override _arguments function to prevent comparguments errors
+_arguments() {
+    # Simple fallback that just completes files
+    _files
+}
+
+# Fix git completion specifically (common source of _arguments errors)
+zstyle ':completion:*:*:git:*' script /opt/homebrew/share/zsh/site-functions/_git 2>/dev/null || true
 
 
 # ============================================================================

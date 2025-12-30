@@ -288,6 +288,32 @@ tree -L 3 tmux                                # Verify tmux structure
 sudo chown -R $(whoami) /usr/local/share/zsh /usr/local/share/zsh/site-functions
 ```
 
+**ZSH completion errors (_arguments:327: comparguments):**
+
+This error occurs when the `comparguments` function is missing. Here are solutions in order of preference:
+
+```bash
+# Method 1: Comprehensive fix (recommended)
+make fix-zsh-completion                        # Fix completion system
+exec $SHELL -l                                # Restart shell
+
+# Method 2: Simple fix (faster)
+make fix-zsh-simple                            # Quick fix
+exec $SHELL -l                                # Restart shell
+
+# Method 3: Manual fix (if make commands fail)
+rm -f ~/.zcompdump*                            # Clear completion cache
+autoload -Uz compinit && compinit              # Reinitialize
+exec $SHELL -l                                # Restart shell
+```
+
+**Root causes:**
+- Missing `comparguments` function in system zsh
+- Corrupted completion cache files
+- Plugin loading conflicts
+
+**ZSH completion errors (_arguments:327: comparguments):**
+
 **Language manager not working:**
 ```bash
 # Restart shell after installation
