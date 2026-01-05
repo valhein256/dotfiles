@@ -233,7 +233,6 @@ if command -v uv &> /dev/null; then
     export PATH="$HOME/.local/bin:$PATH"
     
     # Configure uv Python path management
-    # This ensures that 'python' and 'python3' commands use uv-managed Python versions
     export UV_PYTHON_PREFERENCE="only-managed"
     
     # Add uv tool binaries to PATH (for globally installed tools)
@@ -244,56 +243,147 @@ if command -v uv &> /dev/null; then
     # Enable uv shell completion
     eval "$(uv generate-shell-completion zsh)"
     
-    # Automatic Python version switching based on .python-version files
-    # This function creates python/python3 wrapper functions that use uv's automatic detection
-    uv_auto_switch() {
-        # Create wrapper functions that use uv's built-in .python-version detection
-        python() {
-            local uv_python=$(uv python find 2>/dev/null)
-            if [ -n "$uv_python" ]; then
-                "$uv_python" "$@"
-            else
-                # Fallback to system python if uv fails
-                command python "$@"
-            fi
-        }
+    # Create UV Python shims directory
+    UV_SHIMS_DIR="$HOME/.local/share/uv/shims"
+    mkdir -p "$UV_SHIMS_DIR"
+    
+    # Add UV shims to PATH (highest priority)
+    export PATH="$UV_SHIMS_DIR:$PATH"
+    
+    # Create smart Python shims that use UV's .python-version detection
+    _create_uv_shims() {
+        # Python shim
+        cat > "$UV_SHIMS_DIR/python" << 'EOF'
+#!/bin/bash
+# UV Python shim - automatically detects .python-version
+uv_python=$(uv python find 2>/dev/null)
+if [ -n "$uv_python" ]; then
+    exec "$uv_python" "$@"
+else
+    exec /opt/homebrew/bin/python3 "$@" 2>/dev/null || exec /usr/bin/python3 "$@"
+fi
+EOF
         
-        python3() {
-            local uv_python=$(uv python find 2>/dev/null)
-            if [ -n "$uv_python" ]; then
-                "$uv_python" "$@"
-            else
-                # Fallback to system python3 if uv fails
-                command python3 "$@"
-            fi
-        }
+        # Python3 shim
+        cat > "$UV_SHIMS_DIR/python3" << 'EOF'
+#!/bin/bash
+# UV Python3 shim - automatically detects .python-version
+uv_python=$(uv python find 2>/dev/null)
+if [ -n "$uv_python" ]; then
+    exec "$uv_python" "$@"
+else
+    exec /opt/homebrew/bin/python3 "$@" 2>/dev/null || exec /usr/bin/python3 "$@"
+fi
+EOF
         
-        # Also create a pip wrapper that uses the correct Python
-        pip() {
-            local uv_python=$(uv python find 2>/dev/null)
-            if [ -n "$uv_python" ]; then
-                "$uv_python" -m pip "$@"
-            else
-                command pip "$@"
-            fi
-        }
+        # Pip shim
+        cat > "$UV_SHIMS_DIR/pip" << 'EOF'
+#!/bin/bash
+# UV Pip shim - uses UV-managed Python
+uv_python=$(uv python find 2>/dev/null)
+if [ -n "$uv_python" ]; then
+    exec "$uv_python" -m pip "$@"
+else
+    exec /opt/homebrew/bin/python3 -m pip "$@" 2>/dev/null || exec /usr/bin/python3 -m pip "$@"
+fi
+EOF
         
-        pip3() {
-            local uv_python=$(uv python find 2>/dev/null)
-            if [ -n "$uv_python" ]; then
-                "$uv_python" -m pip "$@"
-            else
-                command pip3 "$@"
-            fi
-        }
+        # Pip3 shim
+        cat > "$UV_SHIMS_DIR/pip3" << 'EOF'
+#!/bin/bash
+# UV Pip3 shim - uses UV-managed Python
+uv_python=$(uv python find 2>/dev/null)
+if [ -n "$uv_python" ]; then
+    exec "$uv_python" -m pip "$@"
+else
+    exec /opt/homebrew/bin/python3 -m pip "$@" 2>/dev/null || exec /usr/bin/python3 -m pip "$@"
+fi
+EOF
+        
+        # Make shims executable
+        chmod +x "$UV_SHIMS_DIR"/{python,python3,pip,pip3}
     }
     
-    # Hook into directory changes to refresh the Python version
+    # Create shims if they don't exist or are outdated
+    if [ ! -f "$UV_SHIMS_DIR/python" ] || [ ! -f "$UV_SHIMS_DIR/python3" ]; then
+        _create_uv_shims
+    fi
+    
+    # Enhanced .python-version detection with visual feedback and file monitoring
+    uv_check_version() {
+        if [ -f ".python-version" ]; then
+            local required_version=$(cat .python-version)
+            local current_version=$(uv python find --show-version 2>/dev/null)
+            if [ "$current_version" != "$required_version" ]; then
+                echo "🐍 Switching to Python $required_version (from $current_version)"
+                uv python pin "$required_version" 2>/dev/null || echo "⚠️  Python $required_version not installed. Run: uv python install $required_version"
+            fi
+        fi
+    }
+    
+    # Function to monitor .python-version file changes
+    uv_monitor_python_version() {
+        # Check if fswatch is available for file monitoring
+        if command -v fswatch &> /dev/null; then
+            # Kill any existing fswatch processes for .python-version
+            pkill -f "fswatch.*\.python-version" 2>/dev/null || true
+            
+            # Start monitoring .python-version file in background
+            if [ -f ".python-version" ]; then
+                (fswatch -o .python-version 2>/dev/null | while read num; do
+                    echo "📝 .python-version file changed, switching Python version..."
+                    uv_check_version
+                done) &
+                disown
+            fi
+        fi
+    }
+    
+    # Function to setup file monitoring when entering a directory
+    uv_setup_monitoring() {
+        uv_check_version
+        uv_monitor_python_version
+    }
+    
+    # Hook into directory changes for automatic version checking and monitoring
     autoload -U add-zsh-hook
-    add-zsh-hook chpwd uv_auto_switch
+    add-zsh-hook chpwd uv_setup_monitoring
     
     # Run once on shell startup
-    uv_auto_switch
+    uv_setup_monitoring
+    
+    # Function to manually refresh Python version (useful after editing .python-version)
+    python-refresh() {
+        echo "🔄 Refreshing Python version..."
+        uv_check_version
+        uv_monitor_python_version
+        echo "✅ Python version refreshed"
+        echo "Current: $(python --version 2>/dev/null || echo 'Not found')"
+    }
+    
+    # Alternative approach using periodic checking (if fswatch is not available)
+    uv_periodic_check() {
+        # Store the last modification time of .python-version
+        if [ -f ".python-version" ]; then
+            local current_mtime=$(stat -f %m .python-version 2>/dev/null || stat -c %Y .python-version 2>/dev/null)
+            if [ -n "$current_mtime" ] && [ "$current_mtime" != "$UV_PYTHON_VERSION_MTIME" ]; then
+                export UV_PYTHON_VERSION_MTIME="$current_mtime"
+                echo "📝 .python-version file changed, switching Python version..."
+                uv_check_version
+            fi
+        fi
+    }
+    
+    # If fswatch is not available, use periodic checking
+    if ! command -v fswatch &> /dev/null; then
+        # Add periodic check to precmd (runs before each prompt)
+        add-zsh-hook precmd uv_periodic_check
+        
+        # Initialize the modification time
+        if [ -f ".python-version" ]; then
+            export UV_PYTHON_VERSION_MTIME=$(stat -f %m .python-version 2>/dev/null || stat -c %Y .python-version 2>/dev/null)
+        fi
+    fi
     
     # Aliases for convenience
     alias python-versions="uv python list"
@@ -301,6 +391,50 @@ if command -v uv &> /dev/null; then
     alias python-pin="uv python pin"
     alias python-current="uv python find --show-version"
     alias python-which="uv python find"
+    alias python-path="uv python find"
+    
+    # Function to show all Python paths
+    python-paths() {
+        echo "🐍 Python Path Information:"
+        echo "=========================="
+        echo ""
+        echo "UV managed Python:"
+        uv python find 2>/dev/null || echo "  No UV Python found"
+        echo ""
+        echo "UV shims (highest priority):"
+        echo "  python: $UV_SHIMS_DIR/python"
+        echo "  python3: $UV_SHIMS_DIR/python3"
+        echo ""
+        echo "System Python paths:"
+        echo "  $(command which -a python 2>/dev/null | grep -v "$UV_SHIMS_DIR" | head -3 | tr '\n' ' ')"
+        echo ""
+        echo "System Python3 paths:"
+        echo "  $(command which -a python3 2>/dev/null | grep -v "$UV_SHIMS_DIR" | head -3 | tr '\n' ' ')"
+        echo ""
+        echo "Current versions:"
+        echo "  python: $(python --version 2>/dev/null || echo 'Not found')"
+        echo "  python3: $(python3 --version 2>/dev/null || echo 'Not found')"
+        echo ""
+        if [ -f ".python-version" ]; then
+            echo "Local .python-version: $(cat .python-version)"
+        else
+            echo "No .python-version file in current directory"
+        fi
+        echo ""
+        echo "PATH priority:"
+        echo "  1. UV shims: $UV_SHIMS_DIR"
+        echo "  2. Homebrew: /opt/homebrew/bin"
+        echo "  3. System: /usr/bin"
+    }
+    
+    # Function to recreate shims (useful for updates)
+    uv-recreate-shims() {
+        echo "🔧 Recreating UV Python shims..."
+        rm -f "$UV_SHIMS_DIR"/{python,python3,pip,pip3}
+        _create_uv_shims
+        echo "✅ UV shims recreated in $UV_SHIMS_DIR"
+        echo "🔄 Please restart your shell: exec \$SHELL -l"
+    }
 fi
 
 # Node.js - fnm (faster than nvm)
