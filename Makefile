@@ -17,10 +17,10 @@ install: ## 🚀 Complete installation (orchestrated)
 	@echo ""
 	@echo "  🏠 Local Taps - Restore custom Homebrew taps from backup"
 	@echo "  📦 Homebrew Packages - Install all formulae, casks, and custom formulas"
-	@echo "  � Patckage Updates - Update all installed packages to latest versions"
+	@echo "  🔄 Package Updates - Update all installed packages to latest versions"
 	@echo "  🔗 Git Submodules - Initialize zplug and tmux plugins"
 	@echo "  ⚙️  Dotfiles - Create symlinks for all configuration files"
-	@echo "  �  Language Managers - Setup Python, Node.js, Java, Rust, Go"
+	@echo "  🔧 Language Managers - Setup Python, Node.js, Java, Rust, Go"
 	@echo "  📝 Neovim Plugins - Install and configure Neovim plugins"
 	@echo ""
 	@echo "  ✅ All configurations will be properly linked"
@@ -31,7 +31,7 @@ install: ## 🚀 Complete installation (orchestrated)
 	@echo ""
 	@echo -n "❓ Proceed with complete installation? Type 'INSTALL' to confirm: "; \
 	read confirm; \
-	if [ "$$confirm" != "INSTALL" ]; then \
+	if [ "$confirm" != "INSTALL" ]; then \
 		echo "❌ Operation cancelled"; \
 		exit 1; \
 	fi
@@ -58,7 +58,7 @@ install: ## 🚀 Complete installation (orchestrated)
 clean: ## 🧹 Complete cleanup (orchestrated)
 	@echo ""
 	@printf "\033[91m##########################################\033[0m\n"
-	@printf "\033[91m# 🧹 COMPLETE SYSTEM CLEANUP �         #\033[0m\n"
+	@printf "\033[91m# 🧹 COMPLETE SYSTEM CLEANUP 🧹         #\033[0m\n"
 	@printf "\033[91m##########################################\033[0m\n"
 	@echo ""
 	@echo "This will run specialized cleanup scripts:"
@@ -78,7 +78,7 @@ clean: ## 🧹 Complete cleanup (orchestrated)
 	@echo ""
 	@echo -n "❓ Are you ABSOLUTELY SURE you want to proceed? Type 'CLEANUP' to confirm: "; \
 	read confirm; \
-	if [ "$$confirm" != "CLEANUP" ]; then \
+	if [ "$confirm" != "CLEANUP" ]; then \
 		echo "❌ Operation cancelled"; \
 		exit 1; \
 	fi
@@ -122,10 +122,10 @@ full-reset: ## 🔄 Complete reset and reinstall (clean + install)
 	@echo "  🚀 INSTALLATION PHASE:"
 	@echo "    🏠 Restore local Homebrew taps"
 	@echo "    📦 Install all Homebrew packages"
-	@echo "    � Updatae all packages to latest versions"
+	@echo "    🔄 Update all packages to latest versions"
 	@echo "    🔗 Initialize git submodules"
 	@echo "    ⚙️  Create dotfiles symlinks"
-	@echo "    � ISetup language managers"
+	@echo "    🔧 Setup language managers"
 	@echo "    📝 Install Neovim plugins"
 	@echo ""
 	@echo "  ✅ Backups will be created before removal"
@@ -136,7 +136,7 @@ full-reset: ## 🔄 Complete reset and reinstall (clean + install)
 	@echo ""
 	@echo -n "❓ Are you ABSOLUTELY SURE you want to proceed? Type 'RESET' to confirm: "; \
 	read confirm; \
-	if [ "$$confirm" != "RESET" ]; then \
+	if [ "$confirm" != "RESET" ]; then \
 		echo "❌ Operation cancelled"; \
 		exit 1; \
 	fi
@@ -179,33 +179,12 @@ full-reset: ## 🔄 Complete reset and reinstall (clean + install)
 
 ##@ VERIFICATION & STATUS
 
-system-status: ## 📊 Check comprehensive system status (usage: make system-status CHECK_TYPE=cleaned|installed)
+system-status: ## 📊 Check comprehensive system status
 	@chmod +x ./scripts/verifications/system-status-checker.py
-	@if [ -z "$(CHECK_TYPE)" ]; then \
-		echo "📊 System Status Check"; \
-		echo "CHECK_TYPE: default (installation status)"; \
-		echo ""; \
-		./scripts/verifications/system-status-checker.py; \
-	else \
-		echo "📊 System Status Check"; \
-		echo "CHECK_TYPE: $(CHECK_TYPE)"; \
-		echo ""; \
-		./scripts/verifications/system-status-checker.py --check-type $(CHECK_TYPE); \
-	fi
-
-system-status-cleaned: ## 📊 Check system cleanup status (verify removal)
 	@echo "📊 System Status Check"
-	@echo "CHECK_TYPE: cleaned"
+	@echo "CHECK_TYPE: default (installation status)"
 	@echo ""
-	@chmod +x ./scripts/verifications/system-status-checker.py
-	@./scripts/verifications/system-status-checker.py --check-type cleaned
-
-system-status-installed: ## 📊 Check system installation status (verify installation)
-	@echo "📊 System Status Check"
-	@echo "CHECK_TYPE: installed"
-	@echo ""
-	@chmod +x ./scripts/verifications/system-status-checker.py
-	@./scripts/verifications/system-status-checker.py --check-type installed
+	@./scripts/verifications/system-status-checker.py
 
 install-verify: ## ✅ Verify installation completeness
 	@chmod +x ./scripts/verifications/installation-verification.py
@@ -214,30 +193,6 @@ install-verify: ## ✅ Verify installation completeness
 cleanup-verify: ## ✅ Verify cleanup completeness
 	@chmod +x ./scripts/verifications/cleanup-verification.py
 	@./scripts/verifications/cleanup-verification.py
-
-system-status-sequential: ## 📊 Check system status (sequential mode, usage: CHECK_TYPE=cleaned|installed)
-	@chmod +x ./scripts/verifications/system-status-checker.py
-	@if [ -z "$(CHECK_TYPE)" ]; then \
-		./scripts/verifications/system-status-checker.py --sequential; \
-	else \
-		./scripts/verifications/system-status-checker.py --sequential --check-type $(CHECK_TYPE); \
-	fi
-
-system-status-packages: ## 📦 Check only package status (usage: CHECK_TYPE=cleaned|installed)
-	@chmod +x ./scripts/verifications/system-status-checker.py
-	@if [ -z "$(CHECK_TYPE)" ]; then \
-		./scripts/verifications/system-status-checker.py --packages-only; \
-	else \
-		./scripts/verifications/system-status-checker.py --packages-only --check-type $(CHECK_TYPE); \
-	fi
-
-system-status-cleanup: ## 🧹 Check only cleanup status (usage: CHECK_TYPE=cleaned|installed)
-	@chmod +x ./scripts/verifications/system-status-checker.py
-	@if [ -z "$(CHECK_TYPE)" ]; then \
-		./scripts/verifications/system-status-checker.py --cleanup-only; \
-	else \
-		./scripts/verifications/system-status-checker.py --cleanup-only --check-type $(CHECK_TYPE); \
-	fi
 
 ##@ COMPONENT INSTALLATION
 
@@ -299,33 +254,39 @@ clean-caches: ## 🗑️ Remove development caches only
 	@chmod +x ./scripts/cleanup/caches.py
 	@./scripts/cleanup/caches.py
 
-##@ HOMEBREW MANAGEMENT
+##@ SYSTEM FIXES
 
 fix-zsh-completion: ## 🔧 Fix ZSH completion system (resolve _arguments errors)
-	@echo "🔧 Fixing ZSH completion system..."
-	@echo "Clearing all completion cache files..."
+	@echo "🔧 Enhanced ZSH completion system fix..."
+	@echo ""
+	@echo "Step 1: Clearing completion cache and problematic files..."
 	@rm -f ~/.zcompdump* ~/.zsh/cache/* ~/.zplug/cache/* 2>/dev/null || true
-	@echo "Creating necessary directories..."
+	@rm -f ~/.zsh/.zcompdump* 2>/dev/null || true
+	@echo "✅ Cache cleared"
+	@echo ""
+	@echo "Step 2: Creating necessary directories..."
 	@mkdir -p ~/.zsh/{cache,functions} 2>/dev/null || true
-	@echo "Creating comparguments stub function..."
-	@echo '#autoload\n# comparguments stub to prevent _arguments errors\nreturn 0' > ~/.zsh/functions/comparguments
-	@echo "Resetting completion system..."
-	@zsh -c 'fpath=(~/.zsh/functions $$fpath) && autoload -Uz compinit && compinit -d ~/.zcompdump'
+	@echo "✅ Directories created"
+	@echo ""
+	@echo "Step 3: Installing completion function fixes..."
+	@echo '#!/bin/zsh\n# Stub function to prevent _arguments errors\n_arguments() { _files }' > ~/.zsh/functions/_arguments
+	@echo '#!/bin/zsh\n# Stub function to prevent comparguments errors\ncomparguments() { return 0 }' > ~/.zsh/functions/comparguments
+	@chmod +x ~/.zsh/functions/_arguments ~/.zsh/functions/comparguments
+	@echo "✅ Function stubs installed"
+	@echo ""
+	@echo "Step 4: Resetting completion system with proper fpath..."
+	@zsh -c 'fpath=(~/.zsh/functions /opt/homebrew/share/zsh/site-functions $$fpath) && autoload -Uz compinit && compinit -d ~/.zcompdump -C'
+	@echo "✅ Completion system reset"
+	@echo ""
+	@echo "Step 5: Verifying fix..."
+	@zsh -c 'autoload -Uz _arguments comparguments && echo "Functions loaded successfully"' || echo "⚠️  Some functions may still have issues"
+	@echo ""
 	@echo "✅ ZSH completion system fixed!"
 	@echo ""
 	@echo "🔄 Please restart your shell: exec \$$SHELL -l"
+	@echo "🧪 Test with: git <TAB> or make <TAB>"
 
-fix-zsh-simple: ## 🔧 Simple ZSH completion fix (disable problematic features)
-	@echo "🔧 Applying simple ZSH completion fix..."
-	@echo "Clearing completion cache..."
-	@rm -f ~/.zcompdump* 2>/dev/null || true
-	@echo "Resetting completion system..."
-	@zsh -c 'autoload -Uz compinit && compinit -d ~/.zcompdump'
-	@echo "✅ Simple fix applied!"
-	@echo ""
-	@echo "🔄 Please restart your shell: exec \$$SHELL -l"
-
-uv-python-setup: ## 🐍 Configure UV Python environment (fix Python path issues)
+uv-python-setup: ## 🐍 Configure UV Python environment with .python-version support
 	@echo "🐍 Configuring UV Python environment..."
 	@echo ""
 	@echo "Checking UV installation..."
@@ -337,36 +298,47 @@ uv-python-setup: ## 🐍 Configure UV Python environment (fix Python path issues
 	@echo "Setting Python 3.12 as default..."
 	@uv python pin 3.12 2>/dev/null || echo "✅ Python 3.12 already set as default"
 	@echo ""
+	@echo "Checking for fswatch (for .python-version file monitoring)..."
+	@if ! command -v fswatch &> /dev/null; then \
+		echo "📦 Installing fswatch for file monitoring..."; \
+		brew install fswatch || echo "⚠️  Failed to install fswatch, will use periodic checking instead"; \
+	else \
+		echo "✅ fswatch already installed"; \
+	fi
+	@echo ""
+	@echo "Creating UV Python shims..."
+	@mkdir -p ~/.local/share/uv/shims
+	@echo '#!/bin/bash\nuv_python=$$(uv python find 2>/dev/null)\nif [ -n "$$uv_python" ]; then\n    exec "$$uv_python" "$$@"\nelse\n    exec /opt/homebrew/bin/python3 "$$@" 2>/dev/null || exec /usr/bin/python3 "$$@"\nfi' > ~/.local/share/uv/shims/python
+	@echo '#!/bin/bash\nuv_python=$$(uv python find 2>/dev/null)\nif [ -n "$$uv_python" ]; then\n    exec "$$uv_python" "$$@"\nelse\n    exec /opt/homebrew/bin/python3 "$$@" 2>/dev/null || exec /usr/bin/python3 "$$@"\nfi' > ~/.local/share/uv/shims/python3
+	@echo '#!/bin/bash\nuv_python=$$(uv python find 2>/dev/null)\nif [ -n "$$uv_python" ]; then\n    exec "$$uv_python" -m pip "$$@"\nelse\n    exec /opt/homebrew/bin/python3 -m pip "$$@" 2>/dev/null || exec /usr/bin/python3 -m pip "$$@"\nfi' > ~/.local/share/uv/shims/pip
+	@echo '#!/bin/bash\nuv_python=$$(uv python find 2>/dev/null)\nif [ -n "$$uv_python" ]; then\n    exec "$$uv_python" -m pip "$$@"\nelse\n    exec /opt/homebrew/bin/python3 -m pip "$$@" 2>/dev/null || exec /usr/bin/python3 -m pip "$$@"\nfi' > ~/.local/share/uv/shims/pip3
+	@chmod +x ~/.local/share/uv/shims/{python,python3,pip,pip3}
+	@echo "✅ UV Python shims created"
+	@echo ""
 	@echo "Current UV Python status:"
-	@echo "  Default Python: $$(uv python find 2>/dev/null || echo 'Not found')"
-	@echo "  Python version: $$(uv python find --show-version 2>/dev/null || echo 'Not found')"
+	@echo "  Default Python: $(uv python find 2>/dev/null || echo 'Not found')"
+	@echo "  Python version: $(uv python find --show-version 2>/dev/null || echo 'Not found')"
+	@echo "  Shims directory: ~/.local/share/uv/shims"
+	@echo "  File monitoring: $$(command -v fswatch &> /dev/null && echo 'fswatch available' || echo 'periodic checking')"
 	@echo ""
 	@echo "✅ UV Python configuration complete!"
 	@echo ""
-	@echo "🔄 Please restart your shell or run: source ~/.zshrc"
-	@echo "   Then test with: python --version"
+	@echo "🔄 Please restart your shell: exec \$$SHELL -l"
+	@echo "   Then test with: which python3 && python --version"
 
-uv-python-status: ## 🐍 Check UV Python configuration status
-	@echo "🐍 UV Python Configuration Status"
-	@echo "=================================="
-	@echo ""
-	@echo "UV Version:"
-	@uv --version || echo "  UV not found"
-	@echo ""
-	@echo "Python Version:"
-	@python --version 2>/dev/null || echo "  Python not found"
-	@echo ""
-	@echo "Python Path:"
-	@which python 2>/dev/null || echo "  Python not in PATH"
-	@echo ""
-	@echo "UV Python Versions:"
-	@uv python list 2>/dev/null || echo "  No UV Python versions installed"
-	@echo ""
-	@echo "UV Default Python:"
-	@uv python find 2>/dev/null || echo "  No default Python set"
-	@echo ""
-	@echo "Test .python-version detection:"
-	@echo "3.12" > .test-python-version && uv python find --show-version 2>/dev/null && rm .test-python-version || echo "  Detection failed"
+python-refresh: ## 🔄 Manually refresh Python version (useful after editing .python-version)
+	@echo "🔄 Refreshing Python version detection..."
+	@if [ -f ".python-version" ]; then \
+		echo "📝 Found .python-version: $$(cat .python-version)"; \
+		echo "🐍 Current UV Python: $$(uv python find --show-version 2>/dev/null || echo 'Not found')"; \
+		uv python pin "$$(cat .python-version)" 2>/dev/null || echo "⚠️  Python $$(cat .python-version) not installed"; \
+		echo "✅ Python version refreshed"; \
+		echo "🧪 Testing: $$(python --version 2>/dev/null || echo 'Python not found')"; \
+	else \
+		echo "❌ No .python-version file found in current directory"; \
+	fi
+
+##@ HOMEBREW MANAGEMENT
 
 brew-install: ## 🍺 Install package (usage: make brew-install PACKAGE=git)
 	@if [ -z "$(PACKAGE)" ]; then \
@@ -379,32 +351,6 @@ brew-install: ## 🍺 Install package (usage: make brew-install PACKAGE=git)
 	else \
 		./scripts/installations/brew-manager.py install "$(PACKAGE)"; \
 	fi
-
-brew-install-formula: ## 🍺 Install from formula file (usage: make brew-install-formula FORMULA=formulas/tool.rb)
-	@if [ -z "$(FORMULA)" ]; then \
-		echo "Usage: make brew-install-formula FORMULA=path/to/formula.rb"; \
-		exit 1; \
-	fi
-	@chmod +x ./scripts/installations/brew-manager.py
-	@./scripts/installations/brew-manager.py install-formula "$(FORMULA)"
-
-brew-clean-taps: ## 🚰 Remove custom Homebrew taps (hashicorp/tap, etc.)
-	@echo "🚰 Removing custom Homebrew taps..."
-	@python3 -c "\
-import subprocess; \
-result = subprocess.run('brew tap', shell=True, capture_output=True, text=True); \
-custom_taps = [tap.strip() for tap in result.stdout.split('\n') if tap.strip() and not tap.startswith('homebrew/')]; \
-print(f'Found {len(custom_taps)} custom taps: {custom_taps}') if custom_taps else print('No custom taps found'); \
-[subprocess.run(f'brew untap {tap}', shell=True) for tap in custom_taps]; \
-print('✅ Custom taps removed') if custom_taps else None"
-
-brew-list-formulas: ## 🍺 List available custom formulas
-	@chmod +x ./scripts/installations/brew-manager.py
-	@./scripts/installations/brew-manager.py list-formulas
-
-brew-update: ## 🍺 Update Homebrew and packages
-	@chmod +x ./scripts/installations/brew-manager.py
-	@./scripts/installations/brew-manager.py update
 
 brew-upgrade: ## 🔄 Upgrade all installed packages to latest versions
 	@echo "🔄 Updating Homebrew package database..."
@@ -437,10 +383,6 @@ local-taps-restore: ## 🏠 Restore local taps (usage: make local-taps-restore D
 	@chmod +x ./scripts/installations/local-taps-manager.py
 	@./scripts/installations/local-taps-manager.py restore "$(DIR)"
 
-local-taps-validate: ## 🏠 Validate all local taps
-	@chmod +x ./scripts/installations/local-taps-manager.py
-	@./scripts/installations/local-taps-manager.py validate
-
 ##@ DEVELOPMENT & TESTING
 
 build: ## 🐳 Build Neovim test environment
@@ -459,7 +401,7 @@ install-step-1-local-taps: ## Step 1/7: Restore local taps
 	@printf "\033[96m============================================================\033[0m\n"
 	@printf "\033[96mStep 1/7: Local Homebrew Taps Restoration\033[0m\n"
 	@printf "\033[96m============================================================\033[0m\n"
-	@$(MAKE) restore-local-taps || printf "\033[93m⚠️  Step 1 failed but continuing...\033[0m\n"
+	@$(MAKE) install-local-taps || printf "\033[93m⚠️  Step 1 failed but continuing...\033[0m\n"
 
 install-step-2-packages: ## Step 2/7: Install Homebrew packages
 	@printf "\033[96m============================================================\033[0m\n"
@@ -570,58 +512,3 @@ clean-step-7-caches: ## Step 7/7: Remove development caches
 	@chmod +x ./scripts/cleanup/caches.py
 	@./scripts/cleanup/caches.py -y || printf "\033[93m⚠️  Step 7 failed but continuing...\033[0m\n"
 	@printf "\033[92m✅ Step 7 completed\033[0m\n"
-
-##@ LEGACY COMPATIBILITY
-
-packages: ## 📦 Legacy: Install all packages
-	@echo "Install all packages..."
-	@chmod +x ./scripts/installations/packages.py
-	@./scripts/installations/packages.py install --all
-	@echo "Done"
-
-language-managers: ## 🔧 Legacy: Setup language managers
-	@echo "Setup language version managers..."
-	@chmod +x ./scripts/installations/language-managers.py
-	@./scripts/installations/language-managers.py
-	@echo "Done"
-
-git-submodule: ## 🔗 Legacy: Install git submodules
-	@echo "Install git-submodule..."
-	@chmod +x ./scripts/installations/git-submodule.py
-	@./scripts/installations/git-submodule.py
-	@echo "Done"
-
-dotfiles: ## ⚙️ Legacy: Install dotfiles
-	@echo "Install dotfiles..."
-	@chmod +x ./scripts/installations/dotfiles.py
-	@./scripts/installations/dotfiles.py
-	@echo "Done"
-
-neovim-plugins: ## 📝 Legacy: Install neovim plugins
-	@echo "Install neovim plugins and configurations..."
-	@chmod +x ./scripts/installations/neovim.py
-	@./scripts/installations/neovim.py
-	@echo "Done"
-
-restore-local-taps: ## 🏠 Legacy: Restore local taps
-	@echo "Restore local Homebrew taps..."
-	@chmod +x ./scripts/installations/local-taps-manager.py
-	@if [ -d "./backups/local-taps" ]; then \
-		./scripts/installations/local-taps-manager.py restore ./backups/local-taps; \
-	else \
-		echo "No local taps backup found, skipping..."; \
-	fi
-	@echo "Done"
-
-post-install-verify: ## ✅ Legacy: Post-install verification
-	@chmod +x ./scripts/verifications/post-install-verification.py
-	@./scripts/verifications/post-install-verification.py
-
-system-status-workers: ## 📊 Legacy: System status with workers
-	@chmod +x ./scripts/verifications/system-status-checker.py
-	@if [ -z "$(WORKERS)" ]; then \
-		echo "Usage: make system-status-workers WORKERS=number"; \
-		echo "Example: make system-status-workers WORKERS=8"; \
-		exit 1; \
-	fi
-	@./scripts/verifications/system-status-checker.py --workers $(WORKERS)
