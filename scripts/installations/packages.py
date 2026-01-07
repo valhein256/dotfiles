@@ -69,6 +69,9 @@ class LanguagePackageManager:
             Package("neovim", PackageManager.BREW, "editor", "Modern Vim"),
             Package("universal-ctags", PackageManager.BREW, "editor", "Modern ctags implementation"),
             
+            # AI Development Tools
+            Package("claude-code", PackageManager.BREW_CASK, "ai-tools", "Claude Code - Terminal-based AI coding assistant"),
+            
             # Python Ecosystem - UV Only (replaces pyenv, pip, poetry, pipx)
             Package("uv", PackageManager.BREW, "python", "Complete Python management tool (versions + packages + projects)"),
             
@@ -476,7 +479,7 @@ class LanguagePackageManager:
             self._cleanup_obsolete_packages()
         
         # Install by category in order
-        install_order = ["core", "editor", "terminal", "python", "nodejs", "golang", "java-prereq", 
+        install_order = ["core", "editor", "ai-tools", "terminal", "python", "nodejs", "golang", "java-prereq", 
                         "rust", "devops", "cloud", "network", "fonts", "system", "custom"]
         
         if not skip_optional:

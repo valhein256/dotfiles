@@ -200,6 +200,104 @@ install-packages: ## 📦 Install Homebrew packages only
 	@chmod +x ./scripts/installations/packages.py
 	@./scripts/installations/packages.py install --all
 
+install-updates: ## 🔄 Install only missing/new packages (skip already installed)
+	@echo "🔄 Installing missing and newly added packages..."
+	@echo ""
+	@echo "This will:"
+	@echo "  ✅ Skip packages that are already installed"
+	@echo "  📦 Install only missing or newly added packages"
+	@echo "  🧹 Clean up obsolete packages with modern replacements"
+	@echo ""
+	@chmod +x ./scripts/installations/packages.py
+	@./scripts/installations/packages.py install --all
+	@echo ""
+	@echo "✅ Package updates completed!"
+	@echo ""
+	@echo "💡 To see what was installed, run: make system-status"
+
+install-and-upgrade: ## 🚀 Install missing packages AND upgrade all existing packages
+	@echo "🚀 Installing missing packages and upgrading existing ones..."
+	@echo ""
+	@echo "This will:"
+	@echo "  📦 Install any missing or newly added packages"
+	@echo "  🔄 Upgrade all existing packages to latest versions"
+	@echo "  🧹 Clean up obsolete packages and old versions"
+	@echo ""
+	@echo "⏱️  This may take several minutes depending on updates available"
+	@echo ""
+	@printf "❓ Proceed with install and upgrade? [y/N]: "; \
+	read confirm; \
+	if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \
+		echo ""; \
+		echo "📦 Step 1: Installing missing packages..."; \
+		chmod +x ./scripts/installations/packages.py; \
+		./scripts/installations/packages.py install --all; \
+		echo ""; \
+		echo "🔄 Step 2: Upgrading all existing packages..."; \
+		$(MAKE) brew-upgrade; \
+		echo ""; \
+		echo "✅ Install and upgrade completed!"; \
+		echo ""; \
+		echo "📊 Summary:"; \
+		echo "  • Missing packages have been installed"; \
+		echo "  • All packages upgraded to latest versions"; \
+		echo "  • Old package versions cleaned up"; \
+		echo ""; \
+		echo "💡 Run 'make system-status' to verify everything is working"; \
+	else \
+		echo "❌ Operation cancelled"; \
+		exit 1; \
+	fi
+
+install-and-upgrade-force: ## 🚀 Install missing packages AND upgrade all existing packages (no confirmation)
+	@echo "🚀 Installing missing packages and upgrading existing ones..."
+	@echo ""
+	@echo "📦 Step 1: Installing missing packages..."
+	@chmod +x ./scripts/installations/packages.py
+	@./scripts/installations/packages.py install --all
+	@echo ""
+	@echo "🔄 Step 2: Upgrading all existing packages..."
+	@$(MAKE) brew-upgrade
+	@echo ""
+	@echo "✅ Install and upgrade completed!"
+	@echo ""
+	@echo "📊 Summary:"
+	@echo "  • Missing packages have been installed"
+	@echo "  • All packages upgraded to latest versions"
+	@echo "  • Old package versions cleaned up"
+	@echo ""
+	@echo "💡 Run 'make system-status' to verify everything is working"
+
+sync-packages: ## ⚡ Quick sync - install missing packages and upgrade existing (no confirmation)
+	@echo "⚡ Quick package sync..."
+	@echo ""
+	@echo "📦 Installing missing packages..."
+	@chmod +x ./scripts/installations/packages.py
+	@./scripts/installations/packages.py install --all
+	@echo ""
+	@echo "🔄 Upgrading existing packages..."
+	@$(MAKE) brew-upgrade
+	@echo ""
+	@echo "✅ Package sync completed!"
+
+install-category: ## 📂 Install packages by category (usage: make install-category CATEGORY=ai-tools)
+	@if [ -z "$(CATEGORY)" ]; then \
+		echo "Usage: make install-category CATEGORY=category-name"; \
+		echo ""; \
+		echo "Available categories:"; \
+		python3 scripts/installations/packages.py list | grep "📂" | sed 's/📂 //g'; \
+		exit 1; \
+	fi
+	@echo "📂 Installing $(CATEGORY) packages..."
+	@chmod +x ./scripts/installations/packages.py
+	@./scripts/installations/packages.py install --category $(CATEGORY)
+
+packages-status: ## 📊 Show package installation status
+	@echo "📊 Package Installation Status"
+	@echo "=============================="
+	@chmod +x ./scripts/installations/packages.py
+	@./scripts/installations/packages.py status
+
 install-dotfiles: ## ⚙️ Install dotfiles symlinks only
 	@chmod +x ./scripts/installations/dotfiles.py
 	@./scripts/installations/dotfiles.py
@@ -337,6 +435,30 @@ python-refresh: ## 🔄 Manually refresh Python version (useful after editing .p
 	else \
 		echo "❌ No .python-version file found in current directory"; \
 	fi
+
+install-claude-code: ## 🤖 Install Claude Code CLI (Anthropic's AI coding assistant)
+	@echo "🤖 Installing Claude Code CLI..."
+	@echo ""
+	@echo "Claude Code is Anthropic's terminal-based AI coding assistant"
+	@echo "that works directly in your development environment."
+	@echo ""
+	@echo "Installing via Homebrew cask..."
+	@brew install --cask claude-code || (echo "❌ Failed to install Claude Code" && exit 1)
+	@echo ""
+	@echo "✅ Claude Code installed successfully!"
+	@echo ""
+	@echo "🚀 Getting started:"
+	@echo "  1. Run: claude auth"
+	@echo "  2. Follow the authentication process"
+	@echo "  3. Navigate to your project: cd your-project"
+	@echo "  4. Start Claude Code: claude"
+	@echo ""
+	@echo "💡 Authentication options:"
+	@echo "  • Claude Console (default) - Requires active billing"
+	@echo "  • Claude Pro/Max subscription - Unified subscription"
+	@echo "  • Enterprise platforms - Bedrock, Vertex AI, Foundry"
+	@echo ""
+	@echo "📚 Learn more: https://docs.claude.com/en/docs/claude-code/overview"
 
 ##@ HOMEBREW MANAGEMENT
 
