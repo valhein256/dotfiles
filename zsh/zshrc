@@ -508,6 +508,23 @@ alias terraform_precheck='terraform init -upgrade && terraform fmt && terraform 
 # ============================================================================
 
 # ----------------------------------------------------------------------------
+# AWS Setup Alias
+# ----------------------------------------------------------------------------
+# Automate AWS SSO login
+AWS_SETUP_SCRIPT="${HOME}/Documents/Netskope/Development/scripts/aws_setup"
+if [[ -f "$AWS_SETUP_SCRIPT" ]]; then
+    alias aws_setup="$AWS_SETUP_SCRIPT"
+fi
+
+# ----------------------------------------------------------------------------
+# Claude CLI Integration
+# ----------------------------------------------------------------------------
+CLAUDE_ENV_FILE="${HOME}/Documents/Netskope/Development/env"
+if [[ -f "$CLAUDE_ENV_FILE" ]]; then
+    source "$CLAUDE_ENV_FILE"
+fi
+
+# ----------------------------------------------------------------------------
 # Less Color Configuration (Disabled)
 # ----------------------------------------------------------------------------
 #export LESS_TERMCAP_mb=$'\E[01;31m'       # begin blinking
@@ -519,15 +536,15 @@ alias terraform_precheck='terraform init -upgrade && terraform fmt && terraform 
 #export LESS_TERMCAP_us=$'\E[04;38;5;146m' # begin underline
 
 
-# ============================================================================
+# ----------------------------------------------------------------------------
 # Amazon Q Integration (Post-initialization)
-# ============================================================================
+# ----------------------------------------------------------------------------
 # NOTE: Keep at the bottom of this file
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && \
     builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
 
 # Added by Antigravity
-export PATH="/Users/wlin/.antigravity/antigravity/bin:$PATH"
+export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 
 
 # Kiro CLI post block. Keep at the bottom of this file.
