@@ -31,7 +31,7 @@ install: ## 🚀 Complete installation (orchestrated)
 	@echo ""
 	@echo -n "❓ Proceed with complete installation? Type 'INSTALL' to confirm: "; \
 	read confirm; \
-	if [ "$confirm" != "INSTALL" ]; then \
+	if [ "$$confirm" != "INSTALL" ]; then \
 		echo "❌ Operation cancelled"; \
 		exit 1; \
 	fi
@@ -78,7 +78,7 @@ clean: ## 🧹 Complete cleanup (orchestrated)
 	@echo ""
 	@echo -n "❓ Are you ABSOLUTELY SURE you want to proceed? Type 'CLEANUP' to confirm: "; \
 	read confirm; \
-	if [ "$confirm" != "CLEANUP" ]; then \
+	if [ "$$confirm" != "CLEANUP" ]; then \
 		echo "❌ Operation cancelled"; \
 		exit 1; \
 	fi
@@ -136,7 +136,7 @@ full-reset: ## 🔄 Complete reset and reinstall (clean + install)
 	@echo ""
 	@echo -n "❓ Are you ABSOLUTELY SURE you want to proceed? Type 'RESET' to confirm: "; \
 	read confirm; \
-	if [ "$confirm" != "RESET" ]; then \
+	if [ "$$confirm" != "RESET" ]; then \
 		echo "❌ Operation cancelled"; \
 		exit 1; \
 	fi

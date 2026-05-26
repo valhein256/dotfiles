@@ -278,15 +278,15 @@ class BrewPackagesCleanup:
         self.backup_packages()
         self.backup_taps()
         
-        # Step 2: Remove custom taps first (before removing packages that might depend on them)
-        self.remove_custom_taps()
-        
-        # Step 3: Remove casks
+        # Step 2: Remove casks first
         self.remove_casks()
-        
-        # Step 4: Remove formulae
+
+        # Step 3: Remove formulae (must precede untap — brew untap refuses
+        # while any formula from that tap is still installed)
         self.remove_formulae()
-        
+
+        # Step 4: Remove custom taps (now safe — no installed formulae depend on them)
+        self.remove_custom_taps()
         # Step 5: Clean up
         self.cleanup_homebrew()
         

@@ -84,6 +84,9 @@ class LanguagePackageManager:
             Package("go", PackageManager.BREW, "golang", "Go programming language"),
 
             # Java Ecosystem Prerequisites - System Level Dependencies
+            # NOTE: bash 4+ is required because SDKMAN's installer rejects macOS' system /bin/bash 3.2.
+            # Without it, setup_sdkman_java() in language-managers.py fails before any JDK is installed.
+            Package("bash", PackageManager.BREW, "java-prereq", "Bash 4+ (required by SDKMAN installer; macOS ships 3.2)", required=True),
             Package("zip", PackageManager.BREW, "java-prereq", "Archive utility (required for SDKMAN)", required=True),
             Package("unzip", PackageManager.BREW, "java-prereq", "Archive extraction (required for SDKMAN)", required=True),
             Package("curl", PackageManager.BREW, "java-prereq", "Download tool (required for SDKMAN)", required=True),
@@ -98,6 +101,8 @@ class LanguagePackageManager:
             Package("terraform", PackageManager.BREW_TAP, "devops", "Infrastructure as code",
                    tap_name="hashicorp/tap", install_cmd="brew install hashicorp/tap/terraform"),
             Package("terragrunt", PackageManager.BREW, "devops", "Terraform wrapper for DRY configurations"),
+            Package("vault", PackageManager.BREW_TAP, "devops", "Secrets management tool",
+                   tap_name="hashicorp/tap", install_cmd="brew install hashicorp/tap/vault"),
 
             # Cloud Tools - Major Providers Only
             Package("awscli", PackageManager.BREW, "cloud", "AWS command line interface"),
@@ -120,6 +125,7 @@ class LanguagePackageManager:
 
             # Optional Development Tools
             Package("kind", PackageManager.BREW, "optional", "Kubernetes in Docker", required=False),
+            Package("grpcurl", PackageManager.BREW, "optional", "gRPC CLI client (curl for gRPC services)", required=False),
             Package("ansible", PackageManager.BREW, "optional", "Configuration management", required=False),
         ]
 
