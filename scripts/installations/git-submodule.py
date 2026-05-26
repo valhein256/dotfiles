@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
-"""
-Git Submodule Management Script
-Initializes and updates git submodules for zsh and tmux plugins.
+"""External Plugin Manager (formerly git-submodule.py).
+
+Despite the filename — kept for Makefile compatibility — this no longer
+manages git submodules. zplug and tpm used to be pinned via .gitmodules,
+but that broke as soon as zplug renamed its default branch (master -> main),
+and we didn't actually want a pinned version anyway.
+
+This script now treats them as plain external clones:
+  * if the working tree is missing, clone it shallow
+  * if it exists, fast-forward to the upstream default branch
 """
 
 import os
@@ -16,225 +23,148 @@ class Colors:
     GREEN = '\033[92m'
     YELLOW = '\033[93m'
     BLUE = '\033[94m'
-    MAGENTA = '\033[95m'
-    CYAN = '\033[96m'
-    WHITE = '\033[97m'
-    BOLD = '\033[1m'
-    RESET = '\033[0m'
     GRAY = '\033[90m'
+    RESET = '\033[0m'
 
 
-class GitSubmoduleManager:
-    """Git submodule management system"""
-    
-    def __init__(self):
-        self.current_path = Path.cwd()
-        self.platform = os.uname().sysname
-        
-        # Define submodules
-        self.submodules = [
-            ("https://github.com/zplug/zplug", "zsh/zplug", "zplug"),
-            ("https://github.com/tmux-plugins/tpm", "tmux/plugins/tpm", "tmux plugin manager"),
-        ]
-    
-    def info(self, message: str) -> None:
-        print(f"  [ {Colors.BLUE}..{Colors.RESET} ] {message}")
-    
-    def success(self, message: str) -> None:
-        print(f"  [ {Colors.GREEN}OK{Colors.RESET} ] {message}")
-    
-    def fail(self, message: str) -> None:
-        print(f"  [ {Colors.RED}FAIL{Colors.RESET} ] {message}")
-        print("")
-        sys.exit(1)
-    
-    def warning(self, message: str) -> None:
-        print(f"  [ {Colors.YELLOW}WARN{Colors.RESET} ]{message}")
-    
-    def run_command(self, cmd: List[str], description: str = "", capture_output: bool = False) -> subprocess.CompletedProcess:
-        """Run a command and handle errors"""
-        try:
-            if not capture_output:
-                self.info(f"Running: {' '.join(cmd)}")
-            
-            result = subprocess.run(
-                cmd,
-                cwd=self.current_path,
-                capture_output=capture_output,
-                text=True,
-                check=True
-            )
-            
-            if description and not capture_output:
-                self.success(description)
-            
-            return result
-            
-        except subprocess.CalledProcessError as e:
-            error_msg = f"Command failed: {' '.join(cmd)}"
-            if e.stderr:
-                error_msg += f"\nError: {e.stderr}"
-            self.fail(error_msg)
-        except Exception as e:
-            self.fail(f"Unexpected error running command: {e}")
-    
-    def check_git_repository(self) -> bool:
-        """Check if we're in a git repository"""
-        try:
-            self.run_command(["git", "rev-parse", "--git-dir"], capture_output=True)
-            return True
-        except:
-            return False
-    
-    def has_gitmodules(self) -> bool:
-        """Check if .gitmodules file exists"""
-        return (self.current_path / ".gitmodules").exists()
-    
-    def add_submodules(self) -> None:
-        """Add submodules if .gitmodules doesn't exist"""
-        if self.has_gitmodules():
-            self.info(".gitmodules already exists, skipping submodule addition")
-            return
-        
-        self.info("Adding git submodules...")
-        
-        for url, path, description in self.submodules:
-            self.info(f"Adding {description} submodule...")
-            try:
-                self.run_command([
-                    "git", "submodule", "add", url, path
-                ], f"{description} submodule added")
-            except:
-                # If submodule already exists, continue
-                self.warning(f"{description} submodule may already exist")
-    
-    def init_submodules(self) -> None:
-        """Initialize git submodules"""
-        self.info("Initializing git submodules...")
-        self.run_command([
-            "git", "submodule", "init"
-        ], "Git submodules initialized")
-    
-    def update_submodules(self) -> None:
-        """Update git submodules recursively, initializing any that are missing.
-        --init makes this idempotent: if zsh/zplug or tmux/plugins/tpm got deinitialized,
-        their working trees are restored on the next run."""
-        self.info("Updating git submodules...")
-        self.run_command([
-            "git", "submodule", "update", "--init", "--recursive"
-        ], "Git submodules updated")
-
-    def pull_submodules(self) -> None:
-        """Fast-forward each submodule to its upstream default branch.
-        Uses --remote so we follow whatever branch the upstream calls default
-        (zplug renamed master -> main; tpm still uses master). The previous
-        'git pull origin master' failed hard on zplug after that rename."""
-        self.info("Pulling latest changes for submodules...")
-        self.run_command([
-            "git", "submodule", "update", "--remote", "--recursive"
-        ], "Submodules pulled to upstream default branch")
-    
-    def verify_submodules(self) -> bool:
-        """Verify that all submodules are properly initialized"""
-        self.info("Verifying submodules...")
-        
-        all_good = True
-        for _, path, description in self.submodules:
-            submodule_path = self.current_path / path
-            git_path = submodule_path / ".git"
-            
-            if submodule_path.exists() and git_path.exists():
-                self.success(f"{description} submodule verified")
-            else:
-                self.warning(f"{description} submodule not properly initialized")
-                all_good = False
-        
-        return all_good
-    
-    def setup_submodules(self) -> None:
-        """Complete submodule setup process"""
-        print("")
-        print(f"{Colors.GRAY}##########################################")
-        print(f"# scripts/installations/git-submodule.py #")
-        print(f"##########################################{Colors.RESET}")
-        print("")
-        print("### Git submodule init & update...")
-        
-        # Check if we're in a git repository
-        if not self.check_git_repository():
-            self.fail("Not in a git repository")
-        
-        # Add submodules if needed
-        self.add_submodules()
-        
-        # Initialize submodules
-        self.init_submodules()
-        
-        # Update submodules
-        self.update_submodules()
-        
-        # Pull latest changes
-        self.pull_submodules()
-        
-        print("### Git submodule init & update... done !!")
-        print("")
-        print(f"{Colors.GREEN}# scripts/installations/git-submodule.py Finish !!{Colors.RESET}")
-        print("")
-    
-    def status(self) -> None:
-        """Show submodule status"""
-        print("📋 Git Submodule Status:")
-        try:
-            result = self.run_command([
-                "git", "submodule", "status"
-            ], capture_output=True)
-            
-            if result.stdout.strip():
-                for line in result.stdout.strip().split('\n'):
-                    print(f"  {line}")
-            else:
-                print("  No submodules found")
-                
-        except:
-            print("  Failed to get submodule status")
+# (url, working-tree path relative to dotfiles root)
+PLUGINS: List[Tuple[str, str]] = [
+    ("https://github.com/zplug/zplug",       "zsh/zplug"),
+    ("https://github.com/tmux-plugins/tpm",  "tmux/plugins/tpm"),
+]
 
 
-def main():
-    """Main function"""
-    manager = GitSubmoduleManager()
-    
-    # Parse command line arguments
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "--status":
-            manager.status()
-            return
-        elif sys.argv[1] == "--verify":
-            success = manager.verify_submodules()
-            sys.exit(0 if success else 1)
-        elif sys.argv[1] == "--help":
-            print("Git Submodule Manager")
-            print("Usage:")
-            print("  python git-submodule.py          # Setup submodules")
-            print("  python git-submodule.py --status # Show status")
-            print("  python git-submodule.py --verify # Verify setup")
-            return
-    
+def info(msg: str) -> None:
+    print(f"  [ {Colors.BLUE}..{Colors.RESET} ] {msg}")
+
+
+def ok(msg: str) -> None:
+    print(f"  [ {Colors.GREEN}OK{Colors.RESET} ] {msg}")
+
+
+def warn(msg: str) -> None:
+    print(f"  [ {Colors.YELLOW}WARN{Colors.RESET} ] {msg}")
+
+
+def fail(msg: str) -> None:
+    print(f"  [ {Colors.RED}FAIL{Colors.RESET} ] {msg}")
+
+
+def run(cmd: List[str], cwd: Path) -> int:
+    """Run a command streaming output. Return exit code."""
+    info("Running: " + " ".join(cmd))
     try:
-        manager.setup_submodules()
-        
-        # Verify installation
-        if manager.verify_submodules():
-            print(f"[ {Colors.GREEN}OK{Colors.RESET} ] All submodules successfully set up!")
-        else:
-            print(f"[ {Colors.YELLOW}WARN{Colors.RESET} ]Some submodules may need attention")
-            
-    except KeyboardInterrupt:
-        print(f"\n[ {Colors.RED}FAIL{Colors.RESET} ] Setup cancelled by user")
-        sys.exit(1)
-    except Exception as e:
-        print(f"\n[ {Colors.RED}FAIL{Colors.RESET} ] Setup failed: {e}")
-        sys.exit(1)
+        result = subprocess.run(cmd, cwd=cwd, check=False)
+        return result.returncode
+    except FileNotFoundError as e:
+        fail(f"Command not found: {e}")
+        return 127
+
+
+def clone_or_update(url: str, path: Path, repo_root: Path) -> bool:
+    """Clone the plugin if missing, otherwise pull --ff-only against its
+    current upstream branch (whatever HEAD is tracking).
+
+    Returns True on success, False if the plugin ended up not usable.
+    """
+    target = repo_root / path
+    git_dir = target / ".git"
+
+    if not git_dir.exists():
+        info(f"{path}: clone from {url}")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        rc = run(["git", "clone", "--depth=1", url, str(target)], cwd=repo_root)
+        if rc != 0:
+            fail(f"{path}: clone failed (exit {rc})")
+            return False
+        ok(f"{path}: cloned")
+        return True
+
+    # Existing checkout — fast-forward to upstream.
+    # `git pull --ff-only` against the configured upstream branch handles the
+    # zplug rename case automatically: the local branch tracks whatever the
+    # clone created, and pulling against that ref doesn't care about
+    # 'master' vs 'main'.
+    info(f"{path}: fast-forward to upstream")
+    rc = run(["git", "-C", str(target), "pull", "--ff-only"], cwd=repo_root)
+    if rc != 0:
+        warn(f"{path}: pull --ff-only failed (exit {rc}); leaving working tree alone")
+        return False
+    ok(f"{path}: up to date")
+    return True
+
+
+def find_dotfiles_root() -> Path:
+    """Resolve the dotfiles repo root regardless of where the script was run from."""
+    here = Path(__file__).resolve()
+    # scripts/installations/git-submodule.py -> dotfiles/
+    return here.parent.parent.parent
+
+
+def main() -> int:
+    # CLI flags retained for compatibility with the old script.
+    if len(sys.argv) > 1 and sys.argv[1] == "--help":
+        print("External Plugin Manager")
+        print("Usage:")
+        print("  git-submodule.py            # Clone or fast-forward each plugin")
+        print("  git-submodule.py --status   # Show status of each plugin")
+        print("  git-submodule.py --verify   # Exit non-zero if any plugin is missing")
+        return 0
+
+    repo_root = find_dotfiles_root()
+
+    if len(sys.argv) > 1 and sys.argv[1] == "--status":
+        print("Plugin status:")
+        for url, path in PLUGINS:
+            target = repo_root / path
+            if (target / ".git").exists():
+                try:
+                    head = subprocess.check_output(
+                        ["git", "-C", str(target), "rev-parse", "--short", "HEAD"],
+                        text=True,
+                    ).strip()
+                    print(f"  {path:<25} @ {head}  ({url})")
+                except subprocess.CalledProcessError:
+                    print(f"  {path:<25} @ <unreadable>  ({url})")
+            else:
+                print(f"  {path:<25} <missing>  ({url})")
+        return 0
+
+    if len(sys.argv) > 1 and sys.argv[1] == "--verify":
+        missing = [p for _, p in PLUGINS if not (repo_root / p / ".git").exists()]
+        if missing:
+            for p in missing:
+                fail(f"missing plugin: {p}")
+            return 1
+        ok("All plugins present")
+        return 0
+
+    print("")
+    print(f"{Colors.GRAY}##########################################")
+    print("# scripts/installations/git-submodule.py #")
+    print(f"##########################################{Colors.RESET}")
+    print("")
+    print("### External plugin clone/update...")
+
+    all_ok = True
+    for url, path in PLUGINS:
+        if not clone_or_update(url, Path(path), repo_root):
+            all_ok = False
+
+    print("### External plugin clone/update... done !!")
+    print("")
+    if all_ok:
+        print(f"{Colors.GREEN}# scripts/installations/git-submodule.py Finish !!{Colors.RESET}")
+        return 0
+    else:
+        warn("Some plugins failed; review messages above")
+        return 1
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        sys.exit(main())
+    except KeyboardInterrupt:
+        print()
+        fail("Cancelled by user")
+        sys.exit(1)
