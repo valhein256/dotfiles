@@ -491,6 +491,18 @@ alias terraform_precheck='terraform init -upgrade && terraform fmt && terraform 
 # ============================================================================
 
 # ----------------------------------------------------------------------------
+# Machine-local configs
+# ----------------------------------------------------------------------------
+# Anything under zsh/local/*.zsh is gitignored — drop work-specific PATH,
+# private env-vars, or per-machine tweaks there. The (N) glob qualifier means
+# "no error if the directory is empty", so a bare clone still works.
+_dotfiles_local_dir="${${(%):-%x}:A:h}/local"
+for _cfg in "$_dotfiles_local_dir"/*.zsh(N); do
+    source "$_cfg"
+done
+unset _cfg _dotfiles_local_dir
+
+# ----------------------------------------------------------------------------
 # Less Color Configuration (Disabled)
 # ----------------------------------------------------------------------------
 #export LESS_TERMCAP_mb=$'\E[01;31m'       # begin blinking
