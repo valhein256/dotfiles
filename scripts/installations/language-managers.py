@@ -63,61 +63,74 @@ def command_exists(command: str) -> bool:
     return result is not None and result.returncode == 0
 
 
+def _find_modern_bash() -> Optional[str]:
+    """Find a Bash 4+ binary. macOS ships /bin/bash 3.2 forever (GPLv3 licensing)
+    and SDKMAN's installer hard-requires Bash 4+."""
+    for path in ('/opt/homebrew/bin/bash', '/usr/local/bin/bash'):
+        if Path(path).exists():
+            return path
+    return None
+
+
 def setup_sdkman_java() -> None:
     """Setup SDKMAN for Java management."""
     info("Setting up SDKMAN for Java management...")
-    
+
     home = Path.home()
     sdkman_dir = home / ".sdkman"
-    
+
     # Check system prerequisites
     info("Checking system prerequisites for SDKMAN...")
     required_tools = ['zip', 'unzip', 'curl', 'sed']
-    
+
     for tool in required_tools:
         if not command_exists(tool):
             fail(f"{tool} is required but not installed. Run 'make packages-java-prereq' first.")
-    
+
     success("System prerequisites verified")
-    
+
+    modern_bash = _find_modern_bash()
+    if not modern_bash:
+        fail("Bash 4+ not found. Run 'brew install bash' first — "
+             "macOS ships /bin/bash 3.2 and SDKMAN's installer rejects it.")
+
     # Install SDKMAN if not present
     if not sdkman_dir.exists():
-        info("Installing SDKMAN core manager...")
-        
-        # Download and install SDKMAN
-        install_cmd = 'curl -s "https://get.sdkman.io" | bash'
+        info(f"Installing SDKMAN core manager (using {modern_bash})...")
+
+        # Pipe the installer to Homebrew bash explicitly; piping to /bin/bash (3.2) fails the version check.
+        install_cmd = f'curl -s "https://get.sdkman.io" | {modern_bash}'
         result = run_command(install_cmd, capture_output=False, shell=True)
-        
+
         if sdkman_dir.exists():
             success("SDKMAN core manager installed at ~/.sdkman")
         else:
             fail("SDKMAN installation failed")
     else:
         success("SDKMAN core manager already installed")
-    
+
     # Source SDKMAN for use in this script
     sdkman_init = sdkman_dir / "bin" / "sdkman-init.sh"
     if not sdkman_init.exists():
         fail("SDKMAN initialization script not found")
-    
+
     # Install Java ecosystem packages
     info("Installing Java ecosystem packages via SDKMAN...")
-    
-    # Define SDKMAN commands
+
+    # Default to Amazon Corretto 17 to match the EAIS-Parser Dockerfile
+    # (FROM amazoncorretto:17). Temurin 21 stays available as a secondary toolchain.
     sdk_commands = [
-        # Install Eclipse Temurin JDK 21 (LTS) as default
-        'source ~/.sdkman/bin/sdkman-init.sh && sdk install java 21.0.1-tem --default',
-        # Install Eclipse Temurin JDK 17 (Previous LTS)
-        'source ~/.sdkman/bin/sdkman-init.sh && sdk install java 17.0.9-tem',
-        # Install Maven
+        'source ~/.sdkman/bin/sdkman-init.sh && sdk install java 17.0.13-amzn',
+        'source ~/.sdkman/bin/sdkman-init.sh && sdk default java 17.0.13-amzn',
+        'source ~/.sdkman/bin/sdkman-init.sh && sdk install java 21.0.5-tem',
         'source ~/.sdkman/bin/sdkman-init.sh && sdk install maven',
-        # Install Gradle
         'source ~/.sdkman/bin/sdkman-init.sh && sdk install gradle',
     ]
-    
+
     descriptions = [
-        "Eclipse Temurin JDK 21 (LTS) as default",
-        "Eclipse Temurin JDK 17 (Previous LTS)",
+        "Amazon Corretto JDK 17 (matches project Dockerfile)",
+        "Set Corretto 17 as the default JDK",
+        "Eclipse Temurin JDK 21 (LTS, secondary)",
         "Maven build tool",
         "Gradle build automation"
     ]
@@ -298,13 +311,13 @@ def show_setup_info() -> None:
     print("  # Java (SDKMAN provides total isolation and easy switching)")
     print("  source ~/.sdkman/bin/sdkman-init.sh")
     print("  sdk list java                     # See all available JDKs")
-    print("  sdk use java 21.0.1-tem         # Switch to Java 21")
-    print("  sdk use java 17.0.9-tem         # Switch to Java 17")
-    print("  sdk default java 21.0.1-tem     # Set permanent default")
+    print("  sdk use java 17.0.13-amzn       # Switch to Corretto 17 (project default)")
+    print("  sdk use java 21.0.5-tem         # Switch to Temurin 21")
+    print("  sdk default java 17.0.13-amzn   # Set permanent default")
     print()
     print("  # Installed Java ecosystem at ~/.sdkman/candidates/:")
-    print("  #   java/21.0.1-tem/    (Eclipse Temurin JDK 21 LTS)")
-    print("  #   java/17.0.9-tem/    (Eclipse Temurin JDK 17 LTS)")
+    print("  #   java/17.0.13-amzn/  (Amazon Corretto JDK 17 — matches project Dockerfile)")
+    print("  #   java/21.0.5-tem/    (Eclipse Temurin JDK 21 LTS)")
     print("  #   maven/latest/       (Java build tool)")
     print("  #   gradle/latest/      (Modern build automation)")
     print()

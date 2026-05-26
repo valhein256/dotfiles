@@ -116,18 +116,23 @@ class GitSubmoduleManager:
         ], "Git submodules initialized")
     
     def update_submodules(self) -> None:
-        """Update git submodules recursively"""
+        """Update git submodules recursively, initializing any that are missing.
+        --init makes this idempotent: if zsh/zplug or tmux/plugins/tpm got deinitialized,
+        their working trees are restored on the next run."""
         self.info("Updating git submodules...")
         self.run_command([
-            "git", "submodule", "update", "--recursive"
+            "git", "submodule", "update", "--init", "--recursive"
         ], "Git submodules updated")
-    
+
     def pull_submodules(self) -> None:
-        """Pull latest changes for all submodules"""
+        """Fast-forward each submodule to its upstream default branch.
+        Uses --remote so we follow whatever branch the upstream calls default
+        (zplug renamed master -> main; tpm still uses master). The previous
+        'git pull origin master' failed hard on zplug after that rename."""
         self.info("Pulling latest changes for submodules...")
         self.run_command([
-            "git", "submodule", "foreach", "--recursive", "git", "pull", "origin", "master"
-        ], "Submodules pulled to latest")
+            "git", "submodule", "update", "--remote", "--recursive"
+        ], "Submodules pulled to upstream default branch")
     
     def verify_submodules(self) -> bool:
         """Verify that all submodules are properly initialized"""

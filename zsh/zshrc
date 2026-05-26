@@ -309,81 +309,64 @@ EOF
         _create_uv_shims
     fi
     
-    # Enhanced .python-version detection with visual feedback and file monitoring
+    # Enhanced .python-version detection with visual feedback and file monitoring.
+    # IMPORTANT: .python-version can hold a partial version (e.g. "3.12") while
+    # `uv python find --show-version` always returns the resolved patch version
+    # (e.g. "3.12.13"). A naive `!=` compare considers them different on every
+    # prompt, re-pins the file, bumps its mtime, fires fswatch, and loops forever.
+    # Treat them as equal when the resolved version starts with the requested one.
     uv_check_version() {
         if [ -f ".python-version" ]; then
             local required_version=$(cat .python-version)
             local current_version=$(uv python find --show-version 2>/dev/null)
-            if [ "$current_version" != "$required_version" ]; then
-                echo "🐍 Switching to Python $required_version (from $current_version)"
-                uv python pin "$required_version" 2>/dev/null || echo "⚠️  Python $required_version not installed. Run: uv python install $required_version"
-            fi
+            case "$current_version" in
+                "$required_version"|"$required_version".*) return 0 ;;
+            esac
+            echo "🐍 Switching to Python $required_version (from $current_version)"
+            uv python pin "$required_version" 2>/dev/null || echo "⚠️  Python $required_version not installed. Run: uv python install $required_version"
         fi
     }
     
-    # Function to monitor .python-version file changes
-    uv_monitor_python_version() {
-        # Check if fswatch is available for file monitoring
-        if command -v fswatch &> /dev/null; then
-            # Kill any existing fswatch processes for .python-version
-            pkill -f "fswatch.*\.python-version" 2>/dev/null || true
-            
-            # Start monitoring .python-version file in background
-            if [ -f ".python-version" ]; then
-                (fswatch -o .python-version 2>/dev/null | while read num; do
-                    echo "📝 .python-version file changed, switching Python version..."
-                    uv_check_version
-                done) &
-                disown
-            fi
-        fi
-    }
-    
-    # Function to setup file monitoring when entering a directory
-    uv_setup_monitoring() {
-        uv_check_version
-        uv_monitor_python_version
-    }
-    
-    # Hook into directory changes for automatic version checking and monitoring
-    autoload -U add-zsh-hook
-    add-zsh-hook chpwd uv_setup_monitoring
-    
-    # Run once on shell startup
-    uv_setup_monitoring
-    
-    # Function to manually refresh Python version (useful after editing .python-version)
-    python-refresh() {
-        echo "🔄 Refreshing Python version..."
-        uv_check_version
-        uv_monitor_python_version
-        echo "✅ Python version refreshed"
-        echo "Current: $(python --version 2>/dev/null || echo 'Not found')"
-    }
-    
-    # Alternative approach using periodic checking (if fswatch is not available)
+    # Detect .python-version changes via mtime on each prompt + on cd.
+    # Replaces the old fswatch-based design which spawned a background process
+    # per cd, accumulated zombies, and (combined with the old `!=` bug) drove an
+    # infinite re-pin loop. mtime polling is cheap (one stat per prompt) and
+    # fast enough for "cd into project, switch Python" — uv's shim handles the
+    # actual interpreter resolution at exec time anyway.
+    typeset -g UV_PYTHON_VERSION_MTIME=""
+
     uv_periodic_check() {
-        # Store the last modification time of .python-version
         if [ -f ".python-version" ]; then
             local current_mtime=$(stat -f %m .python-version 2>/dev/null || stat -c %Y .python-version 2>/dev/null)
             if [ -n "$current_mtime" ] && [ "$current_mtime" != "$UV_PYTHON_VERSION_MTIME" ]; then
-                export UV_PYTHON_VERSION_MTIME="$current_mtime"
-                echo "📝 .python-version file changed, switching Python version..."
+                UV_PYTHON_VERSION_MTIME="$current_mtime"
                 uv_check_version
             fi
+        else
+            UV_PYTHON_VERSION_MTIME=""
         fi
     }
-    
-    # If fswatch is not available, use periodic checking
-    if ! command -v fswatch &> /dev/null; then
-        # Add periodic check to precmd (runs before each prompt)
-        add-zsh-hook precmd uv_periodic_check
-        
-        # Initialize the modification time
-        if [ -f ".python-version" ]; then
-            export UV_PYTHON_VERSION_MTIME=$(stat -f %m .python-version 2>/dev/null || stat -c %Y .python-version 2>/dev/null)
-        fi
+
+    # Hook into directory changes and every prompt
+    autoload -U add-zsh-hook
+    add-zsh-hook chpwd uv_periodic_check
+    add-zsh-hook precmd uv_periodic_check
+
+    # Initial check on shell startup
+    uv_check_version
+    if [ -f ".python-version" ]; then
+        UV_PYTHON_VERSION_MTIME=$(stat -f %m .python-version 2>/dev/null || stat -c %Y .python-version 2>/dev/null)
     fi
+
+    # Function to manually refresh Python version (useful after editing .python-version)
+    python-refresh() {
+        echo "🔄 Refreshing Python version..."
+        UV_PYTHON_VERSION_MTIME=""
+        uv_periodic_check
+        echo "✅ Python version refreshed"
+        echo "Current: $(python --version 2>/dev/null || echo 'Not found')"
+    }
+
     
     # Aliases for convenience
     alias python-versions="uv python list"
@@ -506,23 +489,6 @@ alias terraform_precheck='terraform init -upgrade && terraform fmt && terraform 
 # ============================================================================
 # Optional Configurations
 # ============================================================================
-
-# ----------------------------------------------------------------------------
-# AWS Setup Alias
-# ----------------------------------------------------------------------------
-# Automate AWS SSO login
-AWS_SETUP_SCRIPT="${HOME}/Documents/Netskope/Development/scripts/aws_setup"
-if [[ -f "$AWS_SETUP_SCRIPT" ]]; then
-    alias aws_setup="$AWS_SETUP_SCRIPT"
-fi
-
-# ----------------------------------------------------------------------------
-# Claude CLI Integration
-# ----------------------------------------------------------------------------
-CLAUDE_ENV_FILE="${HOME}/Documents/Netskope/Development/env"
-if [[ -f "$CLAUDE_ENV_FILE" ]]; then
-    source "$CLAUDE_ENV_FILE"
-fi
 
 # ----------------------------------------------------------------------------
 # Less Color Configuration (Disabled)
