@@ -206,3 +206,13 @@ local/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# -----------------------------------------------------------------------------
+# Machine-local zsh configs
+# -----------------------------------------------------------------------------
+# Per-host PATH tweaks, work-specific env vars (Netskope, AWS, etc).
+# Note: an earlier `local/` rule (around line 187) ignores any "local/" dir
+# anywhere. We have to un-ignore zsh/local first, then ignore *.zsh inside it.
+!zsh/local/
+zsh/local/*.zsh
+!zsh/local/.gitkeep
