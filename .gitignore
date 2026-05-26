@@ -216,3 +216,11 @@ Temporary Items
 !zsh/local/
 zsh/local/*.zsh
 !zsh/local/.gitkeep
+
+# -----------------------------------------------------------------------------
+# Plugin manager working trees (formerly git submodules)
+# -----------------------------------------------------------------------------
+# tpm and zplug are now cloned dynamically by scripts/installations/git-submodule.py
+# instead of pinned via .gitmodules. Keep them locally but don't track.
+zsh/zplug/
+tmux/plugins/tpm/
