@@ -186,11 +186,6 @@ if v:version >= 704
     au BufNewFile,BufRead *.inc set filetype=cpp.doxygen  " header C++ source
     au BufNewFile,BufRead *.h set filetype=cpp.doxygen
 
-    "" Markdown
-    au BufNewFile,BufRead *.md set filetype=mkd.markdown
-    au BufNewFile,BufRead *.mkd set filetype=mkd.markdown
-    au BufNewFile,BufRead *.markdown set filetype=mkd.markdown
-
     "" JavaScript
     au BufNewFile,BufRead *.js set filetype=javascript.jsx
 
@@ -361,11 +356,6 @@ if v:version >= 704
     au BufNewFile,BufRead *.tcc set filetype=cpp.doxygen  " template C++ source
     au BufNewFile,BufRead *.inc set filetype=cpp.doxygen  " header C++ source
     au BufNewFile,BufRead *.h set filetype=cpp.doxygen
-
-    "" Markdown
-    au BufNewFile,BufRead *.md set filetype=mkd.markdown
-    au BufNewFile,BufRead *.mkd set filetype=mkd.markdown
-    au BufNewFile,BufRead *.markdown set filetype=mkd.markdown
 
     "" JavaScript
     au BufNewFile,BufRead *.js set filetype=javascript.jsx

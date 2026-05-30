@@ -98,6 +98,10 @@ class LanguagePackageManager:
             # Package("docker", PackageManager.BREW_CASK, "devops", "Containerization platform"),
             Package("kubectl", PackageManager.BREW, "devops", "Kubernetes CLI"),
             Package("helm", PackageManager.BREW, "devops", "Kubernetes package manager"),
+            # kind + grpcurl are required for the EAIS-Parser / Detection Engine local-run flow
+            # (kind cluster + grpcurl smoke tests against the gRPC services).
+            Package("kind", PackageManager.BREW, "devops", "Kubernetes in Docker (local k8s for EAIS services)"),
+            Package("grpcurl", PackageManager.BREW, "devops", "gRPC CLI client (smoke-test EAIS gRPC services)"),
             Package("terraform", PackageManager.BREW_TAP, "devops", "Infrastructure as code",
                    tap_name="hashicorp/tap", install_cmd="brew install hashicorp/tap/terraform"),
             Package("terragrunt", PackageManager.BREW, "devops", "Terraform wrapper for DRY configurations"),
@@ -124,8 +128,6 @@ class LanguagePackageManager:
             Package("xquartz", PackageManager.BREW_CASK, "system", "X11 for macOS"),
 
             # Optional Development Tools
-            Package("kind", PackageManager.BREW, "optional", "Kubernetes in Docker", required=False),
-            Package("grpcurl", PackageManager.BREW, "optional", "gRPC CLI client (curl for gRPC services)", required=False),
             Package("ansible", PackageManager.BREW, "optional", "Configuration management", required=False),
         ]
 
