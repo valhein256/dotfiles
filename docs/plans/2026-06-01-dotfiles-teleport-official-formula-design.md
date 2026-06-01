@@ -71,8 +71,11 @@ if package_name == "teleport":
 
 ### `formulas/teleport.rb`
 
-Delete the entire file. The `formulas/` directory is left in place (empty) so
-future custom formulas can be added.
+Delete the entire file. Once it's the last file in `formulas/`, the directory
+itself disappears from disk (git does not track empty directories).
+`_discover_formula_packages()` already guards on `formulas_dir.exists()`, so
+this is fine — the next contributor adding a custom formula simply runs
+`mkdir formulas && cp <formula>.rb formulas/`.
 
 ### `README.md` (lines 223-227)
 
@@ -155,9 +158,10 @@ straight through the new `BREW` manager — no migration steps needed.
 
 2. **Auto-discovery yields nothing for teleport**
    ```bash
-   ls formulas/
+   ls formulas/ 2>/dev/null || echo "formulas/ does not exist (expected)"
    ```
-   Expect: empty (or only `.gitkeep` if added).
+   Expect: either empty output, or the "does not exist" message — git removes
+   empty directories when their last file is deleted.
 
 3. **No stray references**
    ```bash
@@ -178,7 +182,7 @@ straight through the new `BREW` manager — no migration steps needed.
 8. `python3 scripts/verifications/post-install-verification.py` — teleport row
    should pass (package name unchanged, brew detection still works).
 9. `make brew-list-formulas` — should run without error, list nothing
-   (`formulas/` empty).
+   (`formulas/` is gone or empty).
 
 ### Out of scope
 
