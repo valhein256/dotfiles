@@ -364,7 +364,6 @@ class LanguagePackageManager:
                          capture_output=True)
             return True
         except subprocess.CalledProcessError:
-            print("🔄 Installing Homebrew...")
             cmd = '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
             return self._run_command(cmd, "Installing Homebrew")
 
