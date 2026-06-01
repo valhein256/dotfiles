@@ -116,8 +116,7 @@ class LanguagePackageManager:
             # Network & SSH Tools
             Package("openssh", PackageManager.BREW, "network", "Secure Shell"),
             Package("sshs", PackageManager.BREW, "network", "SSH connection manager"),
-            Package("teleport", PackageManager.BREW_LOCAL_TAP, "network", "Modern SSH server for teams",
-                   formula_path="formulas/teleport.rb", local_tap_name="local/custom"),
+            Package("teleport", PackageManager.BREW, "network", "Modern SSH server for teams"),
 
             # Terminal Tools
             Package("tmux", PackageManager.BREW, "terminal", "Terminal multiplexer - essential for development"),
