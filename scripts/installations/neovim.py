@@ -13,6 +13,21 @@ from pathlib import Path
 from typing import Optional
 
 
+def _ensure_brew_on_path() -> None:
+    """Prepend Homebrew bin dir to PATH so brew-installed tools (uv, nvim) are reachable."""
+    for path in ("/opt/homebrew/bin", "/usr/local/bin",
+                 "/home/linuxbrew/.linuxbrew/bin",
+                 f"{os.path.expanduser('~')}/.linuxbrew/bin"):
+        if os.path.exists(os.path.join(path, "brew")):
+            current = os.environ.get("PATH", "")
+            if path not in current.split(os.pathsep):
+                os.environ["PATH"] = path + os.pathsep + current
+            return
+
+
+_ensure_brew_on_path()
+
+
 class Colors:
     RED = '\033[91m'
     GREEN = '\033[92m'
