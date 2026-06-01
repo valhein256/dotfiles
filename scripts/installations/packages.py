@@ -149,10 +149,6 @@ class LanguagePackageManager:
                 # Extract package name from filename (remove .rb extension)
                 package_name = formula_file.stem
 
-                # Skip teleport as it's manually defined with local tap
-                if package_name == "teleport":
-                    continue
-
                 # Try to extract description from formula file
                 description = self._extract_formula_description(formula_file)
 
