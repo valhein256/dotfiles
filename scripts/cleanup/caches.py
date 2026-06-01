@@ -5,11 +5,30 @@ Removes various development-related caches and temporary files.
 """
 
 import argparse
+import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 from typing import List, Dict
+
+
+def _ensure_brew_on_path() -> bool:
+    """Detect brew binary and prepend its directory to PATH for this process."""
+    try:
+        subprocess.run("brew --version", shell=True, check=True, capture_output=True)
+        return True
+    except subprocess.CalledProcessError:
+        pass
+    for path in ("/opt/homebrew/bin", "/usr/local/bin",
+                 "/home/linuxbrew/.linuxbrew/bin",
+                 f"{os.path.expanduser('~')}/.linuxbrew/bin"):
+        if os.path.exists(os.path.join(path, "brew")):
+            current = os.environ.get("PATH", "")
+            if path not in current.split(os.pathsep):
+                os.environ["PATH"] = path + os.pathsep + current
+            return True
+    return False
 
 
 class Colors:
@@ -78,11 +97,14 @@ class CachesCleanup:
         
         # Run brew cleanup
         self.info("Running brew cleanup --prune=all...")
-        result = self.run_command("brew cleanup --prune=all", capture_output=False)
-        if result and result.returncode == 0:
-            self.success("Brew cleanup completed")
+        if not _ensure_brew_on_path():
+            self.warning("brew not found on PATH, skipping brew cleanup")
         else:
-            self.warning("Brew cleanup may have failed")
+            result = self.run_command("brew cleanup --prune=all", capture_output=False)
+            if result and result.returncode == 0:
+                self.success("Brew cleanup completed")
+            else:
+                self.warning("Brew cleanup may have failed")
         
         # Remove Homebrew cache again after brew cleanup to ensure it's completely clean
         homebrew_cache = self.home / "Library" / "Caches" / "Homebrew"
