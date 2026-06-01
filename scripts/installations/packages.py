@@ -97,6 +97,7 @@ class LanguagePackageManager:
             # DevOps & Infrastructure - Essential Only
             # Package("docker", PackageManager.BREW_CASK, "devops", "Containerization platform"),
             Package("kubectl", PackageManager.BREW, "devops", "Kubernetes CLI"),
+            Package("kubectx", PackageManager.BREW, "devops", "kubectx + kubens (Kubernetes context/namespace switcher)"),
             Package("helm", PackageManager.BREW, "devops", "Kubernetes package manager"),
             # kind + grpcurl are required for the EAIS-Parser / Detection Engine local-run flow
             # (kind cluster + grpcurl smoke tests against the gRPC services).
