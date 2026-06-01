@@ -357,15 +357,42 @@ class LanguagePackageManager:
 
         return self._run_command(cmd, f"Installing {package.name}")
 
-    def _ensure_homebrew(self) -> bool:
-        """Ensure Homebrew is installed"""
+    def _ensure_brew_on_path(self) -> bool:
+        """Detect brew binary and prepend its directory to PATH for this process."""
         try:
             subprocess.run("brew --version", shell=True, check=True,
                          capture_output=True)
             return True
         except subprocess.CalledProcessError:
-            cmd = '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
-            return self._run_command(cmd, "Installing Homebrew")
+            pass
+
+        candidates = [
+            "/opt/homebrew/bin",
+            "/usr/local/bin",
+            "/home/linuxbrew/.linuxbrew/bin",
+            f"{os.path.expanduser('~')}/.linuxbrew/bin",
+        ]
+        for path in candidates:
+            if os.path.exists(os.path.join(path, "brew")):
+                current = os.environ.get("PATH", "")
+                if path not in current.split(os.pathsep):
+                    os.environ["PATH"] = path + os.pathsep + current
+                return True
+        return False
+
+    def _ensure_homebrew(self) -> bool:
+        """Ensure Homebrew is installed and reachable on PATH."""
+        if self._ensure_brew_on_path():
+            return True
+
+        cmd = '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+        if not self._run_command(cmd, "Installing Homebrew"):
+            return False
+
+        if not self._ensure_brew_on_path():
+            print(f"[ {Colors.RED}FAIL{Colors.RESET} ] Homebrew installed but `brew` not found on PATH")
+            return False
+        return True
 
     def install_category(self, category: str, skip_optional: bool = True) -> bool:
         """Install all packages in a specific category"""
