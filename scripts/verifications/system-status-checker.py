@@ -347,7 +347,7 @@ class SystemStatusChecker:
             "golang": ["go"],
             "java-prereq": ["zip", "unzip", "curl"],
             "rust": ["rustup-init"],
-            "devops": ["kubectl", "helm", "terraform", "terragrunt"],
+            "devops": ["kubectl", "helm", "kind", "kubectx", "grpcurl", "terraform", "terragrunt", "vault"],
             "cloud": ["awscli"],
             "network": ["openssh", "sshs", "teleport"],
         }

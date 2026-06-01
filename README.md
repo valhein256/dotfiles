@@ -102,7 +102,7 @@ python3 scripts/installations/packages.py install --category golang
 - `golang` - Go ecosystem (official go toolchain)
 - `java-prereq` - Java prerequisites (zip, unzip, curl for SDKMAN)
 - `rust` - Rust ecosystem (rustup official toolchain)
-- `devops` - DevOps tools (kubectl, helm, terraform, terragrunt)
+- `devops` - DevOps tools (kubectl, helm, kind, kubectx, grpcurl, terraform, terragrunt, vault)
 - `cloud` - Cloud tools (awscli, gcloud-cli)
 - `network` - Network tools (openssh, sshs, teleport)
 - `terminal` - Terminal tools (tmux)

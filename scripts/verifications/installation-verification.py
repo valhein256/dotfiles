@@ -71,7 +71,7 @@ class InstallationVerifier:
             "Go": ["go"],
             "Java Prerequisites": ["zip", "unzip", "curl"],
             "Rust": ["rustup-init"],
-            "DevOps": ["kubectl", "helm", "terraform", "terragrunt"],
+            "DevOps": ["kubectl", "helm", "kind", "kubectx", "grpcurl", "terraform", "terragrunt", "vault"],
             "Cloud": ["awscli"],
             "Network": ["openssh", "sshs", "teleport"],
             "Fonts": ["font-sauce-code-pro-nerd-font"],
