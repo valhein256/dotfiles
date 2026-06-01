@@ -69,7 +69,7 @@ class PostInstallVerifier:
             "fnm", "pnpm",  # nodejs
             "go",  # golang
             "zip", "unzip", "curl",  # java-prereq
-            "kubectl", "helm", "terraform", "terragrunt",  # devops
+            "kubectl", "helm", "kind", "kubectx", "grpcurl", "terraform", "terragrunt", "vault",  # devops
             "awscli",  # cloud
             "openssh", "sshs", "teleport",  # network
         ]
