@@ -223,7 +223,7 @@ make brew-install PACKAGE=docker CASK=true    # GUI applications
 ### Custom Formulas
 ```bash
 make brew-list-formulas                        # List available custom formulas
-make brew-install-formula FORMULA=formulas/teleport.rb
+make brew-install-formula FORMULA=<path>       # Install a custom formula
 ```
 
 ### Maintenance
