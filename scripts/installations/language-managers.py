@@ -135,13 +135,21 @@ def setup_sdkman_java() -> None:
         "Gradle build automation"
     ]
     
+    # SDKMAN's sdk function uses Bash 4+ syntax (e.g. ${var^^}); macOS /bin/sh is bash 3.2.
+    # Run every sdk command through Homebrew bash explicitly.
+    def _bash(cmd: str) -> Optional[subprocess.CompletedProcess]:
+        return run_command([modern_bash, '-c', cmd], capture_output=False)
+
+    def _bash_capture(cmd: str) -> Optional[subprocess.CompletedProcess]:
+        return run_command([modern_bash, '-c', cmd])
+
     for cmd, desc in zip(sdk_commands, descriptions):
         info(f"Installing {desc}...")
-        result = run_command(cmd, capture_output=False, shell=True)
+        result = _bash(cmd)
         if result is None or result.returncode != 0:
             # Check if already installed
             check_cmd = f'source ~/.sdkman/bin/sdkman-init.sh && sdk current {desc.split()[0].lower()}'
-            check_result = run_command(check_cmd, shell=True)
+            check_result = _bash_capture(check_cmd)
             if check_result and check_result.returncode == 0:
                 success(f"{desc} already installed")
             else:
