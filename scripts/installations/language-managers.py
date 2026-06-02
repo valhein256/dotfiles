@@ -204,14 +204,14 @@ def setup_python_uv() -> None:
         _install_python('3.12')
         _install_python('3.11')
         
-        # Set Python 3.12 as default
-        info("Setting Python 3.12 as default...")
-        result = run_command(['uv', 'python', 'pin', '3.12'], capture_output=False)
-        if result and result.returncode == 0:
-            success("Python 3.12 set as default")
-        else:
-            warning("Failed to set Python 3.12 as default")
-        
+        # Intentionally NOT pinning here — `uv python pin 3.12` writes
+        # .python-version into the cwd (the dotfiles repo), which then
+        # follows the user into every shell that starts in dotfiles.
+        # Let uv's default resolution pick the active interpreter; users
+        # who want a project pin can add their own .python-version.
+        info("Skipping pin — uv will resolve Python on demand")
+
+
         # Install common global tools
         info("Installing common Python tools globally...")
         global_tools = ['black', 'ruff', 'pytest', 'mypy', 'ipython']
