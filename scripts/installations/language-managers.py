@@ -215,12 +215,23 @@ def setup_python_uv() -> None:
         # Install common global tools
         info("Installing common Python tools globally...")
         global_tools = ['black', 'ruff', 'pytest', 'mypy', 'ipython']
+        installed = run_command(['uv', 'tool', 'list'])
+        installed_names = set()
+        if installed and installed.returncode == 0 and installed.stdout:
+            # `uv tool list` prints "<name> v<version>" then indented "- <bin>" lines.
+            for line in installed.stdout.splitlines():
+                if line and not line.startswith(' ') and not line.startswith('-'):
+                    installed_names.add(line.split()[0])
         for tool in global_tools:
+            if tool in installed_names:
+                success(f"{tool} already installed")
+                continue
             result = run_command(['uv', 'tool', 'install', tool], capture_output=True)
             if result and result.returncode == 0:
                 success(f"Installed {tool} globally")
             else:
-                warning(f"Failed to install {tool} globally (may already exist)")
+                err = (result.stderr.strip() if result and result.stderr else "unknown error")
+                warning(f"Failed to install {tool} globally: {err.splitlines()[-1] if err else 'unknown error'}")
         
         # Verify Python setup
         info("Verifying Python setup...")
