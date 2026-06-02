@@ -315,18 +315,22 @@ EOF
     # (e.g. "3.12.13"). A naive `!=` compare considers them different on every
     # prompt, re-pins the file, bumps its mtime, fires fswatch, and loops forever.
     # Treat them as equal when the resolved version starts with the requested one.
-    # Read uv's global pin (set via `uv python pin --global X.Y`).
-    _uv_global_pin() {
-        local f="${XDG_CONFIG_HOME:-$HOME/.config}/uv/.python-version"
-        [ -f "$f" ] && cat "$f"
-    }
-
     # Resolve a uv python request to a real installed interpreter version.
     # Empty stdout means "no installed interpreter satisfies that request".
-    # UV_PYTHON_DOWNLOADS=never blocks uv from triggering an interactive
-    # download just to answer the question.
+    # UV_PYTHON_DOWNLOADS=never blocks uv from triggering a surprise download
+    # just to answer the question.
     _uv_resolve() {
         UV_PYTHON_DOWNLOADS=never uv python find --show-version "$1" 2>/dev/null
+    }
+
+    # Plausibility check on a Python version string. We only accept
+    # "X.Y" or "X.Y.Z" with sane bounds — minor < 100, patch < 1000.
+    # This rejects typos like "3.124" before we hand them to uv.
+    _uv_version_looks_valid() {
+        case "$1" in
+            <2-9>.<0-99>|<2-9>.<0-99>.<0-999>) return 0 ;;
+            *) return 1 ;;
+        esac
     }
 
     uv_check_version() {
@@ -340,33 +344,51 @@ EOF
                 ;;
         esac
 
-        # Validate the requested version BEFORE any pin/switch noise —
-        # `uv python pin` accepts garbage like "3.124" without checking
-        # whether the version actually exists.
-        local resolved_required=$(_uv_resolve "$required_version")
-        if [ -z "$resolved_required" ]; then
-            local global_version=$(_uv_global_pin)
-            if [ -n "$global_version" ] && [ "$global_version" != "$required_version" ]; then
-                local resolved_global=$(_uv_resolve "$global_version")
-                if [ -n "$resolved_global" ]; then
-                    echo "⚠️  Python $required_version not installed — falling back to global pin ($global_version)"
-                    echo "🐍 Python $resolved_global"
-                    return 0
-                fi
+        # Reject obvious typos ("3.124", "py3", "") — fall back to whatever
+        # uv picks by default (any installed interpreter).
+        if ! _uv_version_looks_valid "$required_version"; then
+            local fallback=$(uv python find --show-version 2>/dev/null)
+            if [ -n "$fallback" ]; then
+                echo "⚠️  '.python-version' contains '$required_version' (not a valid Python version) — ignoring"
+                echo "🐍 Python $fallback"
+            else
+                echo "⚠️  '.python-version' contains '$required_version' (not a valid Python version) and no Python is available"
             fi
-            echo "⚠️  Python $required_version not installed. Run: uv python install $required_version"
             return 0
         fi
 
-        if [ -n "$current_version" ]; then
-            echo "🐍 Switching to Python $required_version (from $current_version)"
-        else
-            echo "🐍 Switching to Python $required_version"
+        # Valid syntax. If it's already installed, just pin and report.
+        local resolved_required=$(_uv_resolve "$required_version")
+        if [ -n "$resolved_required" ]; then
+            if [ -n "$current_version" ]; then
+                echo "🐍 Switching to Python $required_version (from $current_version)"
+            else
+                echo "🐍 Switching to Python $required_version"
+            fi
+            uv python pin "$required_version" >/dev/null 2>&1
+            echo "🐍 Python $resolved_required"
+            return 0
         fi
-        # Suppress pin's "Pinned ... to ..." stdout noise; we already
-        # printed the intent above and will print the resolved version below.
-        uv python pin "$required_version" >/dev/null 2>&1
-        echo "🐍 Python $resolved_required"
+
+        # Valid syntax but not installed — auto-install (the user opted in).
+        echo "🐍 Python $required_version not installed — installing via uv..."
+        if uv python install "$required_version" 2>&1 | grep -E "Installed|Downloaded" >&2; then
+            : # progress already shown
+        fi
+        local newly_resolved=$(_uv_resolve "$required_version")
+        if [ -n "$newly_resolved" ]; then
+            uv python pin "$required_version" >/dev/null 2>&1
+            echo "🐍 Python $newly_resolved"
+            return 0
+        fi
+        # Install failed (network, manifest miss, etc.) — fall back gracefully.
+        local fallback=$(uv python find --show-version 2>/dev/null)
+        if [ -n "$fallback" ]; then
+            echo "⚠️  Failed to install Python $required_version — using $fallback instead"
+            echo "🐍 Python $fallback"
+        else
+            echo "⚠️  Failed to install Python $required_version and no fallback available"
+        fi
     }
 
     typeset -g UV_PYTHON_VERSION_MTIME=""
