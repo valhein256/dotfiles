@@ -322,7 +322,11 @@ EOF
             case "$current_version" in
                 "$required_version"|"$required_version".*) return 0 ;;
             esac
-            echo "🐍 Switching to Python $required_version (from ${current_version:-none})"
+            if [ -n "$current_version" ]; then
+                echo "🐍 Switching to Python $required_version (from $current_version)"
+            else
+                echo "🐍 Switching to Python $required_version"
+            fi
             uv python pin "$required_version" 2>/dev/null || echo "⚠️  Python $required_version not installed. Run: uv python install $required_version"
         fi
     }
