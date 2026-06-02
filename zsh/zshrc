@@ -250,62 +250,86 @@ if command -v uv &> /dev/null; then
     # Add UV shims to PATH (highest priority)
     export PATH="$UV_SHIMS_DIR:$PATH"
     
-    # Create smart Python shims that use UV's .python-version detection
+    # Bump this when the shim body below changes — old shims get regenerated.
+    UV_SHIM_VERSION="2"
+
+    # Create smart Python shims that use UV's .python-version detection.
+    # If .python-version contains an unresolvable version (typo / uninstalled),
+    # ignore it and fall back to any installed 3.x rather than to brew/system,
+    # so the active interpreter matches what zshrc reports.
     _create_uv_shims() {
         # Python shim
         cat > "$UV_SHIMS_DIR/python" << 'EOF'
 #!/bin/bash
-# UV Python shim - automatically detects .python-version
-uv_python=$(uv python find 2>/dev/null)
+# UV Python shim v2 - .python-version-aware with sane fallback
+uv_python=$(uv python find 2>/dev/null) \
+    || uv_python=$(UV_PYTHON_DOWNLOADS=never uv python find 3 2>/dev/null)
 if [ -n "$uv_python" ]; then
     exec "$uv_python" "$@"
-else
-    exec /opt/homebrew/bin/python3 "$@" 2>/dev/null || exec /usr/bin/python3 "$@"
 fi
+for fallback in /opt/homebrew/bin/python3 /usr/bin/python3; do
+    [ -x "$fallback" ] && exec "$fallback" "$@"
+done
+echo "python3: no interpreter available" >&2
+exit 127
 EOF
-        
+
         # Python3 shim
         cat > "$UV_SHIMS_DIR/python3" << 'EOF'
 #!/bin/bash
-# UV Python3 shim - automatically detects .python-version
-uv_python=$(uv python find 2>/dev/null)
+# UV Python3 shim v2 - .python-version-aware with sane fallback
+uv_python=$(uv python find 2>/dev/null) \
+    || uv_python=$(UV_PYTHON_DOWNLOADS=never uv python find 3 2>/dev/null)
 if [ -n "$uv_python" ]; then
     exec "$uv_python" "$@"
-else
-    exec /opt/homebrew/bin/python3 "$@" 2>/dev/null || exec /usr/bin/python3 "$@"
 fi
+for fallback in /opt/homebrew/bin/python3 /usr/bin/python3; do
+    [ -x "$fallback" ] && exec "$fallback" "$@"
+done
+echo "python3: no interpreter available" >&2
+exit 127
 EOF
-        
+
         # Pip shim
         cat > "$UV_SHIMS_DIR/pip" << 'EOF'
 #!/bin/bash
-# UV Pip shim - uses UV-managed Python
-uv_python=$(uv python find 2>/dev/null)
+# UV Pip shim v2 - uses UV-managed Python with sane fallback
+uv_python=$(uv python find 2>/dev/null) \
+    || uv_python=$(UV_PYTHON_DOWNLOADS=never uv python find 3 2>/dev/null)
 if [ -n "$uv_python" ]; then
     exec "$uv_python" -m pip "$@"
-else
-    exec /opt/homebrew/bin/python3 -m pip "$@" 2>/dev/null || exec /usr/bin/python3 -m pip "$@"
 fi
+for fallback in /opt/homebrew/bin/python3 /usr/bin/python3; do
+    [ -x "$fallback" ] && exec "$fallback" -m pip "$@"
+done
+echo "pip: no python interpreter available" >&2
+exit 127
 EOF
-        
+
         # Pip3 shim
         cat > "$UV_SHIMS_DIR/pip3" << 'EOF'
 #!/bin/bash
-# UV Pip3 shim - uses UV-managed Python
-uv_python=$(uv python find 2>/dev/null)
+# UV Pip3 shim v2 - uses UV-managed Python with sane fallback
+uv_python=$(uv python find 2>/dev/null) \
+    || uv_python=$(UV_PYTHON_DOWNLOADS=never uv python find 3 2>/dev/null)
 if [ -n "$uv_python" ]; then
     exec "$uv_python" -m pip "$@"
-else
-    exec /opt/homebrew/bin/python3 -m pip "$@" 2>/dev/null || exec /usr/bin/python3 -m pip "$@"
 fi
+for fallback in /opt/homebrew/bin/python3 /usr/bin/python3; do
+    [ -x "$fallback" ] && exec "$fallback" -m pip "$@"
+done
+echo "pip: no python interpreter available" >&2
+exit 127
 EOF
-        
-        # Make shims executable
+
         chmod +x "$UV_SHIMS_DIR"/{python,python3,pip,pip3}
+        echo "$UV_SHIM_VERSION" > "$UV_SHIMS_DIR/.version"
     }
-    
-    # Create shims if they don't exist or are outdated
-    if [ ! -f "$UV_SHIMS_DIR/python" ] || [ ! -f "$UV_SHIMS_DIR/python3" ]; then
+
+    # Regenerate shims if missing or version-stale.
+    if [ ! -f "$UV_SHIMS_DIR/python" ] \
+       || [ ! -f "$UV_SHIMS_DIR/python3" ] \
+       || [ "$(cat "$UV_SHIMS_DIR/.version" 2>/dev/null)" != "$UV_SHIM_VERSION" ]; then
         _create_uv_shims
     fi
     
