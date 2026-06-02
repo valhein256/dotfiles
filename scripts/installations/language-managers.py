@@ -185,21 +185,24 @@ def setup_python_uv() -> None:
     """Setup Python with uv (modern Python version and package manager)."""
     info("Setting up Python with uv...")
     
+    def _install_python(version: str) -> None:
+        info(f"Installing Python {version} via uv...")
+        result = run_command(['uv', 'python', 'install', version], capture_output=False)
+        if result and result.returncode == 0:
+            success(f"Python {version} installed via uv")
+            return
+        # `uv python install` fails when the version is missing AND can't be
+        # downloaded (e.g. TLS / network errors). Distinguish "already present"
+        # from a real failure by probing the installed list.
+        check = run_command(['uv', 'python', 'find', version])
+        if check and check.returncode == 0 and check.stdout.strip():
+            success(f"Python {version} already installed")
+        else:
+            warning(f"Failed to install Python {version} (not present)")
+
     if command_exists('uv'):
-        # Install latest Python versions
-        info("Installing Python 3.12 via uv...")
-        result = run_command(['uv', 'python', 'install', '3.12'], capture_output=False)
-        if result and result.returncode == 0:
-            success("Python 3.12 installed via uv")
-        else:
-            warning("Python 3.12 may already be installed")
-        
-        info("Installing Python 3.11 via uv...")
-        result = run_command(['uv', 'python', 'install', '3.11'], capture_output=False)
-        if result and result.returncode == 0:
-            success("Python 3.11 installed via uv")
-        else:
-            warning("Python 3.11 may already be installed")
+        _install_python('3.12')
+        _install_python('3.11')
         
         # Set Python 3.12 as default
         info("Setting Python 3.12 as default...")
