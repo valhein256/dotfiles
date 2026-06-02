@@ -554,7 +554,9 @@ source "/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc"
 # ----------------------------------------------------------------------------
 source <(kubectl completion zsh)
 export KUBE_EDITOR="$(which nvim)"
-export KUBECONFIG=~/.kube/config
+KUBECONFIG="$HOME/.kube/config"
+for f in "$HOME"/.kube/configs/*.yaml(N); do KUBECONFIG="$KUBECONFIG:$f"; done
+export KUBECONFIG
 
 # ----------------------------------------------------------------------------
 # OpenAI API
