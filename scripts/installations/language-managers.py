@@ -185,6 +185,30 @@ def setup_python_uv() -> None:
     """Setup Python with uv (modern Python version and package manager)."""
     info("Setting up Python with uv...")
     
+    def _latest_stable_cpython() -> str:
+        """Return the latest stable cpython version uv knows about.
+
+        Reads `uv python list --only-downloads` and skips entries with
+        pre-release suffixes (a/b/rc) or freethreaded/debug variants.
+        Returns "X.Y.Z" suitable for `uv python install`, or "" if nothing
+        usable is found.
+        """
+        result = run_command(['uv', 'python', 'list', '--only-downloads'])
+        if not result or result.returncode != 0:
+            return ""
+        for line in result.stdout.splitlines():
+            head = line.split()[0] if line.strip() else ""
+            # head looks like: cpython-3.13.13-macos-aarch64-none
+            if not head.startswith('cpython-'):
+                continue
+            ver = head.split('-')[1]
+            if '+' in ver:  # freethreaded / debug variant tag
+                continue
+            if any(tag in ver for tag in ('a', 'b', 'rc', 'dev')):
+                continue
+            return ver
+        return ""
+
     def _install_python(version: str) -> None:
         info(f"Installing Python {version} via uv...")
         result = run_command(['uv', 'python', 'install', version], capture_output=False)
@@ -201,14 +225,20 @@ def setup_python_uv() -> None:
             warning(f"Failed to install Python {version} (not present)")
 
     if command_exists('uv'):
-        _install_python('3.12')
-        _install_python('3.11')
-        
-        # Intentionally NOT pinning here — `uv python pin 3.12` writes
-        # .python-version into the cwd (the dotfiles repo), which then
-        # follows the user into every shell that starts in dotfiles.
-        # Let uv's default resolution pick the active interpreter; users
-        # who want a project pin can add their own .python-version.
+        # Install the highest STABLE CPython that uv knows about.
+        # We can't just pass "3" — uv's manifest puts pre-releases (e.g.
+        # 3.15.0b1) at the top and "3" would match them. Inspect the
+        # manifest, drop alpha/beta/rc tags, and install the top result.
+        latest_stable = _latest_stable_cpython()
+        if latest_stable:
+            _install_python(latest_stable)
+        else:
+            warning("Couldn't determine latest stable Python — skipping install")
+
+        # Intentionally NOT pinning — `uv python pin` (without --global)
+        # writes .python-version into cwd, which during `make install`
+        # is the dotfiles repo. That leaks an unwanted pin into the repo
+        # and forces every shell that cd's there into one specific minor.
         info("Skipping pin — uv will resolve Python on demand")
 
 
