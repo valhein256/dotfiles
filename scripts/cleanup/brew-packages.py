@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 Homebrew Packages Cleanup Script
 Removes all Homebrew formulae and casks.

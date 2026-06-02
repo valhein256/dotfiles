@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 Caches Cleanup Script
 Removes various development-related caches and temporary files.

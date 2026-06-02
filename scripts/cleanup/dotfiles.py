@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 Dotfiles Cleanup Script
 Removes dotfiles symlinks and configurations.
