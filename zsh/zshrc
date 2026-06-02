@@ -316,29 +316,48 @@ EOF
     # prompt, re-pins the file, bumps its mtime, fires fswatch, and loops forever.
     # Treat them as equal when the resolved version starts with the requested one.
     uv_check_version() {
-        if [ -f ".python-version" ]; then
-            local required_version=$(cat .python-version)
-            local current_version=$(uv python find --show-version 2>/dev/null)
-            case "$current_version" in
-                "$required_version"|"$required_version".*) return 0 ;;
-            esac
-            if [ -n "$current_version" ]; then
-                echo "🐍 Switching to Python $required_version (from $current_version)"
-            else
-                echo "🐍 Switching to Python $required_version"
-            fi
-            uv python pin "$required_version" 2>/dev/null || echo "⚠️  Python $required_version not installed. Run: uv python install $required_version"
+        [ -f ".python-version" ] || return 0
+        local required_version=$(cat .python-version)
+        local current_version=$(uv python find --show-version 2>/dev/null)
+        case "$current_version" in
+            "$required_version"|"$required_version".*)
+                echo "🐍 Python $current_version"
+                return 0
+                ;;
+        esac
+        if [ -n "$current_version" ]; then
+            echo "🐍 Switching to Python $required_version (from $current_version)"
+        else
+            echo "🐍 Switching to Python $required_version"
+        fi
+        if uv python pin "$required_version" 2>/dev/null; then
+            local new_version=$(uv python find --show-version 2>/dev/null)
+            [ -n "$new_version" ] && echo "🐍 Python $new_version"
+        else
+            echo "⚠️  Python $required_version not installed. Run: uv python install $required_version"
         fi
     }
-    
-    # Detect .python-version changes via mtime on each prompt + on cd.
-    # Replaces the old fswatch-based design which spawned a background process
-    # per cd, accumulated zombies, and (combined with the old `!=` bug) drove an
-    # infinite re-pin loop. mtime polling is cheap (one stat per prompt) and
-    # fast enough for "cd into project, switch Python" — uv's shim handles the
-    # actual interpreter resolution at exec time anyway.
+
     typeset -g UV_PYTHON_VERSION_MTIME=""
 
+    # Refresh tracked mtime so precmd doesn't re-fire after chpwd/pin.
+    _uv_refresh_mtime() {
+        if [ -f ".python-version" ]; then
+            UV_PYTHON_VERSION_MTIME=$(stat -f %m .python-version 2>/dev/null || stat -c %Y .python-version 2>/dev/null)
+        else
+            UV_PYTHON_VERSION_MTIME=""
+        fi
+    }
+
+    # On every cd: always re-check (even if same version — the user wants
+    # confirmation of what's active in this directory).
+    uv_chpwd_check() {
+        uv_check_version
+        _uv_refresh_mtime
+    }
+
+    # On every prompt: only re-check if .python-version mtime changed
+    # (catches edits without spamming on every prompt redraw).
     uv_periodic_check() {
         if [ -f ".python-version" ]; then
             local current_mtime=$(stat -f %m .python-version 2>/dev/null || stat -c %Y .python-version 2>/dev/null)
@@ -351,16 +370,13 @@ EOF
         fi
     }
 
-    # Hook into directory changes and every prompt
     autoload -U add-zsh-hook
-    add-zsh-hook chpwd uv_periodic_check
+    add-zsh-hook chpwd uv_chpwd_check
     add-zsh-hook precmd uv_periodic_check
 
     # Initial check on shell startup
     uv_check_version
-    if [ -f ".python-version" ]; then
-        UV_PYTHON_VERSION_MTIME=$(stat -f %m .python-version 2>/dev/null || stat -c %Y .python-version 2>/dev/null)
-    fi
+    _uv_refresh_mtime
 
     # Function to manually refresh Python version (useful after editing .python-version)
     python-refresh() {
