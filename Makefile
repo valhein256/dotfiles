@@ -523,7 +523,7 @@ install-step-1-local-taps: ## Step 1/7: Restore local taps
 	@printf "\033[96m============================================================\033[0m\n"
 	@printf "\033[96mStep 1/7: Local Homebrew Taps Restoration\033[0m\n"
 	@printf "\033[96m============================================================\033[0m\n"
-	@$(MAKE) install-local-taps || printf "\033[93m⚠️  Step 1 failed but continuing...\033[0m\n"
+	@$(MAKE) install-local-taps ; rc=$$?; if [ $$rc -ne 0 ]; then printf "\033[93m⚠️  Step 1 failed (exit $$rc) but continuing...\033[0m\n"; fi
 
 install-step-2-packages: ## Step 2/7: Install Homebrew packages
 	@printf "\033[96m============================================================\033[0m\n"
@@ -578,7 +578,7 @@ clean-step-1-brew-packages: ## Step 1/7: Remove Homebrew packages
 	@printf "\033[96m============================================================\033[0m\n"
 	@echo "🍺 Removing all Homebrew formulae and casks..."
 	@chmod +x ./scripts/cleanup/brew-packages.py
-	@./scripts/cleanup/brew-packages.py -y || printf "\033[93m⚠️  Step 1 failed but continuing...\033[0m\n"
+	@./scripts/cleanup/brew-packages.py -y ; rc=$$?; if [ $$rc -ne 0 ]; then printf "\033[93m⚠️  Step 1 failed (exit $$rc) but continuing...\033[0m\n"; fi
 	@printf "\033[92m✅ Step 1 completed\033[0m\n"
 
 clean-step-2-language-managers: ## Step 2/7: Remove language managers
@@ -587,7 +587,7 @@ clean-step-2-language-managers: ## Step 2/7: Remove language managers
 	@printf "\033[96m============================================================\033[0m\n"
 	@echo "🔧 Removing Python, Node.js, Java, Rust, Go environments..."
 	@chmod +x ./scripts/cleanup/language-managers.py
-	@./scripts/cleanup/language-managers.py -y || printf "\033[93m⚠️  Step 2 failed but continuing...\033[0m\n"
+	@./scripts/cleanup/language-managers.py -y ; rc=$$?; if [ $$rc -ne 0 ]; then printf "\033[93m⚠️  Step 2 failed (exit $$rc) but continuing...\033[0m\n"; fi
 	@printf "\033[92m✅ Step 2 completed\033[0m\n"
 
 clean-step-3-neovim: ## Step 3/7: Remove Neovim dynamic content
@@ -596,7 +596,7 @@ clean-step-3-neovim: ## Step 3/7: Remove Neovim dynamic content
 	@printf "\033[96m============================================================\033[0m\n"
 	@echo "📝 Removing Neovim plugins, cache, and dynamic content..."
 	@chmod +x ./scripts/cleanup/neovim.py
-	@./scripts/cleanup/neovim.py -y || printf "\033[93m⚠️  Step 3 failed but continuing...\033[0m\n"
+	@./scripts/cleanup/neovim.py -y ; rc=$$?; if [ $$rc -ne 0 ]; then printf "\033[93m⚠️  Step 3 failed (exit $$rc) but continuing...\033[0m\n"; fi
 	@printf "\033[92m✅ Step 3 completed\033[0m\n"
 
 clean-step-4-dotfiles: ## Step 4/7: Remove dotfiles symlinks
@@ -605,7 +605,7 @@ clean-step-4-dotfiles: ## Step 4/7: Remove dotfiles symlinks
 	@printf "\033[96m============================================================\033[0m\n"
 	@echo "⚙️  Removing all dotfiles symlinks..."
 	@chmod +x ./scripts/cleanup/dotfiles.py
-	@./scripts/cleanup/dotfiles.py -y || printf "\033[93m⚠️  Step 4 failed but continuing...\033[0m\n"
+	@./scripts/cleanup/dotfiles.py -y ; rc=$$?; if [ $$rc -ne 0 ]; then printf "\033[93m⚠️  Step 4 failed (exit $$rc) but continuing...\033[0m\n"; fi
 	@printf "\033[92m✅ Step 4 completed\033[0m\n"
 
 clean-step-5-local-taps: ## Step 5/7: Remove local Homebrew taps
@@ -614,7 +614,7 @@ clean-step-5-local-taps: ## Step 5/7: Remove local Homebrew taps
 	@printf "\033[96m============================================================\033[0m\n"
 	@echo "🏠 Backing up and removing custom Homebrew taps..."
 	@chmod +x ./scripts/cleanup/local-taps.py
-	@./scripts/cleanup/local-taps.py -y || printf "\033[93m⚠️  Step 5 failed but continuing...\033[0m\n"
+	@./scripts/cleanup/local-taps.py -y ; rc=$$?; if [ $$rc -ne 0 ]; then printf "\033[93m⚠️  Step 5 failed (exit $$rc) but continuing...\033[0m\n"; fi
 	@printf "\033[92m✅ Step 5 completed\033[0m\n"
 
 clean-step-6-git-submodules: ## Step 6/7: Remove git submodules
@@ -623,7 +623,7 @@ clean-step-6-git-submodules: ## Step 6/7: Remove git submodules
 	@printf "\033[96m============================================================\033[0m\n"
 	@echo "🔗 Deinitializing and removing git submodules..."
 	@chmod +x ./scripts/cleanup/git-submodules.py
-	@./scripts/cleanup/git-submodules.py -y || printf "\033[93m⚠️  Step 6 failed but continuing...\033[0m\n"
+	@./scripts/cleanup/git-submodules.py -y ; rc=$$?; if [ $$rc -ne 0 ]; then printf "\033[93m⚠️  Step 6 failed (exit $$rc) but continuing...\033[0m\n"; fi
 	@printf "\033[92m✅ Step 6 completed\033[0m\n"
 
 clean-step-7-caches: ## Step 7/7: Remove development caches
@@ -632,5 +632,5 @@ clean-step-7-caches: ## Step 7/7: Remove development caches
 	@printf "\033[96m============================================================\033[0m\n"
 	@echo "🗑️  Removing all development caches..."
 	@chmod +x ./scripts/cleanup/caches.py
-	@./scripts/cleanup/caches.py -y || printf "\033[93m⚠️  Step 7 failed but continuing...\033[0m\n"
+	@./scripts/cleanup/caches.py -y ; rc=$$?; if [ $$rc -ne 0 ]; then printf "\033[93m⚠️  Step 7 failed (exit $$rc) but continuing...\033[0m\n"; fi
 	@printf "\033[92m✅ Step 7 completed\033[0m\n"
