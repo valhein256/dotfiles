@@ -347,7 +347,9 @@ EOF
         # Reject obvious typos ("3.124", "py3", "") — fall back to whatever
         # uv picks by default (any installed interpreter).
         if ! _uv_version_looks_valid "$required_version"; then
-            local fallback=$(uv python find --show-version 2>/dev/null)
+            # Pass "3" so uv picks any installed 3.x — without an arg, it
+            # would re-read .python-version and re-trigger the same failure.
+            local fallback=$(UV_PYTHON_DOWNLOADS=never uv python find --show-version 3 2>/dev/null)
             if [ -n "$fallback" ]; then
                 echo "⚠️  '.python-version' contains '$required_version' (not a valid Python version) — ignoring"
                 echo "🐍 Python $fallback"
@@ -382,7 +384,9 @@ EOF
             return 0
         fi
         # Install failed (network, manifest miss, etc.) — fall back gracefully.
-        local fallback=$(uv python find --show-version 2>/dev/null)
+        # Pass "3" so uv picks any installed 3.x — without an arg, it
+        # would re-read .python-version and re-trigger the same failure.
+        local fallback=$(UV_PYTHON_DOWNLOADS=never uv python find --show-version 3 2>/dev/null)
         if [ -n "$fallback" ]; then
             echo "⚠️  Failed to install Python $required_version — using $fallback instead"
             echo "🐍 Python $fallback"
