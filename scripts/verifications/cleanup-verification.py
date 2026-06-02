@@ -127,25 +127,48 @@ class CleanupVerifier:
             (self.home / "go", "Go workspace"),
             (self.home / ".cache" / "go-build", "Go build cache"),
             
+            # pipx
+            (self.home / ".local" / "pipx", "pipx data"),
+
             # Legacy Python managers
             (self.home / ".pyenv", "Legacy Python (pyenv)"),
             (self.home / ".cache" / "pip", "Python pip cache"),
             (self.home / ".cache" / "poetry", "Python poetry cache"),
             (self.home / ".cache" / "pipenv", "Python pipenv cache"),
-            
+
             # Legacy Node.js managers
             (self.home / ".nvm", "Legacy Node.js (nvm)"),
             (self.home / ".npm", "Node.js npm cache"),
             (self.home / ".cache" / "yarn", "Node.js yarn cache"),
         ]
-        
+
         self.total_checks += len(language_dirs)
-        
+
         for dir_path, description in language_dirs:
             if dir_path.exists():
                 self.error(f"{description} still exists: {dir_path}")
             else:
                 self.success(f"{description} removed")
+
+        # Check ~/.local/bin has no leftover broken symlinks pointing into
+        # uv/pipx — these block re-install with "Executable already exists".
+        self.total_checks += 1
+        local_bin = self.home / ".local" / "bin"
+        leftover = []
+        if local_bin.is_dir():
+            for entry in local_bin.iterdir():
+                if not entry.is_symlink():
+                    continue
+                try:
+                    target = os.readlink(entry)
+                except OSError:
+                    continue
+                if any(part in target for part in ("/.local/share/uv/", "/.local/pipx/")):
+                    leftover.append(entry.name)
+        if leftover:
+            self.error(f"Stale uv/pipx symlinks in ~/.local/bin: {', '.join(leftover)}")
+        else:
+            self.success("No stale uv/pipx symlinks in ~/.local/bin")
     
     def check_neovim_cleanup(self) -> None:
         """Verify Neovim dynamic content is cleaned up"""

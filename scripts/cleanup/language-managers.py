@@ -60,18 +60,87 @@ class LanguageManagersCleanup:
         else:
             self.success(f"{description} not found (already clean)")
     
+    def remove_symlinks_pointing_into(self, link_dir: Path, target_root: Path, description: str) -> None:
+        """Remove symlinks in link_dir whose target is under target_root.
+
+        Catches both live and broken symlinks (readlink works on broken ones too).
+        Without this, `uv tool install` later refuses to overwrite the leftover
+        link with "Executable already exists".
+        """
+        if not link_dir.is_dir():
+            self.success(f"{description} skipped (no {link_dir})")
+            return
+        target_root_str = str(target_root.resolve() if target_root.exists() else target_root)
+        removed = 0
+        for entry in link_dir.iterdir():
+            if not entry.is_symlink():
+                continue
+            try:
+                link_target = os.readlink(entry)
+            except OSError:
+                continue
+            if not link_target.startswith(target_root_str) and not link_target.startswith(str(target_root)):
+                continue
+            try:
+                entry.unlink()
+                removed += 1
+            except OSError as e:
+                self.warning(f"Failed to remove symlink {entry}: {e}")
+        if removed:
+            self.success(f"{description}: removed {removed} symlink(s) from {link_dir}")
+        else:
+            self.success(f"{description}: no matching symlinks in {link_dir}")
+
+    def remove_broken_symlinks(self, link_dir: Path, description: str) -> None:
+        """Remove broken (dangling) symlinks in link_dir as a final sweep."""
+        if not link_dir.is_dir():
+            return
+        removed = 0
+        for entry in link_dir.iterdir():
+            if entry.is_symlink() and not entry.exists():
+                try:
+                    entry.unlink()
+                    removed += 1
+                except OSError as e:
+                    self.warning(f"Failed to remove broken symlink {entry}: {e}")
+        if removed:
+            self.success(f"{description}: removed {removed} broken symlink(s) from {link_dir}")
+        else:
+            self.success(f"{description}: no broken symlinks in {link_dir}")
+
     def cleanup_python_uv(self) -> None:
         """Remove uv and all Python installations"""
         print(f"\n🐍 Python (uv) Cleanup")
-        
+
         directories = [
             (self.home / ".local" / "share" / "uv", "uv data directory"),
             (self.home / ".cache" / "uv", "uv cache"),
             (self.home / ".config" / "uv", "uv config"),
         ]
-        
+
         for path, description in directories:
             self.remove_directory(path, description)
+
+        # uv tool install creates symlinks in ~/.local/bin pointing into
+        # ~/.local/share/uv/. Removing the share dir alone leaves them as
+        # broken links, and a later `uv tool install` will refuse to
+        # overwrite them. Sweep them out by target.
+        self.remove_symlinks_pointing_into(
+            self.home / ".local" / "bin",
+            self.home / ".local" / "share" / "uv",
+            "uv-installed binaries"
+        )
+
+    def cleanup_pipx(self) -> None:
+        """Remove pipx environments and any symlinks it created."""
+        print(f"\n📦 pipx Cleanup")
+
+        self.remove_directory(self.home / ".local" / "pipx", "pipx data directory")
+        self.remove_symlinks_pointing_into(
+            self.home / ".local" / "bin",
+            self.home / ".local" / "pipx",
+            "pipx-installed binaries"
+        )
     
     def cleanup_nodejs_fnm(self) -> None:
         """Remove fnm and all Node.js installations"""
@@ -156,7 +225,12 @@ class LanguageManagersCleanup:
             "Python (uv)": [
                 "~/.local/share/uv (all Python versions)",
                 "~/.cache/uv (cache)",
-                "~/.config/uv (config)"
+                "~/.config/uv (config)",
+                "~/.local/bin/* symlinks pointing into ~/.local/share/uv"
+            ],
+            "pipx": [
+                "~/.local/pipx (all pipx-installed venvs)",
+                "~/.local/bin/* symlinks pointing into ~/.local/pipx"
             ],
             "Node.js (fnm)": [
                 "~/.local/share/fnm (all Node versions)",
@@ -220,12 +294,18 @@ class LanguageManagersCleanup:
         
         # Execute cleanup for each language
         self.cleanup_python_uv()
+        self.cleanup_pipx()
         self.cleanup_nodejs_fnm()
         self.cleanup_java_sdkman()
         self.cleanup_rust_rustup()
         self.cleanup_go_environment()
         self.cleanup_legacy_managers()
         self.cleanup_language_caches()
+
+        # Final sweep: any other broken symlinks in ~/.local/bin
+        # (e.g. left by previous tooling we don't track explicitly).
+        print(f"\n🧹 Final symlink sweep")
+        self.remove_broken_symlinks(self.home / ".local" / "bin", "broken symlinks")
         
         print()
         print(f"{Colors.GREEN}[ {Colors.GREEN}OK{Colors.RESET} ] Language managers cleanup complete!{Colors.RESET}")
