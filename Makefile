@@ -76,9 +76,9 @@ clean: ## 🧹 Complete cleanup (orchestrated)
 	@echo ""
 	@printf "\033[93m⚠️  WARNING: This will remove ALL development tools and data!\033[0m\n"
 	@echo ""
-	@echo -n "❓ Are you ABSOLUTELY SURE you want to proceed? Type 'CLEANUP' to confirm: "; \
+	@echo -n "❓ Are you ABSOLUTELY SURE you want to proceed? Type 'CLEAN' to confirm: "; \
 	read confirm; \
-	if [ "$$confirm" != "CLEANUP" ]; then \
+	if [ "$$confirm" != "CLEAN" ]; then \
 		echo "❌ Operation cancelled"; \
 		exit 1; \
 	fi
