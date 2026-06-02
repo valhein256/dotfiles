@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 Language Managers Cleanup Script
 Removes all language version managers and their installations.

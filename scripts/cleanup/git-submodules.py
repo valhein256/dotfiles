@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 Git Submodules Cleanup Script
 Removes and deinitializes git submodules.

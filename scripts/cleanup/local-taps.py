@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 Local Homebrew Taps Cleanup Script
 Removes local Homebrew taps with backup functionality.
