@@ -2,13 +2,6 @@
 # Kiro CLI pre block. Keep at the top of this file.
 [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
 
-# ============================================================================
-# Amazon Q Integration (Pre-initialization)
-# ============================================================================
-# NOTE: Keep at the top of this file
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && \
-    builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
-
 
 # ============================================================================
 # Zplug Plugin Manager
@@ -616,13 +609,6 @@ unset _cfg _dotfiles_local_dir
 #export LESS_TERMCAP_ue=$'\E[0m'           # end underline
 #export LESS_TERMCAP_us=$'\E[04;38;5;146m' # begin underline
 
-
-# ----------------------------------------------------------------------------
-# Amazon Q Integration (Post-initialization)
-# ----------------------------------------------------------------------------
-# NOTE: Keep at the bottom of this file
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && \
-    builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
 
 # Added by Antigravity
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
