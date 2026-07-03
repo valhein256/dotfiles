@@ -223,6 +223,21 @@ zsh/local/*.zsh
 !zsh/local/.gitkeep
 
 # -----------------------------------------------------------------------------
+# Local symlink manifests
+# -----------------------------------------------------------------------------
+# Declare machine-specific "source -> symlink target" mappings (e.g. work
+# Claude settings that live outside the repo). The manifests hold real machine
+# paths, so they stay local. Same trick as zsh/local: the earlier `local/`
+# rule ignores the whole dir, so un-ignore local/links first, ignore its
+# contents, then re-allow the scaffolding files (.gitkeep, README, *.example).
+!local/
+!local/links/
+local/links/*
+!local/links/.gitkeep
+!local/links/README.md
+!local/links/*.example
+
+# -----------------------------------------------------------------------------
 # Plugin manager working trees (formerly git submodules)
 # -----------------------------------------------------------------------------
 # tpm and zplug are now cloned dynamically by scripts/installations/git-submodule.py

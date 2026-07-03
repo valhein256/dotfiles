@@ -1,0 +1,5 @@
+# Claude Code settings — machine-local source, symlinked into ~/.claude
+#
+# Copy this file to `claude.conf` (gitignored) and adjust the source path.
+#   <source: real file you edit>                        <target: symlink location>
+~/Documents/YourOrg/Development/claude/settings.json    ~/.claude/settings.json

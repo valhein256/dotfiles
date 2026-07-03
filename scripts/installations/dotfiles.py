@@ -114,16 +114,80 @@ class DotfilesInstaller:
         # Special handling for tmux.conf (link to the file inside the tmux directory)
         tmux_conf_source = self.home / ".tmux" / "tmux.conf"
         tmux_conf_target = self.home / ".tmux.conf"
-        
+
         if tmux_conf_source.exists():
             self.info("tmux.conf setting...")
             self.create_symlink(tmux_conf_source, tmux_conf_target, "tmux.conf")
-        
+
+        # Machine-local symlinks declared under local/links/ (gitignored)
+        self.install_local_symlinks()
+
         print("### Dotfiles setting... done !!")
         print("")
         print(f"{Colors.GREEN}# scripts/installations/dotfiles.py Finish !!{Colors.RESET}")
         print("")
-    
+
+    def _local_links_dir(self) -> Path:
+        """Directory holding machine-local symlink manifests."""
+        return self.current_path / "local" / "links"
+
+    def _read_local_manifests(self) -> List[Tuple[Path, Path, str]]:
+        """Parse local/links/ manifests into (source, target, description) tuples.
+
+        Each manifest is a plain-text file with one "source target" mapping per
+        line. Blank lines and lines starting with '#' are ignored. '~' and
+        '$VARS' are expanded in both paths. Scaffolding files (.gitkeep,
+        README.md, *.example) and hidden files are skipped.
+        """
+        links_dir = self._local_links_dir()
+        mappings: List[Tuple[Path, Path, str]] = []
+
+        if not links_dir.is_dir():
+            return mappings
+
+        skip_names = {"README.md"}
+        for manifest in sorted(links_dir.iterdir()):
+            if (not manifest.is_file()
+                    or manifest.name.startswith(".")
+                    or manifest.suffix == ".example"
+                    or manifest.name in skip_names):
+                continue
+
+            for lineno, raw in enumerate(manifest.read_text().splitlines(), 1):
+                line = raw.strip()
+                if not line or line.startswith("#"):
+                    continue
+
+                parts = line.split()
+                if len(parts) != 2:
+                    self.warning(
+                        f"{manifest.name}:{lineno} expected '<source> <target>', "
+                        f"skipping: {raw!r}"
+                    )
+                    continue
+
+                source = Path(os.path.expandvars(parts[0])).expanduser()
+                target = Path(os.path.expandvars(parts[1])).expanduser()
+                description = f"{manifest.name}:{target.name}"
+                mappings.append((source, target, description))
+
+        return mappings
+
+    def install_local_symlinks(self) -> None:
+        """Create symlinks declared in local/links/ manifests."""
+        mappings = self._read_local_manifests()
+        if not mappings:
+            return
+
+        print("### Local symlinks setting...")
+        for source, target, description in mappings:
+            if not source.exists():
+                self.warning(f"Local source not found, skipping: {source}")
+                continue
+
+            self.info(f"{description} setting...")
+            self.create_symlink(source, target, description)
+
     def verify_installation(self) -> bool:
         """Verify that all symlinks are correctly created"""
         print("🔍 Verifying dotfiles installation...")
@@ -146,7 +210,15 @@ class DotfilesInstaller:
             else:
                 self.warning(f"{description} not properly linked")
                 all_good = False
-        
+
+        # Verify machine-local symlinks declared under local/links/
+        for source, target, description in self._read_local_manifests():
+            if target.is_symlink() and target.exists():
+                self.success(f"{description} correctly linked")
+            else:
+                self.warning(f"{description} not properly linked")
+                all_good = False
+
         return all_good
 
 
