@@ -85,16 +85,16 @@ class DotfilesInstaller:
         print(f"{Colors.GREEN}# scripts/installations/dotfiles.py Finish !!{Colors.RESET}")
         print("")
 
-    def _local_links_dir(self) -> Path:
+    def _manifests_dir(self) -> Path:
         """Directory holding the dotfile symlink manifests."""
-        return self.current_path / "local" / "links"
+        return self.current_path / "links"
 
-    def _read_local_manifests(self) -> List[Tuple[Path, Path, str]]:
-        """Parse local/links/ manifests into (source, target, description) tuples.
+    def _read_manifests(self) -> List[Tuple[Path, Path, str]]:
+        """Parse links/ manifests into (source, target, description) tuples.
 
         This is the single source of truth for every symlink the installer
-        creates -- core dotfiles (core.conf), Claude config (claude.conf), and
-        any machine-specific manifests all live here.
+        creates -- core dotfiles and Claude config all live in core.conf, and
+        any machine-specific *.local.conf manifests are picked up here too.
 
         Each manifest is a plain-text file with one "source target" mapping per
         line. Blank lines and lines starting with '#' are ignored. '~' and
@@ -103,11 +103,11 @@ class DotfilesInstaller:
 
         A source that resolves to a relative path (i.e. does not start with '/',
         '~', or '$VAR') is taken relative to the repo root, so in-repo sources
-        can be declared as e.g. `local/claude/settings.json` without hardcoding
-        the repo's absolute location. Absolute and '~'/'$'-anchored sources
-        (files outside the repo) keep working as before.
+        can be declared as e.g. `claude/settings.json` without hardcoding the
+        repo's absolute location. Absolute and '~'/'$'-anchored sources (files
+        outside the repo) keep working as before.
         """
-        links_dir = self._local_links_dir()
+        links_dir = self._manifests_dir()
         mappings: List[Tuple[Path, Path, str]] = []
 
         if not links_dir.is_dir():
@@ -145,10 +145,10 @@ class DotfilesInstaller:
         return mappings
 
     def _link_manifests(self) -> None:
-        """Create every symlink declared in local/links/ manifests."""
-        mappings = self._read_local_manifests()
+        """Create every symlink declared in links/ manifests."""
+        mappings = self._read_manifests()
         if not mappings:
-            self.warning("No symlink manifests found under local/links/")
+            self.warning("No symlink manifests found under links/")
             return
 
         for source, target, description in mappings:
@@ -163,9 +163,9 @@ class DotfilesInstaller:
         """Verify that every symlink declared in the manifests is correct."""
         print("🔍 Verifying dotfiles installation...")
 
-        mappings = self._read_local_manifests()
+        mappings = self._read_manifests()
         if not mappings:
-            self.warning("No symlink manifests found under local/links/")
+            self.warning("No symlink manifests found under links/")
             return False
 
         all_good = True

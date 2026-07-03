@@ -223,37 +223,20 @@ zsh/local/*.zsh
 !zsh/local/.gitkeep
 
 # -----------------------------------------------------------------------------
-# Local symlink manifests
+# Claude Code config
 # -----------------------------------------------------------------------------
-# Declare machine-specific "source -> symlink target" mappings (e.g. work
-# Claude settings that live outside the repo). The manifests hold real machine
-# paths, so they stay local. Same trick as zsh/local: the earlier `local/`
-# rule ignores the whole dir, so un-ignore local/links first, ignore its
-# contents, then re-allow the scaffolding files (.gitkeep, README, *.example).
-!local/
-!local/links/
-local/links/*
-!local/links/.gitkeep
-!local/links/README.md
-!local/links/*.example
-# core.conf (standard dotfiles) and claude.conf map in-repo sources via
-# repo-relative paths, so they hold no machine-specific info and are tracked.
-# Manifests that reference machine-specific absolute/external paths must stay
-# unlisted here (ignored).
-!local/links/core.conf
-!local/links/claude.conf
+# The real settings.json holds account-specific values, so keep it local and
+# track only the redacted claude/settings.example. `~/.claude/settings.json` is
+# symlinked to claude/settings.json via links/core.conf.
+claude/settings.json
+claude/*.local.json
 
 # -----------------------------------------------------------------------------
-# Local Claude config
+# Machine-specific symlink manifests
 # -----------------------------------------------------------------------------
-# Real Claude config (settings.json etc.) lives here but holds machine/account
-# specifics, so it stays local. Only the redacted settings.example and README
-# are tracked so a fresh clone knows the format. `~/.claude/settings.json` is
-# symlinked here via local/links/claude.conf.
-!local/claude/
-local/claude/*
-!local/claude/settings.example
-!local/claude/README.md
+# links/*.conf are tracked. A manifest that references machine-specific
+# absolute/external paths should be named *.local.conf so it stays private.
+links/*.local.conf
 
 # -----------------------------------------------------------------------------
 # Plugin manager working trees (formerly git submodules)
