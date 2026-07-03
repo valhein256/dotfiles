@@ -70,57 +70,15 @@ class DotfilesInstaller:
             self.fail(f"Failed to create symlink for {description}: {e}")
     
     def install_dotfiles(self) -> None:
-        """Install all dotfiles by creating symbolic links"""
+        """Install every dotfile by creating the symlinks declared in manifests."""
         print("")
         print(f"{Colors.GRAY}#####################################")
         print(f"# scripts/installations/dotfiles.py #")
         print(f"#####################################{Colors.RESET}")
         print("")
         print("### Dotfiles setting...")
-        
-        # Define dotfiles to be linked
-        dotfiles = [
-            (self.current_path / "gitconfig", self.home / ".gitconfig", "gitconfig"),
-            (self.current_path / "screenrc", self.home / ".screenrc", "screenrc"),
-            (self.current_path / "sshrc", self.home / ".ssh" / "rc", "sshrc"),
-            (self.current_path / "zsh" / "zshrc", self.home / ".zshrc", "zshrc"),
-        ]
-        
-        # Define directories to be linked
-        directories = [
-            (self.current_path / "zsh" / "zplug", self.home / ".zplug", "zplug"),
-            (self.current_path / "tmux", self.home / ".tmux", "tmux"),
-            (self.current_path / "tools", self.home / ".tools", "tools"),
-        ]
-        
-        # Install individual dotfiles
-        for source, target, description in dotfiles:
-            if not source.exists():
-                self.warning(f"Source file not found: {source}")
-                continue
-            
-            self.info(f"{description} setting...")
-            self.create_symlink(source, target, description)
-        
-        # Install directory links
-        for source, target, description in directories:
-            if not source.exists():
-                self.warning(f"Source directory not found: {source}")
-                continue
-            
-            self.info(f"{description} setting...")
-            self.create_symlink(source, target, description)
-        
-        # Special handling for tmux.conf (link to the file inside the tmux directory)
-        tmux_conf_source = self.home / ".tmux" / "tmux.conf"
-        tmux_conf_target = self.home / ".tmux.conf"
 
-        if tmux_conf_source.exists():
-            self.info("tmux.conf setting...")
-            self.create_symlink(tmux_conf_source, tmux_conf_target, "tmux.conf")
-
-        # Machine-local symlinks declared under local/links/ (gitignored)
-        self.install_local_symlinks()
+        self._link_manifests()
 
         print("### Dotfiles setting... done !!")
         print("")
@@ -128,11 +86,15 @@ class DotfilesInstaller:
         print("")
 
     def _local_links_dir(self) -> Path:
-        """Directory holding machine-local symlink manifests."""
+        """Directory holding the dotfile symlink manifests."""
         return self.current_path / "local" / "links"
 
     def _read_local_manifests(self) -> List[Tuple[Path, Path, str]]:
         """Parse local/links/ manifests into (source, target, description) tuples.
+
+        This is the single source of truth for every symlink the installer
+        creates -- core dotfiles (core.conf), Claude config (claude.conf), and
+        any machine-specific manifests all live here.
 
         Each manifest is a plain-text file with one "source target" mapping per
         line. Blank lines and lines starting with '#' are ignored. '~' and
@@ -177,51 +139,37 @@ class DotfilesInstaller:
                     # Relative source -> resolve against the repo root.
                     source = self.current_path / source
                 target = Path(os.path.expandvars(parts[1])).expanduser()
-                description = f"{manifest.name}:{target.name}"
+                description = source.name
                 mappings.append((source, target, description))
 
         return mappings
 
-    def install_local_symlinks(self) -> None:
-        """Create symlinks declared in local/links/ manifests."""
+    def _link_manifests(self) -> None:
+        """Create every symlink declared in local/links/ manifests."""
         mappings = self._read_local_manifests()
         if not mappings:
+            self.warning("No symlink manifests found under local/links/")
             return
 
-        print("### Local symlinks setting...")
         for source, target, description in mappings:
             if not source.exists():
-                self.warning(f"Local source not found, skipping: {source}")
+                self.warning(f"Source not found, skipping: {source}")
                 continue
 
             self.info(f"{description} setting...")
             self.create_symlink(source, target, description)
 
     def verify_installation(self) -> bool:
-        """Verify that all symlinks are correctly created"""
+        """Verify that every symlink declared in the manifests is correct."""
         print("🔍 Verifying dotfiles installation...")
-        
-        expected_links = [
-            (self.home / ".gitconfig", "gitconfig"),
-            (self.home / ".screenrc", "screenrc"),
-            (self.home / ".ssh" / "rc", "sshrc"),
-            (self.home / ".zshrc", "zshrc"),
-            (self.home / ".zplug", "zplug"),
-            (self.home / ".tmux", "tmux"),
-            (self.home / ".tmux.conf", "tmux.conf"),
-            (self.home / ".tools", "tools"),
-        ]
-        
-        all_good = True
-        for target, description in expected_links:
-            if target.is_symlink() and target.exists():
-                self.success(f"{description} correctly linked")
-            else:
-                self.warning(f"{description} not properly linked")
-                all_good = False
 
-        # Verify machine-local symlinks declared under local/links/
-        for source, target, description in self._read_local_manifests():
+        mappings = self._read_local_manifests()
+        if not mappings:
+            self.warning("No symlink manifests found under local/links/")
+            return False
+
+        all_good = True
+        for source, target, description in mappings:
             if target.is_symlink() and target.exists():
                 self.success(f"{description} correctly linked")
             else:

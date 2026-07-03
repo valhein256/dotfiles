@@ -1,13 +1,16 @@
-# Local symlink manifests
+# Symlink manifests
 
-Drop-in manifests that tell `scripts/installations/dotfiles.py` to create
-symlinks during `make install`, without hardcoding them in the script.
+Manifests that tell `scripts/installations/dotfiles.py` which symlinks to
+create during `make install`. This is the **single source of truth** for every
+link the installer makes — the script has no hardcoded list.
 
-Use this for two cases:
+Manifests cover three cases:
 
-1. **In-repo local config** — a file kept under `local/` (gitignored payload)
-   that should be symlinked into place, e.g. `local/claude/settings.json`.
-2. **External / machine-specific files** — config that must live **outside**
+1. **Core dotfiles** — `core.conf` (tracked): the standard links like
+   `gitconfig -> ~/.gitconfig`, `zsh/zshrc -> ~/.zshrc`, `tmux -> ~/.tmux`.
+2. **In-repo local config** — a gitignored payload under `local/` that should
+   be symlinked into place, e.g. `local/claude/settings.json` via `claude.conf`.
+3. **External / machine-specific files** — config that must live **outside**
    the repo (work paths, secrets, per-host settings), same spirit as
    `zsh/local/*.zsh`.
 

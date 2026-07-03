@@ -236,9 +236,11 @@ local/links/*
 !local/links/.gitkeep
 !local/links/README.md
 !local/links/*.example
-# claude.conf maps an in-repo source to ~/.claude via a repo-relative path, so
-# it holds no machine-specific info and is tracked. Manifests that reference
-# machine-specific absolute/external paths must stay unlisted here (ignored).
+# core.conf (standard dotfiles) and claude.conf map in-repo sources via
+# repo-relative paths, so they hold no machine-specific info and are tracked.
+# Manifests that reference machine-specific absolute/external paths must stay
+# unlisted here (ignored).
+!local/links/core.conf
 !local/links/claude.conf
 
 # -----------------------------------------------------------------------------
