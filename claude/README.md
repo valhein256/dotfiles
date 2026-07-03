@@ -5,9 +5,9 @@ holds account-specific values (AWS profile, etc.), so it is **gitignored** —
 only `settings.example` (redacted) and this README are tracked.
 
 `~/.claude/settings.json` is symlinked to `settings.json` here via the
-`claude/settings.json` line in `links/core.conf`, so editing this file takes
-effect directly (Claude Code writes settings in place, so `/config` changes
-also flow back into this file).
+`claude/settings.json` line in `links.conf`, so editing this file takes effect
+directly (Claude Code writes settings in place, so `/config` changes also flow
+back into this file).
 
 ## Setup on a new machine
 

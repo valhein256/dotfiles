@@ -232,13 +232,6 @@ claude/settings.json
 claude/*.local.json
 
 # -----------------------------------------------------------------------------
-# Machine-specific symlink manifests
-# -----------------------------------------------------------------------------
-# links/*.conf are tracked. A manifest that references machine-specific
-# absolute/external paths should be named *.local.conf so it stays private.
-links/*.local.conf
-
-# -----------------------------------------------------------------------------
 # Plugin manager working trees (formerly git submodules)
 # -----------------------------------------------------------------------------
 # tpm and zplug are now cloned dynamically by scripts/installations/git-submodule.py

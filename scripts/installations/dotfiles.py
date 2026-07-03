@@ -70,7 +70,7 @@ class DotfilesInstaller:
             self.fail(f"Failed to create symlink for {description}: {e}")
     
     def install_dotfiles(self) -> None:
-        """Install every dotfile by creating the symlinks declared in manifests."""
+        """Install every dotfile by creating the symlinks declared in links.conf."""
         print("")
         print(f"{Colors.GRAY}#####################################")
         print(f"# scripts/installations/dotfiles.py #")
@@ -78,28 +78,26 @@ class DotfilesInstaller:
         print("")
         print("### Dotfiles setting...")
 
-        self._link_manifests()
+        self._link_manifest()
 
         print("### Dotfiles setting... done !!")
         print("")
         print(f"{Colors.GREEN}# scripts/installations/dotfiles.py Finish !!{Colors.RESET}")
         print("")
 
-    def _manifests_dir(self) -> Path:
-        """Directory holding the dotfile symlink manifests."""
-        return self.current_path / "links"
+    def _manifest_file(self) -> Path:
+        """The manifest file declaring every dotfile symlink."""
+        return self.current_path / "links.conf"
 
-    def _read_manifests(self) -> List[Tuple[Path, Path, str]]:
-        """Parse links/ manifests into (source, target, description) tuples.
+    def _read_manifest(self) -> List[Tuple[Path, Path, str]]:
+        """Parse links.conf into (source, target, description) tuples.
 
         This is the single source of truth for every symlink the installer
-        creates -- core dotfiles and Claude config all live in core.conf, and
-        any machine-specific *.local.conf manifests are picked up here too.
+        creates -- core dotfiles and Claude config alike.
 
-        Each manifest is a plain-text file with one "source target" mapping per
-        line. Blank lines and lines starting with '#' are ignored. '~' and
-        '$VARS' are expanded in both paths. Scaffolding files (.gitkeep,
-        README.md, *.example) and hidden files are skipped.
+        The file has one "source target" mapping per line. Blank lines and
+        lines starting with '#' are ignored. '~' and '$VARS' are expanded in
+        both paths.
 
         A source that resolves to a relative path (i.e. does not start with '/',
         '~', or '$VAR') is taken relative to the repo root, so in-repo sources
@@ -107,48 +105,39 @@ class DotfilesInstaller:
         repo's absolute location. Absolute and '~'/'$'-anchored sources (files
         outside the repo) keep working as before.
         """
-        links_dir = self._manifests_dir()
+        manifest = self._manifest_file()
         mappings: List[Tuple[Path, Path, str]] = []
 
-        if not links_dir.is_dir():
+        if not manifest.is_file():
             return mappings
 
-        skip_names = {"README.md"}
-        for manifest in sorted(links_dir.iterdir()):
-            if (not manifest.is_file()
-                    or manifest.name.startswith(".")
-                    or manifest.suffix == ".example"
-                    or manifest.name in skip_names):
+        for lineno, raw in enumerate(manifest.read_text().splitlines(), 1):
+            line = raw.strip()
+            if not line or line.startswith("#"):
                 continue
 
-            for lineno, raw in enumerate(manifest.read_text().splitlines(), 1):
-                line = raw.strip()
-                if not line or line.startswith("#"):
-                    continue
+            parts = line.split()
+            if len(parts) != 2:
+                self.warning(
+                    f"links.conf:{lineno} expected '<source> <target>', "
+                    f"skipping: {raw!r}"
+                )
+                continue
 
-                parts = line.split()
-                if len(parts) != 2:
-                    self.warning(
-                        f"{manifest.name}:{lineno} expected '<source> <target>', "
-                        f"skipping: {raw!r}"
-                    )
-                    continue
-
-                source = Path(os.path.expandvars(parts[0])).expanduser()
-                if not source.is_absolute():
-                    # Relative source -> resolve against the repo root.
-                    source = self.current_path / source
-                target = Path(os.path.expandvars(parts[1])).expanduser()
-                description = source.name
-                mappings.append((source, target, description))
+            source = Path(os.path.expandvars(parts[0])).expanduser()
+            if not source.is_absolute():
+                # Relative source -> resolve against the repo root.
+                source = self.current_path / source
+            target = Path(os.path.expandvars(parts[1])).expanduser()
+            mappings.append((source, target, source.name))
 
         return mappings
 
-    def _link_manifests(self) -> None:
-        """Create every symlink declared in links/ manifests."""
-        mappings = self._read_manifests()
+    def _link_manifest(self) -> None:
+        """Create every symlink declared in links.conf."""
+        mappings = self._read_manifest()
         if not mappings:
-            self.warning("No symlink manifests found under links/")
+            self.warning("No symlinks found in links.conf")
             return
 
         for source, target, description in mappings:
@@ -160,12 +149,12 @@ class DotfilesInstaller:
             self.create_symlink(source, target, description)
 
     def verify_installation(self) -> bool:
-        """Verify that every symlink declared in the manifests is correct."""
+        """Verify that every symlink declared in links.conf is correct."""
         print("🔍 Verifying dotfiles installation...")
 
-        mappings = self._read_manifests()
+        mappings = self._read_manifest()
         if not mappings:
-            self.warning("No symlink manifests found under links/")
+            self.warning("No symlinks found in links.conf")
             return False
 
         all_good = True
