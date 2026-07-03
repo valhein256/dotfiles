@@ -1,5 +1,10 @@
-# Claude Code settings — machine-local source, symlinked into ~/.claude
+# Symlink manifest — one "<source> <target>" mapping per line.
 #
-# Copy this file to `claude.conf` (gitignored) and adjust the source path.
-#   <source: real file you edit>                        <target: symlink location>
-~/Documents/YourOrg/Development/claude/settings.json    ~/.claude/settings.json
+# <source> is repo-relative (no leading / ~ $) OR an absolute/~/$VAR path.
+# Copy this to a new *.conf and adjust. See README.md for details.
+#
+# In-repo source (repo-relative, survives moving/cloning the repo):
+local/claude/settings.json             ~/.claude/settings.json
+#
+# External source (absolute / ~ / $VAR), e.g. work files outside the repo:
+#~/Documents/YourOrg/Development/env    ~/.config/yourorg/env

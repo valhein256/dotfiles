@@ -1,36 +1,53 @@
 # Local symlink manifests
 
-Drop-in manifests that tell `scripts/installations/dotfiles.py` to symlink
-machine-specific files into place during `make install`.
+Drop-in manifests that tell `scripts/installations/dotfiles.py` to create
+symlinks during `make install`, without hardcoding them in the script.
 
-Use this for config that must live **outside** the repo (work paths, secrets,
-per-host settings) but still wants a symlink managed by dotfiles — the same
-spirit as `zsh/local/*.zsh`.
+Use this for two cases:
+
+1. **In-repo local config** — a file kept under `local/` (gitignored payload)
+   that should be symlinked into place, e.g. `local/claude/settings.json`.
+2. **External / machine-specific files** — config that must live **outside**
+   the repo (work paths, secrets, per-host settings), same spirit as
+   `zsh/local/*.zsh`.
 
 ## How it works
 
 - Any file in this directory (except `.gitkeep`, `README.md`, and `*.example`)
   is treated as a manifest and read at install time.
-- Manifests are **gitignored** — the real machine paths never enter git.
 - Each non-empty, non-`#` line declares one symlink:
 
   ```
   <source>    <target>
   ```
 
-  - `<source>` — the real file on this machine (the source of truth you edit)
-  - `<target>` — where the symlink is created (what tools actually read)
-  - Two whitespace-separated columns. `~` and `$VARS` are expanded.
+  - `<source>` — the source of truth you edit. Two forms:
+    - **Repo-relative** (no leading `/`, `~`, or `$`): resolved against the repo
+      root, e.g. `local/claude/settings.json`. Survives moving/cloning the repo.
+    - **Absolute / `~` / `$VAR`**: an external file, e.g.
+      `~/Documents/Work/env`. Expanded as-is.
+  - `<target>` — where the symlink is created (what tools actually read).
+    `~` and `$VARS` are expanded.
+  - Two whitespace-separated columns.
   - If `<source>` does not exist, that line is warned about and skipped.
   - If `<target>` already exists (real file or old symlink) it is replaced.
 
+## Tracked vs. local manifests
+
+Manifests are **ignored by default** (`local/links/*` in `.gitignore`), so a
+new manifest stays private unless you opt in. A manifest that contains only
+generic, repo-relative mappings (no secrets, no machine paths) — like
+`claude.conf` — can be tracked by adding a `!local/links/<name>` line to
+`.gitignore`. Keep any manifest that references machine-specific absolute paths
+or secrets **unlisted** (ignored).
+
 ## Example
 
-Copy `claude.example` to `claude.conf` and edit the paths:
+Copy `claude.example` to a new manifest and edit the paths:
 
 ```sh
-cp local/links/claude.example local/links/claude.conf
-$EDITOR local/links/claude.conf
+cp local/links/claude.example local/links/work.conf
+$EDITOR local/links/work.conf
 ```
 
 Then `make install` (or `make install-step-5-dotfiles`) creates the symlinks.

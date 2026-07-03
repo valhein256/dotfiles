@@ -138,6 +138,12 @@ class DotfilesInstaller:
         line. Blank lines and lines starting with '#' are ignored. '~' and
         '$VARS' are expanded in both paths. Scaffolding files (.gitkeep,
         README.md, *.example) and hidden files are skipped.
+
+        A source that resolves to a relative path (i.e. does not start with '/',
+        '~', or '$VAR') is taken relative to the repo root, so in-repo sources
+        can be declared as e.g. `local/claude/settings.json` without hardcoding
+        the repo's absolute location. Absolute and '~'/'$'-anchored sources
+        (files outside the repo) keep working as before.
         """
         links_dir = self._local_links_dir()
         mappings: List[Tuple[Path, Path, str]] = []
@@ -167,6 +173,9 @@ class DotfilesInstaller:
                     continue
 
                 source = Path(os.path.expandvars(parts[0])).expanduser()
+                if not source.is_absolute():
+                    # Relative source -> resolve against the repo root.
+                    source = self.current_path / source
                 target = Path(os.path.expandvars(parts[1])).expanduser()
                 description = f"{manifest.name}:{target.name}"
                 mappings.append((source, target, description))
