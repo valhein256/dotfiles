@@ -238,6 +238,18 @@ local/links/*
 !local/links/*.example
 
 # -----------------------------------------------------------------------------
+# Local Claude config
+# -----------------------------------------------------------------------------
+# Real Claude config (settings.json etc.) lives here but holds machine/account
+# specifics, so it stays local. Only the redacted settings.example and README
+# are tracked so a fresh clone knows the format. `~/.claude/settings.json` is
+# symlinked here via local/links/claude.conf.
+!local/claude/
+local/claude/*
+!local/claude/settings.example
+!local/claude/README.md
+
+# -----------------------------------------------------------------------------
 # Plugin manager working trees (formerly git submodules)
 # -----------------------------------------------------------------------------
 # tpm and zplug are now cloned dynamically by scripts/installations/git-submodule.py
