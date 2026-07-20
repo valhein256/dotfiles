@@ -82,6 +82,8 @@ class LanguagePackageManager:
 
             # Go Ecosystem - Minimal & Official
             Package("go", PackageManager.BREW, "golang", "Go programming language"),
+            Package("buf", PackageManager.BREW_TAP, "golang", "Protobuf build tool (codegen for gRPC proto repos, e.g. ef-client)",
+                   tap_name="bufbuild/buf", install_cmd="brew install bufbuild/buf/buf"),
 
             # Java Ecosystem Prerequisites - System Level Dependencies
             # NOTE: bash 4+ is required because SDKMAN's installer rejects macOS' system /bin/bash 3.2.
