@@ -6,7 +6,17 @@
 # ============================================================================
 # Zplug Plugin Manager
 # ============================================================================
-source ~/.zplug/init.zsh
+# zplug is an external clone (not a submodule, not in git) populated by
+# `make install-step-4-git-submodules`. On a fresh clone it won't exist yet,
+# so guard the source and stub out `zplug` to keep the declarations below
+# silent instead of spamming "command not found: zplug" on every shell start.
+export ZPLUG_HOME="$HOME/Documents/dotfiles/zsh/zplug"
+if [[ -r "$ZPLUG_HOME/init.zsh" ]]; then
+    source "$ZPLUG_HOME/init.zsh"
+else
+    printf 'zshrc: zplug not installed — run `make install-step-4-git-submodules`\n' >&2
+    zplug() { :; }   # no-op: plugin declarations and `zplug load` become harmless
+fi
 
 
 # ----------------------------------------------------------------------------
@@ -154,7 +164,6 @@ zstyle ':completion:*:*:git:*' script /opt/homebrew/share/zsh/site-functions/_gi
 # ----------------------------------------------------------------------------
 # Path Configuration
 # ----------------------------------------------------------------------------
-export ZPLUG_HOME=$HOME/Documents/dotfiles/zsh/zplug
 export PATH="$HOME/.local/bin:/usr/local/bin:$PATH:$HOME/usr/bin:$ZPLUG_HOME/bin"
 
 # ----------------------------------------------------------------------------
