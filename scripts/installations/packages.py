@@ -105,6 +105,9 @@ class LanguagePackageManager:
             # (kind cluster + grpcurl smoke tests against the gRPC services).
             Package("kind", PackageManager.BREW, "devops", "Kubernetes in Docker (local k8s for EAIS services)"),
             Package("grpcurl", PackageManager.BREW, "devops", "gRPC CLI client (smoke-test EAIS gRPC services)"),
+            # actionlint lints GitHub Actions workflow files locally (expressions, needs/matrix
+            # references, action inputs) before pushing, e.g. xray-remediation-action's pr-review.yml.
+            Package("actionlint", PackageManager.BREW, "devops", "GitHub Actions workflow linter"),
             Package("terraform", PackageManager.BREW_TAP, "devops", "Infrastructure as code",
                    tap_name="hashicorp/tap", install_cmd="brew install hashicorp/tap/terraform"),
             Package("terragrunt", PackageManager.BREW, "devops", "Terraform wrapper for DRY configurations"),
