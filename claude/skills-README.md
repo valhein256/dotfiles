@@ -41,7 +41,7 @@ claude/
 | `python-uv-deps` | original | any Python work | `team-python-standards` (plugin) when present |
 | `kubeconfig-refresh` | original (optimized 2026-10-17) | pasted kubeconfig YAML, "update my kubeconfig" | `~/.kube/configs/` layout (zshrc glob) |
 | `weekly-report` | original (2026-10-17) | "weekly report", "週報", "summarize my week" | `draft` + `profiles/reporting`; session history + git + Jira (MCP) at runtime |
-| `dotfiles-setup` | original (2026-10-17) | "new machine setup", "install dotfiles", "新機器設定" | Makefile install steps, `scripts/installations/dotfiles.py`, `scripts/skills/` |
+| `dotfiles-setup` | original (2026-10-17; pre-flight gate + reset added same day) | "new machine setup", "install dotfiles", "remove and reinstall dotfiles" | Makefile install/clean steps, `scripts/installations/dotfiles.py`, `scripts/skills/` |
 
 ## The three sources of a skill at `~/.claude/skills/`
 

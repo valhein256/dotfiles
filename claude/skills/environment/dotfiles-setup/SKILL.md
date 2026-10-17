@@ -1,26 +1,64 @@
 ---
 name: dotfiles-setup
-description: Provision this machine from the dotfiles repo in stages — environment (make install steps), the Claude personal layer (settings restore with key-safety ordering, profiles, skills, standby activation), then verification. Fully idempotent; safe to re-run. Use when asked to set up a new machine, install or configure dotfiles, or restore the Claude layer. Triggers: "new machine setup", "install dotfiles", "provision this machine", "新機器設定", "設定新電腦".
+description: Provision this machine from the dotfiles repo in stages — pre-flight checklist (hard gate), optional reset (remove the repo-managed setup), environment (make install steps), the Claude personal layer (settings restore with key-safety ordering, profiles, skills, standby activation), then verification. Fully idempotent; safe to re-run. Use when asked to set up a new machine, install or configure dotfiles, remove and reinstall, or restore the Claude layer. Triggers: "new machine setup", "install dotfiles", "provision this machine", "remove and reinstall dotfiles".
 ---
 
 # Dotfiles setup
 
-Provision a machine from this repo in three stages. Drive the repo's own
+Provision a machine from this repo in stages. Drive the repo's own
 tooling (Makefile, scripts/, links.conf) — this skill adds ordering and
-safety rules, not new mechanisms. Every stage is idempotent: probe first,
-run only what is missing, re-run freely.
+safety rules, not new mechanisms. Every stage is idempotent: pre-flight
+first, run only what is missing, re-run freely.
 
-## Stage 0 — Probe
+## Stage 0 — Pre-flight checklist (hard gate)
 
-Before anything: report machine state, then act only on gaps.
+Run EVERY check, print the full table, and STOP before any removal or
+setup step unless every REQUIRED row passes. Never print secret values —
+field presence only.
 
-- Repo clean? `git status --porcelain` — uncommitted changes must be
-  committed or stashed before Stage 2 touches settings.
-- Environment: `command -v brew`, language managers present.
-- Claude layer: does `~/.claude/settings.json` resolve (symlink target
-  exists)? `./scripts/installations/dotfiles.py --verify` for the whole
-  link manifest.
-- Report the gap list to the user, then run the missing stages.
+| # | Item | Verify | Required |
+|---|---|---|---|
+| 1 | settings.json complete | `claude/settings/settings.json` exists and contains `apiKeyHelper`, `enabledPlugins` (>=1), `env.ANTHROPIC_BASE_URL`, `hooks.SessionStart` | YES — hard stop |
+| 2 | Variants complete | each `claude/settings/settings-*.json` has `enabledPlugins`; `fw-*` variants also `apiKeyHelper` | warn only |
+| 3 | Repo clean | `git status --porcelain` empty (commit or stash first) | YES — hard stop |
+| 4 | No other Claude sessions | ask the user; `ps` for other claude processes | YES — hard stop |
+| 5 | CLT tools alive | `/usr/bin/python3`, `/usr/bin/make`, `/usr/bin/git` exist | YES (reset path) |
+| 6 | Local layer present | `zsh/local/*.zsh`, `claude/settings/settings.example` exist | warn only |
+| 7 | Team plugin state | `~/.claude/plugins` has the team plugin → Stage 2 runs `make skills-sync`; absent → `make skills-activate-standby` | report |
+| 8 | Level-2 assets | real-dir skills under `~/.claude/skills` + `~/.claude/projects` memory backed up | YES only if wiping `~/.claude` |
+
+On any REQUIRED fail: name the missing asset and stop — never enter
+removal or setup with incomplete assets.
+
+After the gate passes: report the gap list (what is missing → which
+stages run), then run only the missing stages.
+
+## Reset (optional — remove the repo-managed setup)
+
+Run only when the goal is remove-then-reinstall, and only after Stage 0
+passes fully.
+
+Removal: `make clean` (prompts for typed `CLEAN`) or the individual
+`make clean-step-N-*` targets. It removes brew packages/taps, language
+managers, neovim dynamic content, every links.conf symlink, git
+submodules, and caches. Real files survive: the local layer
+(`claude/settings/*.json`, `zsh/local/*.zsh`) is untouched.
+
+Order rules:
+
+1. **Clean and reinstall in one continuous stretch** — never leave the
+   settings symlink dangling across sessions or overnight.
+2. **Close the settings gap first**: right after clean finishes, run
+   the link step (`make install-dotfiles`) before the long environment
+   steps. The repo settings file is already in place (Stage 0 checked
+   it); linking takes seconds and ends the dangling window.
+3. **No new Claude Code sessions between clean and relink** — a fresh
+   session reads no settings, and its first settings save writes a
+   defaults-only file (no `apiKeyHelper` — unreconstructable).
+4. **Level 2 (wiping `~/.claude` entirely) is a separate manual
+   decision**: back up the one-copy assets first (Stage 0 row 8) —
+   `make clean` never touches them, but a wipe destroys them
+   permanently.
 
 ## Stage 1 — Environment
 
