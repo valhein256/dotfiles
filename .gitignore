@@ -225,12 +225,13 @@ zsh/local/*.zsh
 # -----------------------------------------------------------------------------
 # Claude Code config
 # -----------------------------------------------------------------------------
-# The real settings.json holds account-specific values, so keep it local and
-# track only the redacted claude/settings.example. `~/.claude/settings.json` is
-# symlinked to claude/settings.json via links/core.conf.
-claude/settings.json
-claude/settings-*.json
-claude/*.local.json
+# Claude Code settings — everything under claude/settings/ is machine-local
+# (settings.json + account/provider variants hold account values and work
+# marketplace entries); only the redacted settings.example is tracked.
+# `~/.claude/settings.json` is symlinked to claude/settings/settings.json
+# via links.conf.
+claude/settings/*
+!claude/settings/settings.example
 
 # -----------------------------------------------------------------------------
 # Plugin manager working trees (formerly git submodules)
