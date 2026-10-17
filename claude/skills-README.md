@@ -21,10 +21,13 @@ claude/
                              #   + save-back into profiles/)
     environment/python-uv-deps/
     environment/kubeconfig-refresh/
+    environment/dotfiles-setup/    #   staged machine provisioning (this skill
+                                  #   drives make install + the Claude layer)
     automation/weekly-report/
   skills-standby/            # verbatim mirrors of team plugin skills (NOT
                              #   symlinked while the plugin exists — see below)
-  settings.example           # example settings incl. the skills-sync hook
+  settings/settings.example  # redacted settings example incl. the skills-sync
+                             #   hook
 ```
 
 `links.conf` is the single source of truth for what gets symlinked into
@@ -38,6 +41,7 @@ claude/
 | `python-uv-deps` | original | any Python work | `team-python-standards` (plugin) when present |
 | `kubeconfig-refresh` | original (optimized 2026-10-17) | pasted kubeconfig YAML, "update my kubeconfig" | `~/.kube/configs/` layout (zshrc glob) |
 | `weekly-report` | original (2026-10-17) | "weekly report", "週報", "summarize my week" | `draft` + `profiles/reporting`; session history + git + Jira (MCP) at runtime |
+| `dotfiles-setup` | original (2026-10-17) | "new machine setup", "install dotfiles", "新機器設定" | Makefile install steps, `scripts/installations/dotfiles.py`, `scripts/skills/` |
 
 ## The three sources of a skill at `~/.claude/skills/`
 
@@ -85,11 +89,15 @@ as report-only (never fast-forward) and activation skips it unless
 
 ## Rebuild on a new machine
 
+Run the `dotfiles-setup` skill (`environment/dotfiles-setup/`) — it probes
+what is missing and drives these stages with the settings-safety ordering
+rules (settings file first, symlink second; never rebuild settings.json):
+
 1. Clone this repo; `make install` (or `make install-dotfiles`) —
    CLAUDE.md, profiles, and personal skills symlinked into `~/.claude/`.
 2. Company machine additionally: install the team plugin from the
    marketplace + clone the team skills repo and run its installer
    (team skills + hook-delivered workflow rules). Personal machine:
    `make skills-activate-standby` for the generic standards mirrors.
-3. The `skills-sync` SessionStart hook (see `settings.example`) keeps
-   standby mirrors current automatically.
+3. The `skills-sync` SessionStart hook (see `settings/settings.example`)
+   keeps standby mirrors current automatically.
