@@ -36,7 +36,11 @@ stages run), then run only the missing stages.
 ## Reset (optional — remove the repo-managed setup)
 
 Run only when the goal is remove-then-reinstall, and only after Stage 0
-passes fully.
+passes fully. Prefer the Stage 1 manual-execution model for the whole
+stretch — the user runs clean + install in their own terminal (TTY for
+sudo passwords); the agent may run the removal itself only when no
+sudo step is expected, closing the settings gap per rule 2 immediately
+after.
 
 Removal: `make clean` (prompts for typed `CLEAN`) or the individual
 `make clean-step-N-*` targets. It removes brew packages/taps, language
@@ -62,14 +66,47 @@ Order rules:
 
 ## Stage 1 — Environment
 
-Run the repo's existing steps in order:
+**Default: the user runs the complete install commands manually in
+their own terminal; the agent verifies afterwards.** The agent's shell
+and the `!` prefix both run without a TTY, so any step that needs a
+sudo password (brew cask pkg installs/upgrades, e.g. xquartz) always
+fails in agent-driven runs. The skill's job here is instructions, not
+execution: hand the user the complete command list and say which steps
+prompt for a password.
 
-    make install-step-1-local-taps ... install-step-7-neovim
+Hand the user these commands (remove-then-reinstall runs all three, in
+one terminal, back-to-back):
 
-(or `make install` — it prompts for typed confirmation `INSTALL`.)
+    make clean            # prompts for typed CLEAN
+    make install-dotfiles  # seconds — run FIRST after clean: closes
+                          # the settings-symlink gap before the long
+                          # environment steps (Reset rule 2)
+    make install          # prompts for typed INSTALL; step 3 (brew
+                          # upgrade) may ask the sudo password for
+                          # cask upgrades (xquartz) — enter it when
+                          # asked
 
-- Long-running (brew). Steps continue on failure — collect every failure
-  and report them; never silently retry.
+Order rules (Reset section) still apply in the manual flow: clean →
+install in one continuous stretch, no new Claude Code sessions during
+the settings-symlink gap, complete settings file in the repo before
+the link step runs (Stage 0 already verified it).
+
+Claude links need nothing manual: `make install` step 5
+(`install-step-5-dotfiles` → `scripts/installations/dotfiles.py`)
+creates every link declared in `links.conf` — settings.json, CLAUDE.md,
+the profiles, and the personal skills. An existing regular file at a
+target is unlinked and replaced by the symlink (why the API key must
+live in the repo file first, never written directly into `~/.claude`).
+
+After the user reports completion: agent-driven follow-ups — `make
+skills-sync` (Stage 2, plugin present) and the Stage 3 verification. If
+a sudo step still failed in their terminal run, hand back that one
+command for a manual re-run and re-verify; never retry a sudo step in
+the agent shell.
+
+Agent-driven full `make install` (background, logged) remains possible
+when no sudo step is expected — but expect cask-upgrade steps to fail
+without a TTY; report and hand the command over instead of retrying.
 
 ## Stage 2 — Claude personal layer (safety-critical)
 
