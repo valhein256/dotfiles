@@ -1,6 +1,6 @@
 ---
 name: weekly-report
-description: Generate the user's personal weekly work report — what was done in the past week, in the user's own weekly-report voice (the reporting channel profile), matching the shape of their entries in the team weekly-report document. Derives the week's repos and task narrative from the Claude Code session history (~/.claude/projects/), corroborates with git commits and Jira tickets, then drafts via the `draft` skill (channel reporting), so the review gate and save-back apply. Triggers on "weekly report", "週報", "報告上週進度", "summarize my week", "generate my weekly report".
+description: Generate the user's personal weekly work report — what was done in the past week, in the user's own weekly-report voice (the reporting channel profile), matching the shape of their entries in the team weekly-report document. Derives the week's repos and task narrative from the Claude Code session history (~/.claude/projects/), corroborates with git commits and Jira tickets, then drafts via the `draft` skill (channel reporting), so the review gate and save-back apply. Triggers on "weekly report", "summarize my week", "generate my weekly report", "report last week's progress".
 ---
 
 # Weekly Report
@@ -19,7 +19,8 @@ forward line. Do not restate its traits here.
 ## Workflow
 
 1. **Establish the window**: default = Monday of the current week to
-   today; the user may name any range ("上禮拜" = the previous Mon–Sun).
+   today; the user may name any range in their own words (e.g. the
+   previous Mon–Sun).
 
 2. **Gather the facts** — raw material only, never invent work:
    - **Agent sessions (the entry point)**: list

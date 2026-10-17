@@ -1,6 +1,6 @@
 ---
 name: kubeconfig-refresh
-description: Manage this machine's kubectl config for the user — the split-file kubeconfig layout at ~/.kube/configs/ (auto-loaded via KUBECONFIG in zsh). Refresh a cluster's token when the user pastes a new/refreshed kubeconfig (e.g. after a Rancher token expired, causing "You must be logged in to the server" errors), add a new cluster from pasted YAML, retire old ones. Triggers on the user pasting kubeconfig YAML, or saying things like "這是新的 kubectl config 幫我更新" / "update my kubeconfig".
+description: Manage this machine's kubectl config for the user — the split-file kubeconfig layout at ~/.kube/configs/ (auto-loaded via KUBECONFIG in zsh). Refresh a cluster's token when the user pastes a new/refreshed kubeconfig (e.g. after a Rancher token expired, causing "You must be logged in to the server" errors), add a new cluster from pasted YAML, retire old ones. Triggers on the user pasting kubeconfig YAML, or asking to update the kubeconfig ("update my kubeconfig", "here is a new kubectl config").
 ---
 
 # Kubeconfig Refresh
