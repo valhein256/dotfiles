@@ -20,11 +20,12 @@ verifies afterwards. Password-requiring steps (sudo — e.g. brew cask
 upgrades like xquartz) only work in your own terminal, so the
 environment install runs manually by design:
 
-    make clean              # remove-then-reinstall only; prompts CLEAN
-    make install-dotfiles   # run FIRST after clean — closes the
-                            # settings-symlink gap in seconds
-    make install            # prompts INSTALL; step 3 may ask the sudo
-                            # password for cask upgrades
+    make clean && make install-dotfiles && make install
+    # remove-then-reinstall, one chained command: the link step starts
+    # the moment clean finishes (closes the settings-symlink gap
+    # immediately); prompts CLEAN then INSTALL; step 3 may ask the
+    # sudo password for cask upgrades. A mistyped confirmation aborts
+    # before anything is removed.
 
 On a fresh machine, first place a **complete** `settings.json` (copied
 from the old machine or a backup) at `claude/settings/settings.json` —

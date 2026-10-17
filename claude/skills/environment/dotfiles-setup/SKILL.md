@@ -74,17 +74,16 @@ fails in agent-driven runs. The skill's job here is instructions, not
 execution: hand the user the complete command list and say which steps
 prompt for a password.
 
-Hand the user these commands (remove-then-reinstall runs all three, in
-one terminal, back-to-back):
+Hand the user this single chained command for remove-then-reinstall
+(one line, one terminal — the `&&` chain starts the link step the
+moment clean finishes, closing the settings-symlink gap immediately):
 
-    make clean            # prompts for typed CLEAN
-    make install-dotfiles  # seconds — run FIRST after clean: closes
-                          # the settings-symlink gap before the long
-                          # environment steps (Reset rule 2)
-    make install          # prompts for typed INSTALL; step 3 (brew
-                          # upgrade) may ask the sudo password for
-                          # cask upgrades (xquartz) — enter it when
-                          # asked
+    make clean && make install-dotfiles && make install
+    # prompts for typed CLEAN, then INSTALL; step 3 (brew upgrade)
+    # may ask the sudo password for cask upgrades (xquartz) — enter
+    # it when asked. A mistyped confirmation aborts before anything
+    # is removed; a failed step stops the chain with settings either
+    # untouched or already re-linked.
 
 Order rules (Reset section) still apply in the manual flow: clean →
 install in one continuous stretch, no new Claude Code sessions during
