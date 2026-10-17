@@ -10,22 +10,31 @@ via the `links.conf` line, so editing the repo file takes effect directly
 (Claude Code writes settings in place, so `/config` changes also flow back
 into this file).
 
-## Setup on a new machine
+## Setup on a new machine (or remove-then-reinstall)
 
 Ask Claude to run the `dotfiles-setup` skill
-(`claude/skills/environment/dotfiles-setup/`) — it drives the full staged
-setup with the settings-safety ordering rules.
+(`claude/skills/environment/dotfiles-setup/`): it runs the pre-flight
+checklist (hard gate — verifies the complete settings.json before
+anything moves), hands over the exact commands to run manually, and
+verifies afterwards. Password-requiring steps (sudo — e.g. brew cask
+upgrades like xquartz) only work in your own terminal, so the
+environment install runs manually by design:
 
-Manual equivalent, in this order (order matters):
+    make clean              # remove-then-reinstall only; prompts CLEAN
+    make install-dotfiles   # run FIRST after clean — closes the
+                            # settings-symlink gap in seconds
+    make install            # prompts INSTALL; step 3 may ask the sudo
+                            # password for cask upgrades
 
-1. Copy a **complete** `settings.json` from your old machine (or a backup)
-   to `claude/settings/settings.json` — never rebuild it from the example:
-   `apiKeyHelper`, `enabledPlugins`, and env values exist nowhere else.
-2. Only then run `make install-dotfiles` (or `make install`) to create the
-   symlink.
+On a fresh machine, first place a **complete** `settings.json` (copied
+from the old machine or a backup) at `claude/settings/settings.json` —
+never rebuild it from the example: `apiKeyHelper`, `enabledPlugins`, and
+env values exist nowhere else. Claude links (settings, CLAUDE.md,
+profiles, personal skills) are created automatically by the link step
+from `links.conf` — nothing manual there.
 
-Writing the API key directly into `~/.claude/settings.json` before linking
-loses it: the installer replaces that file with a symlink.
+Writing the API key directly into `~/.claude/settings.json` before
+linking loses it: the installer replaces that file with a symlink.
 
 ## Local-only files (never committed)
 
