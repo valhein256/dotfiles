@@ -322,6 +322,14 @@ install-local-taps: ## 🏠 Restore local Homebrew taps
 		echo "No local taps backup found, skipping..."; \
 	fi
 
+skills-sync: ## 🔄 Sync skills-standby mirrors from the team plugin (silent unless changed)
+	@chmod +x ./scripts/skills/sync-standby.sh
+	@./scripts/skills/sync-standby.sh
+
+skills-activate-standby: ## 🔛 Flip skills-standby mirrors into live skills (when the team plugin is gone)
+	@chmod +x ./scripts/skills/activate-standby.sh
+	@./scripts/skills/activate-standby.sh
+
 ##@ COMPONENT CLEANUP
 
 clean-packages: ## 🍺 Remove Homebrew packages only

@@ -11,6 +11,18 @@
     "type": "command",
     "command": "bash ~/.claude/statusline-command.sh"
   },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "make -C ~/Documents/dotfiles skills-sync"
+          }
+        ]
+      }
+    ]
+  },
   "enabledPlugins": {
     "<TEAM_PLUGIN>@<TEAM_MARKETPLACE>": true,
     "gopls-lsp@claude-plugins-official": true
