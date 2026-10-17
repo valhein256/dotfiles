@@ -1,8 +1,8 @@
 # Claude Code Skills & Profiles — Layout and Management
 
 This repo manages the personal layer of the Claude Code setup. Team
-skills arrive via the company plugin (`<TEAM_PLUGIN>`) and its
-local clone — they are NOT managed here.
+skills arrive via the team plugin and its local clone — they are NOT
+managed here.
 
 ## Layout
 
@@ -44,8 +44,8 @@ claude/
 `ls -la ~/.claude/skills/` is the map:
 
 - symlink → this repo's `claude/skills/` — personal, portable
-- symlink → `~/.claude/plugins/company-team-skills/` — team repo clone
-  (update: `git pull` + re-run its `install.sh`-style links)
+- symlink → the team skills clone under `~/.claude/plugins/` — team repo
+  clone (update: `git pull` + re-run its `install.sh`-style links)
 - real directory — machine-local (company project tooling that must not
   leave this machine)
 

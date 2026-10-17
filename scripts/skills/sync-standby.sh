@@ -15,18 +15,34 @@ set -u
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 STANDBY="$ROOT/claude/skills-standby"
-PLUGIN_JSON="$HOME/.claude/plugins/installed_plugins.json"
-PLUGIN_KEY="<TEAM_PLUGIN>@<TEAM_MARKETPLACE>"
 
-VER="$(python3 -c "import json; d=json.load(open('$PLUGIN_JSON')); print(d['plugins']['$PLUGIN_KEY'][0]['version'])" 2>/dev/null || true)"
-UP_BASE="$HOME/.claude/plugins/cache/<TEAM_MARKETPLACE>/<TEAM_PLUGIN>/${VER:-}/skills"
+# Discover the team plugin dynamically: the INSTALLED plugin whose cache
+# provides a standby skill's directory. No plugin or marketplace names
+# hardcoded — works regardless of which team plugin provides the skills.
+UP_BASE="$(python3 -c "
+import json, os, sys
+probe = 'team-db-standards'
+try:
+    d = json.load(open(os.path.expanduser('~/.claude/plugins/installed_plugins.json')))
+except OSError:
+    sys.exit(0)
+for entries in d.get('plugins', {}).values():
+    for e in entries:
+        base = e.get('installPath', '')
+        if os.path.isdir(os.path.join(base, 'skills', probe)):
+            print(os.path.join(base, 'skills'))
+            sys.exit(0)
+" 2>/dev/null || true)"
+
+VER=""
+[ -n "${UP_BASE:-}" ] && VER="$(basename "${UP_BASE%/skills}")"
 
 for dir in "$STANDBY"/*/; do
   [ -f "$dir/SKILL.md" ] || continue
   name="$(basename "$dir")"
   [ -f "$dir/.scrubbed" ] && continue
 
-  if [ -z "${VER:-}" ] || [ ! -f "$UP_BASE/$name/SKILL.md" ]; then
+  if [ -z "${UP_BASE:-}" ] || [ ! -f "$UP_BASE/$name/SKILL.md" ]; then
     echo "standby: team plugin not found for '$name' — run: make skills-activate-standby"
     continue
   fi

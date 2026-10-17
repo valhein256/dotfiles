@@ -1,8 +1,8 @@
 # Development Standards (personal)
 
 > Team workflow rules (brainstorm gate, TDD, branch format, Jira triggers,
-> worktree enforcement) arrive automatically via the `<TEAM_PLUGIN>`
-> plugin session hook. This file holds personal sections and overrides only.
+> worktree enforcement) arrive automatically via the team plugin's session
+> hook. This file holds personal sections and overrides only.
 
 ## Communication Standards
 

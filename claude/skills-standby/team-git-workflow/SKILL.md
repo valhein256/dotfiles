@@ -20,7 +20,7 @@ Git branching strategy, commit message conventions, release tagging, and hotfix 
 develop (always deployable)
   │
   ├── pr/{TICKET}/add-feature    ← short-lived, squash merged
-  ├── pr/PE-456/fix-bug         ← short-lived, squash merged
+  ├── pr/{TICKET}/fix-bug       ← short-lived, squash merged
   │
   └── hotfix/{TICKET}/critical   ← branched from tag, not develop
 ```
