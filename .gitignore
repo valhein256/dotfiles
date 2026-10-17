@@ -215,7 +215,7 @@ Temporary Items
 # -----------------------------------------------------------------------------
 # Machine-local zsh configs
 # -----------------------------------------------------------------------------
-# Per-host PATH tweaks, work-specific env vars (company, AWS, etc).
+# Per-host PATH tweaks, work-specific env vars (cloud hosts, etc).
 # Note: an earlier `local/` rule (around line 187) ignores any "local/" dir
 # anywhere. We have to un-ignore zsh/local first, then ignore *.zsh inside it.
 !zsh/local/
@@ -229,6 +229,7 @@ zsh/local/*.zsh
 # track only the redacted claude/settings.example. `~/.claude/settings.json` is
 # symlinked to claude/settings.json via links/core.conf.
 claude/settings.json
+claude/settings-*.json
 claude/*.local.json
 
 # -----------------------------------------------------------------------------
