@@ -34,7 +34,10 @@ profiles, personal skills) are created automatically by the link step
 from `links.conf` — nothing manual there.
 
 Writing the API key directly into `~/.claude/settings.json` before
-linking loses it: the installer replaces that file with a symlink.
+linking still loses it from the live position: the installer replaces
+that file with a symlink (a non-empty replaced file is backed up to
+`backups/` first, and the installer refuses to replace what it cannot
+back up — but the repo file remains the source of truth).
 
 ## Local-only files (never committed)
 

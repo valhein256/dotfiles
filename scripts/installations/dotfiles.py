@@ -45,27 +45,67 @@ class DotfilesInstaller:
     def warning(self, message: str) -> None:
         print(f"  [ {Colors.YELLOW}WARN{Colors.RESET} ] {message}")
     
+    def _backup_replaced_target(self, target: Path) -> bool:
+        """Back up a real file/dir that a symlink is about to replace.
+
+        Deleting silently is how machine-local data (API keys, plugin
+        state) has been lost before: an existing regular file at a
+        target was unlinked with no warning and no copy. Guard: any
+        non-empty file (or any directory) leaves a dated copy under
+        backups/ first. Empty files are deleted as before. A failed
+        backup aborts the replacement (returns False) — never destroy
+        what could not be copied.
+        """
+        import shutil
+        import time
+
+        if target.is_file() and target.stat().st_size == 0:
+            return True  # nothing to lose
+
+        backup_dir = self.current_path / "backups"
+        backup_dir.mkdir(parents=True, exist_ok=True)
+        stamp = time.strftime("%Y%m%d-%H%M%S")
+        backup = backup_dir / f"{target.name}.bak-{stamp}"
+        try:
+            if target.is_dir():
+                shutil.copytree(target, backup)
+            else:
+                shutil.copy2(target, backup)
+        except Exception as e:
+            self.fail(
+                f"Refusing to replace {target}: backup failed ({e}) — "
+                f"resolve manually before re-running"
+            )
+            return False
+
+        self.warning(
+            f"replaced real file at {target} — backup: {backup}"
+        )
+        return True
+
     def create_symlink(self, source: Path, target: Path, description: str) -> None:
-        """Create a symbolic link, removing existing file/link if necessary"""
+        """Create a symbolic link, backing up any real file/dir it replaces"""
         try:
             # Ensure parent directory exists
             target.parent.mkdir(parents=True, exist_ok=True)
-            
-            # Remove existing file or symlink
+
+            # Remove existing file or symlink (real content is backed up first)
             if target.exists() or target.is_symlink():
                 if target.is_symlink():
                     target.unlink()
                 else:
+                    if not self._backup_replaced_target(target):
+                        return  # backup failed and already reported; keep target
                     if target.is_dir():
                         import shutil
                         shutil.rmtree(target)
                     else:
                         target.unlink()
-            
+
             # Create symlink
             target.symlink_to(source)
             self.success(f"{description} symlinked")
-            
+
         except Exception as e:
             self.fail(f"Failed to create symlink for {description}: {e}")
     

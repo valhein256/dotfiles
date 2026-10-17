@@ -96,7 +96,9 @@ Claude links need nothing manual: `make install` step 5
 creates every link declared in `links.conf` — settings.json, CLAUDE.md,
 the profiles, and the personal skills. An existing regular file at a
 target is unlinked and replaced by the symlink (why the API key must
-live in the repo file first, never written directly into `~/.claude`).
+live in the repo file first, never written directly into `~/.claude`);
+the installer backs up any non-empty replaced file to `backups/` and
+refuses to replace what it cannot back up.
 
 After the user reports completion: agent-driven follow-ups — `make
 skills-sync` (Stage 2, plugin present) and the Stage 3 verification. If
