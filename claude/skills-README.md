@@ -40,7 +40,7 @@ claude/
 | `draft` | original (v2, 2026-10-16) | "draft", any external-facing write-up, pasted text to tighten | `profiles/` (core + channel) |
 | `python-uv-deps` | original | any Python work | `team-python-standards` (plugin) when present |
 | `kubeconfig-refresh` | original (optimized 2026-10-17) | pasted kubeconfig YAML, "update my kubeconfig" | `~/.kube/configs/` layout (zshrc glob) |
-| `weekly-report` | original (2026-10-17) | "weekly report", "summarize my week" | `draft` + `profiles/reporting`; session history + git + Jira (MCP) at runtime |
+| `weekly-report` | original (2026-10-17; fact-filter pass added 2026-10-18) | "weekly report", "summarize my week" | `draft` + `profiles/reporting`; session history + git + Jira (MCP) at runtime |
 | `dotfiles-setup` | original (2026-10-17; pre-flight gate + reset added same day) | "new machine setup", "install dotfiles", "remove and reinstall dotfiles" | Makefile install/clean steps, `scripts/installations/dotfiles.py`, `scripts/skills/` |
 
 ## The three sources of a skill at `~/.claude/skills/`

@@ -53,7 +53,30 @@ forward line. Do not restate its traits here.
    applies — floor, reporting voice, AI-simulated take, the English +
    Chinese review gate, save-back of the user's edits.
 
-5. The user-confirmed text is final: ready to paste into the weekly
+5. **Fact-filter pass — before the review gate shows the draft**:
+   every claim in the draft must trace to a source (session text, git
+   commit, or Jira field). Found live on the first fact-filtered run:
+   - A verification sentence with no source is deleted — never kept
+     because it fits the voice. The reporting profile's
+     "verification closer" trait is evidence-gated: the top failure
+     mode is a voice-compliant but evidence-free sentence the AI
+     grew to satisfy the trait. Keep or mark `[unverified]` only when
+     a source exists.
+   - A ticket updated in the window is not work done in the window:
+     check the code-landing date (`git log --grep=<key>`) before
+     presenting a ticket as this week's build work. Work that landed
+     earlier becomes a one-line closure note.
+   - Trailing status vocabulary matches the ticket's actual state
+     (Done / Ongoing / Todo / Pending / Blocked) — read the Jira
+     status, do not guess. "Ready to run, not started" is Todo, not
+     Ongoing.
+   - When the user challenges an item, read that session's actual
+     conclusions (beyond the first user message) before answering —
+     a challenge usually means this pass missed something. Also
+     verify window membership: work completed before the window
+     start belongs to the previous report, not this one.
+
+6. The user-confirmed text is final: ready to paste into the weekly
    report document as-is.
 
 ## Notes
