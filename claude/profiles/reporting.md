@@ -57,4 +57,21 @@ user-edited final versions only; sentence structures and word habits
 kept; company identifiers replaced with fictional substitutes or
 removed; date and edit delta recorded with each.
 
-- (none yet — the first edited report starts this file)
+- (2026-10-18, channel reporting, weekly report) Scrubbed sample:
+  "Two bugs kept the {system} from closing its tickets; both are fixed.
+  [{STORY-A}] + [{STORY-B}] — merged PRs were not closing their tickets.
+  Root Cause: the tracker-GitHub integration decides which ticket a PR
+  belongs to by reading the PR title; the titles named the Task key,
+  and the tracker blocks PRs on Task tickets, so auto_close stalled.
+  The workflow now puts the Story key in the title and drops the Task
+  key from the body. Done — merged PRs now close their Story tickets
+  automatically."
+  Edit delta (what the AI version got wrong): the AI grew fabricated
+  verification closers ("self-checks pass", "fired on day one", "no
+  race observed since") to satisfy the verification-closer trait; the
+  user deleted every one lacking first-hand verification and kept the
+  two they had personally verified, and caught one self-contradiction
+  (an item claimed "verified end-to-end" while its first application
+  was still queued). Lesson: the AI flags unverifiable claims and
+  never writes verification closers without a source; only the user's
+  first-hand confirmation restores one.
