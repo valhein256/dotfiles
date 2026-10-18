@@ -86,6 +86,10 @@ forward line. Do not restate its traits here.
   silently.
 - If a week has no session, git, or Jira activity at all, say so and
   ask what to include instead of padding the report.
+- The report covers work projects only. Sessions from personal /
+  off-hours projects (dotfiles, side projects) discovered by the
+  session scan are excluded by default — do not draft a Personal
+  group unless the user asks for it.
 - The facts stay machine-local (the user's sessions, git, and Jira);
   this skill's text stays portable — it names no repo, cluster, or
   ticket.
